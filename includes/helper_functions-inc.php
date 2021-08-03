@@ -76,13 +76,43 @@ function usernameExists($conn, $display_name, $ID){
   mysqli_stmt_close($stmt);
 }
 
-function getShowcaseUsersPage($conn, $from, $to){
-  $sql = "SELECT usersID, userFirstName, userLastName, userEmail, userDisplayName, userImage, visits, lastOnline FROM users LIMIT ?, ?;";
+function getShowcaseUsersPage($conn, $from, $to, $option, $filterOrder){
+  $sql = "";
+
+  switch($option){
+    case "none":
+    $sql = "SELECT usersID, userFirstName, userLastName, userEmail, userDisplayName, userImage, visits, lastOnline FROM users LIMIT ?, ?;";
+    break;
+    case "visits":
+      switch($filterOrder){
+        case "DESC":
+        $sql = "SELECT usersID, userFirstName, userLastName, userEmail, userDisplayName, userImage, visits, lastOnline FROM users ORDER BY visits DESC LIMIT ?, ?; ";
+        break;
+        case "ASC":
+        $sql = "SELECT usersID, userFirstName, userLastName, userEmail, userDisplayName, userImage, visits, lastOnline FROM users ORDER BY visits ASC LIMIT ?, ?; ";
+        break;
+      }
+    break;
+    case "last_online":
+      switch($filterOrder){
+        case "DESC":
+        $sql = "SELECT usersID, userFirstName, userLastName, userEmail, userDisplayName, userImage, visits, lastOnline FROM users ORDER BY lastOnline DESC LIMIT ?, ?; ";
+        break;
+        case "ASC":
+        $sql = "SELECT usersID, userFirstName, userLastName, userEmail, userDisplayName, userImage, visits, lastOnline FROM users ORDER BY lastOnline ASC LIMIT ?, ?; ";
+        break;
+      }
+    break;
+    default:
+    header("location: ../index.php?error=failedorderquery");
+  }
+
   $stmt = mysqli_stmt_init($conn);
 
   if(!mysqli_stmt_prepare($stmt, $sql)){
-    header("location: ../index.php?error=failedpaginationquery");
-    exit();
+    echo $sql;
+    //header("location: ../index.php?error=failedpaginationquery");
+    //exit();
   }
   mysqli_stmt_bind_param($stmt, "ss", $from, $to);
   mysqli_stmt_execute($stmt);
