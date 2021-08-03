@@ -242,13 +242,7 @@ hr{
 .start-page-pagination-bar{
   height: 100px;
   width: 150px;
-
-  top:0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-
-  margin: auto;
+  margin-left: 20px;
 }
 
 .start-page-pagination-bar div{

@@ -30,7 +30,8 @@ if(isset($_GET["page_number"])){
 $start_page_first_result = ($page-1) * $results_per_page;
 $users = getShowcaseUsersPage($database->getConn(), $start_page_first_result, $results_per_page);
 
-echo str_replace('---page-count---', $number_of_pages , $fragments[0]);
+$temp = str_replace('---page-count---', $number_of_pages , $fragments[0]);
+echo str_replace('---page---', $page , $temp);
 
 foreach($users as $user){
   $temp = str_replace('---ID---', $user->getID() , $fragments[1]);
@@ -50,7 +51,7 @@ foreach($users as $user){
   echo $temp;
 }
 
-echo str_replace('---page---', $page , $fragments[2]);
+echo $fragments[2];
 
 if($page != 1){
   echo str_replace('---page---', $page - 1, $fragments[3]);
@@ -59,9 +60,6 @@ if($page != 1){
 if($page != $number_of_pages){
   echo str_replace('---page---', $page + 1, $fragments[4]);
 }
-
-echo $fragments[5];
-
 
 function getPieces($html){
   //Get the segments from the html file we want to modify.
