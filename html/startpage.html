@@ -1,0 +1,50 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+    <meta name="description" content="A simple HTML5 Template for new projects.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/header.css">
+  </head>
+  <body>
+    <div class="start-page-filter-box">
+      <h4>test</h4>
+    </div>
+
+    <div class="start-page-container">
+      <p>
+        Total page count: ---page-count---
+      </p>
+
+      <!--===edit===-->
+      <div class="start-page-content-user">
+        <div class="start-page-image">
+          <img src="---SRC---" alt="USER IMAGE">
+        </div>
+        ---ID---
+      </div>
+      <!--===edit===-->
+    </div>
+    <div class="start-page-pagination-bar">
+      <h2>
+        Page: ---page---
+      </h2>
+
+      <form action="./index.php" method="get">
+        <input type="text" name="page_number" required>
+        <button type="submit" width="50px" height="50px" name="submit" value="GO">Go to page</button>
+      </form>
+
+      <div>
+        <!--===edit===-->
+        <a href="index.php?page=---page---"> previous</a>
+        <!--===edit===-->
+        <a href="index.php?page=---page---"> next</a>
+        <!--===edit===-->
+
+
+      </div>
+    </div>
+  </body>
+</html>
