@@ -15,7 +15,7 @@ if(isset($_GET["ID"])){
   $user_image = 'data:image/jpeg;base64,'.$Image;
   $html = file_get_contents("html/profile.html");
   $fragments = getPieces($html, "<!--===edit===-->");
-  
+
   if($Image == ""){
     echo str_replace('---SRC---', "images/user.png", $fragments[0]);
   }else{
@@ -63,8 +63,8 @@ if(isset($_GET["ID"])){
 
     $project_image = 'data:image/jpeg;base64,'.$image;
 
-    $project_panel = str_replace('---name---', $name , $fragments[5]);
-    $project_panel = str_replace('---description---', $description , $project_panel);
+    $length = strlen($name);
+    $project_panel = str_replace('---name---', $length > 10 ? substr($name, 0, 10) . "..." : $name, $fragments[5]);
     $project_panel = str_replace('---PROJECT-SRC---', $project_image , $project_panel);
     $project_panel = str_replace('---LINK---', $link , $project_panel);
     $project_panel = str_replace('---ID---', $projectID , $project_panel);
