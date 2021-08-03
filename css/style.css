@@ -4,6 +4,19 @@
   box-sizing: border-box;
 }
 
+fieldset{
+  border: 0;
+}
+
+textarea{
+  resize: vertical;
+}
+
+.txt-small{
+  font-size: 13px;
+  color: gray;
+}
+
 .vertical-line{
   display: inline-block;
    border-left: 1px solid #ccc;
@@ -119,6 +132,10 @@ hr{
   height: 100%;
 }
 
+.user-content input{
+  margin-top: 10px;
+}
+
 .user-image{
   height: 360px;
   width: 100%;
@@ -146,58 +163,115 @@ hr{
   box-shadow: 0px 2px 8px 0px var(--clr-gray-light);
   background-color: white;
   text-align: center;
-  border-radius: 1rem;
+  border-radius: 5px;
   position: relative;
   margin: 0.5rem;
-}
-
-.user-projects-container:hover{
-  transform: scale(1.01); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
 }
 
 .user-project-wrapper-grid{
     display: grid;
     grid-template-columns: repeat(auto-fit, 20rem);
-    justify-content: left;
+    justify-content: flex-start;
+}
+
+.user-profile-project-button-upload {
+  background-color: #4008cc;
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  width: 100%;
+  cursor: pointer;
+  border:none;
+}
+
+.user-profile-project-button-delete {
+  background-color: #c72a44;
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  width: 100%;
+  cursor: pointer;
+  border:none;
+}
+
+.user-profile-project-button-visit {
+  background-color: #2121db;
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  width: 100%;
+  cursor: pointer;
+  border:none;
+}
+
+.user-profile-project-button-link {
+  background-color: gray;
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  width: 100%;
+  cursor: pointer;
+  border:none;
+}
+
+.user-profile-project-button-delete:hover {
+  background-color: #852636;
+  color: white;
+}
+
+.user-profile-project-button-visit:hover{
+  background-color: #263b87;
+  color: white;
+}
+
+.user-profile-project-button-link:hover{
+  background-color: #165e7d;
+  color: white;
+}
+
+.user-profile-project-button-upload:hover{
+  background-color: #1e045e;
+  color: white;
+}
+
+.user-profile-project-description-box{
+  width:100%;
+  height: 100px;
+}
+
+.user-profile-project-description-box h1{
+  width: 100%;
+  border: 3px solid blue;
+  padding: 30px;
+  text-overflow: clip;
 }
 
 .user-project-github-logo{
   width: 100%;
-  max-height: 370px;
+  max-height: 300px;
 }
 
-.user-project-name{
-  font-weight: bold;
-  font-size: 1.5rem;
+
+.user-project-button-link-delete : hover{
+  background-color: red;
 }
 
-.user-project-description{
-  margin: 1rem 2rem;
-  font-size: 0.9rem;
-}
-
-.user-project-button-link-visit{
-  width: 100%;
-  border: none;
-  font-size: 1rem;
-  font-weight: bold;
-  color: blue;
-  padding: 1rem;
-}
-
-.user-project-button-link-delete{
-  width: 100%;
-  border: none;
-  font-size: 1rem;
-  color: red;
-  padding: 1rem;
-
-}
-
-.user-project-input-area{
-  width: 300px;
-  height: 200px;
-}
 
 .user-projects-container a{
   color: black;
@@ -217,7 +291,7 @@ hr{
   grid-template-columns: auto;
   grid-gap: 3px;
   background-color: white;
-  padding: 20px;
+  padding: 10px 20px 20px;
 }
 
 .start-page-container > div {
@@ -229,9 +303,74 @@ hr{
 }
 
 .start-page-filter-box{
+  display: grid;
+  grid-template-columns: auto;
+  grid-gap: 3px;
+  background-color: white;
+  padding: 10px 10px 10px;
+}
+
+.start-page-filter-bar {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: left;
+  background-color: white;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  transition: 0.5s;
+}
+
+.start-page-filter-bar button{
+  background-color: #347aeb;
+   border: none;
+   color: white;
+   padding: 15px 32px;
+   text-align: center;
+   text-decoration: none;
+   display: inline-block;
+   font-size: 16px;
+   border-radius: 10px;
+}
+
+.start-page-filter-bar select{
+  -webkit-appearance: button;
+  -moz-appearance: button;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -webkit-padding-end: 20px;
+  -moz-padding-end: 20px;
+  -webkit-padding-start: 2px;
+  -moz-padding-start: 2px;
+  background-color: white; /* Fallback color if gradients are not supported */
+  background-image: url(../images/select-arrow.png), -webkit-linear-gradient(top, #E5E5E5, #F4F4F4); /* For Chrome and Safari */
+  background-image: url(../images/select-arrow.png), -moz-linear-gradient(top, #E5E5E5, #F4F4F4); /* For old Firefox (3.6 to 15) */
+  background-image: url(../images/select-arrow.png), -ms-linear-gradient(top, #E5E5E5, #F4F4F4); /* For pre-releases of Internet Explorer  10*/
+  background-image: url(../images/select-arrow.png), -o-linear-gradient(top, #E5E5E5, #F4F4F4); /* For old Opera (11.1 to 12.0) */
+  background-image: url(../images/select-arrow.png), linear-gradient(to bottom, #E5E5E5, #F4F4F4); /* Standard syntax; must be last */
+  background-position: center right;
+  background-repeat: no-repeat;
+  border: 1px solid #AAA;
+  border-radius: 2px;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+  color: #555;
+  font-size: inherit;
+  margin: 0;
+  overflow: hidden;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.start-page-filter-bar p{
+  font-size: 20px;
+}
+
+.start-page-filter-bar fieldset{
   margin-top: 10px;
-  height: 50px;
-  background-color: gray;
+  margin-bottom: 10px;
 }
 
 .start-page-filter-box h4{
@@ -241,8 +380,14 @@ hr{
 
 .start-page-pagination-bar{
   height: 100px;
-  width: 150px;
+  width: 250px;
   margin-left: 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  transition: 0.5s;
+  padding: 20px;
+  margin-bottom: 20px;
+  margin-top: 10px;
 }
 
 .start-page-pagination-bar div{
@@ -284,9 +429,19 @@ hr{
 .start-page-card-info a{
   height: 50%;
   background-color: #347aeb;
- color: white;
- padding: 15px 25px;
- text-decoration: none;
+  color: white;
+  padding: 15px 25px;
+  text-decoration: none;
+}
+
+.start-page-card-info : hover{
+  background-color: black;
+  color: black;
+}
+
+.start-page-card-info h4{
+  color: blue;
+  font-family: monospace ;
 }
 
 .start-page-card-info p{
@@ -312,7 +467,51 @@ overflow: hidden;
   width: 100%;
 }
 
+.user-project-input{
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
 @media screen and (max-width: 768px) {
+  .user-project-wrapper-grid{
+    justify-content: center;
+  }
+
+  .start-page-pagination-bar{
+    margin: auto;
+   width: 50%;
+  }
+
+  .start-page-container{
+    grid-gap: 8px;
+  }
+
+  .vertical-line{
+    display: none;
+  }
+
+  .start-page-container > div {
+    height: auto;
+  }
+
+  .start-page-content-user{
+    flex-direction: column;
+  }
+
+  .start-page-content-user img{
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  .start-page-content-user a{
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
 
   .user-image{
     display: flex;
