@@ -113,17 +113,16 @@
             <h3> Enter project information</h3>
 
             <form method="post" enctype='multipart/form-data' action="includes/register-project-inc.php">
-              <input type="text" name="URL" placeholder="Enter link">
-              <input type="text" name="name" placeholder="Project name">
+              <input class="user-project-input" type="text" name="URL" placeholder="Enter link">
+              <input class="user-project-input" type="text" name="name" placeholder="Project name">
               <br />
-              <textarea class="user-project-input-area" type="text" name="description" placeholder="Enter description"></textarea>
+              <textarea class="user-project-input" type="text" name="description" placeholder="Enter description"></textarea>
               <p>
                 Project image
                 <input type='file' name='project-file' value='Upload'/>
               </p>
               <p>
-                Upload project
-                <input type="submit" name="submit_project" value="Upload">
+                <input class="user-profile-project-button-upload" type="submit" name="submit_project" value="Upload">
               </p>
             </form>
             <!--===edit===-->
@@ -137,21 +136,23 @@
               <!--===edit===-->
               <div class="user-projects-container">
                  <img src='---PROJECT-SRC---' alt='profile image' class="user-project-github-logo">
-                 <p>
-                    Name
-                 </p>
-                 <h1 class="user-project-name">---name---</h1>
-                 <hr />
-                 <p>
-                    Description
-                 </p>
-                 <p class="user-project-description">---description---</p>
-                 <hr />
 
-                 <a href="---LINK---"><h2>Go to project</h2></a>
-                 <form action="includes/remove-project-inc.php" method="post">
-                   <input class="user-project-button-link-delete" type='submit' value="Delete" name="---ID---"></input>
+                 <div class="user-profile-project-description-box">
+                   <h1>---name---</h1>
+                 </div>
+
+                 <form action="./projects.php">
+                   <input hidden value="---ID---" name="ID"></input>
+                   <button type="submit" class="user-profile-project-button-visit">Go to project details</button>
                  </form>
+
+                 <a href="---LINK---"><button type="submit" class="user-profile-project-button-link">Go to link</button></a>
+
+                 <form action="includes/remove-project-inc.php" method="post">
+                   <input hidden value="Delete" name="---ID---"></input>
+                   <button type="submit" class="user-profile-project-button-delete">Delete</button>
+                 </form>
+
               </div>
               <!--===edit===-->
             </div>
@@ -166,20 +167,19 @@
             </h2>
 
             <!--===edit===-->
-            <h3>Enter degree</h3>
+            <h3> Enter degree</h3>
 
             <form method="post" enctype='multipart/form-data' action="includes/register-project-inc.php">
-              <input type="text" name="URL" placeholder="Enter link">
-              <input type="text" name="name" placeholder="Project name">
+              <input class="user-project-input" type="text" name="URL" placeholder="Enter link">
+              <input class="user-project-input" type="text" name="name" placeholder="Degree name">
               <br />
-              <textarea class="user-project-input-area" type="text" name="description" placeholder="Enter description"></textarea>
+              <textarea class="user-project-input" type="text" name="description" placeholder="Enter description"></textarea>
               <p>
-                Project image
-                <input type='file' name='project-file' value='Upload'/>
+                Degree image
+                <input type='file' name='degree-file' value='Upload'/>
               </p>
               <p>
-                Upload project
-                <input type="submit" name="submit_project" value="Upload">
+                <input class="user-profile-project-button-upload" type="submit" name="submit_project" value="Upload">
               </p>
             </form>
             <!--===edit===-->
