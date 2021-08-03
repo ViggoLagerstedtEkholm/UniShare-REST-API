@@ -12,12 +12,15 @@ if(isset($_GET["ID"])){
   $user = usernameExists($database->getConn(), $ID, $ID);
   $projects = getProjects($database->getConn(), $ID);
 
-  $replace = 'data:image/jpeg;base64,'.$Image;
+  $user_image = 'data:image/jpeg;base64,'.$Image;
   $html = file_get_contents("html/profile.html");
   $fragments = getPieces($html, "<!--===edit===-->");
-  $fragments2 = getPieces($html, "<!--===project===-->");
-
-  echo str_replace('---SRC---', $replace, $fragments[0]);
+  
+  if($Image == ""){
+    echo str_replace('---SRC---', "images/user.png", $fragments[0]);
+  }else{
+    echo str_replace('---SRC---', $user_image, $fragments[0]);
+  }
 
   $info_panel = str_replace('---First_name---', $user["userFirstName"], $fragments[2]);
   $info_panel = str_replace('---Last_name---', $user["userLastName"], $info_panel);
@@ -45,11 +48,12 @@ if(isset($_GET["ID"])){
 
   if(isset($_SESSION["userID"])){
     if($ID == $_SESSION["userID"]){
-      echo$fragments2[3];
+      echo$fragments[3];
     }
   }
 
-  echo$fragments2[4];
+  echo$fragments[4];
+
   foreach ($projects as $item) {
     $projectID = $item->getID();
     $name = $item->getName();
@@ -59,7 +63,7 @@ if(isset($_GET["ID"])){
 
     $project_image = 'data:image/jpeg;base64,'.$image;
 
-    $project_panel = str_replace('---name---', $name , $fragments2[5]);
+    $project_panel = str_replace('---name---', $name , $fragments[5]);
     $project_panel = str_replace('---description---', $description , $project_panel);
     $project_panel = str_replace('---PROJECT-SRC---', $project_image , $project_panel);
     $project_panel = str_replace('---LINK---', $link , $project_panel);
@@ -67,6 +71,15 @@ if(isset($_GET["ID"])){
 
     echo $project_panel;
   }
+
+  echo$fragments[6];
+
+  if(isset($_SESSION["userID"])){
+    if($ID == $_SESSION["userID"]){
+      echo $fragments[7];
+    }
+  }
+
 }else{
   header("location: /index.php?ID=" );
 }

@@ -4,6 +4,13 @@
   box-sizing: border-box;
 }
 
+.vertical-line{
+  display: inline-block;
+   border-left: 1px solid #ccc;
+   margin: 0 10px;
+   height: 100px;
+}
+
  /* Center div center of screen. */
 .form-authentication{
   margin: auto;
@@ -208,7 +215,7 @@ hr{
 .start-page-container{
   display: grid;
   grid-template-columns: auto;
-  grid-gap: 5px;
+  grid-gap: 3px;
   background-color: white;
   padding: 20px;
 }
@@ -245,35 +252,57 @@ hr{
 }
 
 .start-page-pagination-bar div{
-    height: 100px;
+    height: 15px;
     width: 150px;
-    line-height: 100px;
     text-align: center;
 }
 
-.start-page-container img{
-    height: 70px;
-    width: 70px;
-}
-
 .start-page-content-user{
-    display: flex;                  /* establish flex container */
-    flex-direction: row;            /* default value; can be omitted */
-    flex-wrap: nowrap;              /* default value; can be omitted */
-    justify-content: left; /* switched from default (flex-start, see below) */
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: left;
     background-color: lightyellow;
 }
 
-.start-page-image{
-  width: 100px;
-  height: 100px;
+.start-page-card-image{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 10px;
 }
 
-
-.start-page-image img{
-  margin-top: 15px;
+.start-page-card-image img{
+  height: 70px;
+  width: 70px;
 }
 
+.start-page-card-info{
+  margin-left: 10px;
+  display: flex;
+  width:200px;
+  font-size: 15px;
+  flex-direction: column;
+  justify-content: center;
+  text-align: left;
+}
+
+.start-page-card-info a{
+  height: 50%;
+  background-color: #347aeb;
+ color: white;
+ padding: 15px 25px;
+ text-decoration: none;
+}
+
+.start-page-card-info p{
+overflow: hidden;
+}
+
+.start-page-card-info button{
+  height: 100%;
+  width: 100%;
+}
 
 .start-page-pagination-bar h2{
   text-align: center;
@@ -286,6 +315,7 @@ hr{
 
 .start-page-pagination-bar button{
   margin-top: 5px;
+  width: 100%;
 }
 
 @media screen and (max-width: 768px) {

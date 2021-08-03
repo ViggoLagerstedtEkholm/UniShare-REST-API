@@ -10,7 +10,7 @@ $database = new Database('localhost', 'root', '', '9.0');
 $fragments = getPieces($html, "<!--===edit===-->");
 //print_r($fragments);
 $user_count = getUserCount($database->getConn())["COUNT(*)"];
-$results_per_page = 5;
+$results_per_page = 6;
 $number_of_pages = ceil($user_count / $results_per_page);
 
 if(!isset($_GET['page'])){
@@ -35,10 +35,19 @@ echo str_replace('---page-count---', $number_of_pages , $fragments[0]);
 foreach($users as $user){
   $temp = str_replace('---ID---', $user->getID() , $fragments[1]);
   if($user->getImage() == ""){
-    echo str_replace('---SRC---', 'images/user.png', $temp);
+    $temp = str_replace('---SRC---', 'images/user.png', $temp);
   }else{
-    echo str_replace('---SRC---', 'data:image/jpeg;base64,'.$user->getImage(), $temp);
+    $temp = str_replace('---SRC---', 'data:image/jpeg;base64,'.$user->getImage(), $temp);
   }
+  $temp = str_replace('---first_name---', $user->getFirst_name() , $temp);
+  $temp = str_replace('---last_name---', $user->getLast_name() , $temp);
+  $temp = str_replace('---email---', $user->getEmail() , $temp);
+  $temp = str_replace('---last_online---', $user->getLastOnline() , $temp);
+
+  $temp = str_replace('---visits---', $user->getVisitors(), $temp);
+  $temp = str_replace('---projects---', 0, $temp);
+  $temp = str_replace('---courses---', 0, $temp);
+  echo $temp;
 }
 
 echo str_replace('---page---', $page , $fragments[2]);

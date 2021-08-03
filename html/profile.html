@@ -108,8 +108,8 @@
             <h2>
               Projects
             </h2>
-            <!--===edit===-->
 
+            <!--===edit===-->
             <h3> Enter project information</h3>
 
             <form method="post" enctype='multipart/form-data' action="includes/register-project-inc.php">
@@ -134,7 +134,6 @@
           <!-- Projects -->
 
             <div class="user-project-wrapper-grid">
-
               <!--===edit===-->
               <div class="user-projects-container">
                  <img src='---PROJECT-SRC---' alt='profile image' class="user-project-github-logo">
@@ -155,8 +154,36 @@
                  </form>
               </div>
               <!--===edit===-->
+            </div>
 
-          </div>
+            <!--===Degrees===-->
+
+            <hr />
+            <br />
+
+            <h2>
+              Degrees and courses
+            </h2>
+
+            <!--===edit===-->
+            <h3>Enter degree</h3>
+
+            <form method="post" enctype='multipart/form-data' action="includes/register-project-inc.php">
+              <input type="text" name="URL" placeholder="Enter link">
+              <input type="text" name="name" placeholder="Project name">
+              <br />
+              <textarea class="user-project-input-area" type="text" name="description" placeholder="Enter description"></textarea>
+              <p>
+                Project image
+                <input type='file' name='project-file' value='Upload'/>
+              </p>
+              <p>
+                Upload project
+                <input type="submit" name="submit_project" value="Upload">
+              </p>
+            </form>
+            <!--===edit===-->
+
         </div>
       </div>
     </div>

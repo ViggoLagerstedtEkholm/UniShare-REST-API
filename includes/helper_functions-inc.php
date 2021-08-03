@@ -97,10 +97,14 @@ function getShowcaseUsersPage($conn, $from, $to){
       $email =  $row['userEmail'];
       $display_name = $row['userDisplayName'];
       $image = base64_encode($row['userImage']);
+      $last_online = $row['lastOnline'];
+      $visitors = $row['visits'];
 
       $user = new User($first_name, $last_name, $email, $display_name);
       $user->setImage($image);
       $user->setID($ID);
+      $user->setLastOnline($last_online);
+      $user->setVistiors($visitors);
       $users[] = $user;
   }
   mysqli_stmt_close($stmt);

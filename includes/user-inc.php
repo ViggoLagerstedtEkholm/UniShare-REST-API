@@ -8,6 +8,8 @@ class User{
   private $password;
   private $password_repeat;
   private $image;
+  private $last_online;
+  private $visitors;
 
   function __construct($first_name, $last_name, $email, $display_name){
     $this->first_name = $first_name;
@@ -78,5 +80,21 @@ class User{
 
   public function setImage($image){
       $this->image = $image;
+  }
+
+  public function getLastOnline(){
+    return $this->last_online;
+  }
+
+  public function setLastOnline($date){
+    return $this->last_online = $date;
+  }
+
+  public function getVisitors(){
+    return $this->visitors;
+  }
+
+  public function setVistiors($visitors){
+    $this->visitors = $visitors;
   }
 }
