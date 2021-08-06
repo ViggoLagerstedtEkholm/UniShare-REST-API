@@ -100,6 +100,45 @@ form .text_field{
     padding: 10px;
 }
 
+/* Style the tab */
+.profile-tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+
+}
+
+/* Style the buttons inside the tab */
+.profile-tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.profile-tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.profile-tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.profile-tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+  background-color: #ced6eb;
+}
+
 .fixed {
     background-color:#4F628E;
     width: 400px;
@@ -168,10 +207,33 @@ hr{
   margin: 0.5rem;
 }
 
+.user-input-form-box{
+  padding: 10px;
+  background-color: white;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.user-degree-container{
+  overflow: hidden;
+  box-shadow: 0px 2px 8px 0px var(--clr-gray-light);
+  background-color: black;
+  text-align: center;
+  border-radius: 5px;
+  position: relative;
+  margin: 0.5rem;
+}
+
 .user-project-wrapper-grid{
     display: grid;
     grid-template-columns: repeat(auto-fit, 20rem);
     justify-content: flex-start;
+}
+
+.user-degree-wrapper-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 100%);
+  justify-content: flex-start;
 }
 
 .user-profile-project-button-upload {
