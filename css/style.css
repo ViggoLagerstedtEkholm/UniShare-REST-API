@@ -12,6 +12,15 @@ textarea{
   resize: vertical;
 }
 
+.container{
+  background-image: url("../images/bg-website.jpg");
+  padding-top: 20px;
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-bottom: 20px;
+}
+
+
 .txt-small{
   font-size: 13px;
   color: gray;
@@ -105,7 +114,6 @@ form .text_field{
   overflow: hidden;
   border: 1px solid #ccc;
   background-color: #f1f1f1;
-
 }
 
 /* Style the buttons inside the tab */
@@ -176,9 +184,15 @@ hr{
 }
 
 .user-image{
-  height: 360px;
-  width: 100%;
-  background-color: #6372d6;
+  margin: 10px;
+  outline: 2px solid #CCC;
+  height: 300px;
+  width: auto;
+}
+
+.user-image img{
+object-fit: cover;
+height: 100%; width: 100%;
 }
 
 .user-upload-image-center{
@@ -349,19 +363,18 @@ hr{
 }
 
 .start-page-container{
-  display: grid;
-  grid-template-columns: auto;
-  grid-gap: 3px;
   background-color: white;
   padding: 10px 20px 20px;
 }
 
 .start-page-container > div {
   background-color: rgba(255, 255, 255, 0.8);
-  border: 1px solid black;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   text-align: center;
   font-size: 30px;
   height: 100px;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 .start-page-filter-box{
@@ -369,7 +382,8 @@ hr{
   grid-template-columns: auto;
   grid-gap: 3px;
   background-color: white;
-  padding: 10px 10px 10px;
+  padding: 10px;
+  border-radius: 5px;
 }
 
 .start-page-filter-bar {
@@ -442,14 +456,14 @@ hr{
 
 .start-page-pagination-bar{
   height: 100px;
-  width: 250px;
-  margin-left: 20px;
+  width: 100%;
   border-radius: 5px;
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
   transition: 0.5s;
   padding: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   margin-top: 10px;
+  background-color: white;
 }
 
 .start-page-pagination-bar div{
@@ -460,7 +474,6 @@ hr{
 
 .start-page-content-user{
     display: flex;
-    flex-direction: row;
     flex-wrap: nowrap;
     justify-content: left;
     background-color: lightyellow;
@@ -476,16 +489,16 @@ hr{
 .start-page-card-image img{
   height: 70px;
   width: 70px;
+  border-radius: 50%;
 }
 
 .start-page-card-info{
-  margin-left: 10px;
   display: flex;
-  width:200px;
   font-size: 15px;
   flex-direction: column;
   justify-content: center;
   text-align: left;
+  width: 100%;
 }
 
 .start-page-card-info a{
@@ -496,18 +509,14 @@ hr{
   text-decoration: none;
 }
 
-.start-page-card-info : hover{
-  background-color: black;
-  color: black;
-}
-
 .start-page-card-info h4{
   color: blue;
   font-family: monospace ;
 }
 
 .start-page-card-info p{
-overflow: hidden;
+  overflow: hidden;
+  max-width: 250px;
 }
 
 .start-page-card-info button{
@@ -539,18 +548,53 @@ overflow: hidden;
   box-sizing: border-box;
 }
 
-@media screen and (max-width: 768px) {
-  .user-project-wrapper-grid{
+/*Profile resizing*/
+@media screen and (max-width: 984px)
+{
+  .container{
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .fixed{
+    width: 100%;
+  }
+
+  .flex-item {
+      width: 100%;
+  }
+
+  .profile-containter{
+    flex-direction: column;
+  }
+
+  .user-image{
+    width: 100px;
+    height: 100px;
     justify-content: center;
   }
+}
 
-  .start-page-pagination-bar{
-    margin: auto;
-   width: 50%;
+@media screen and (max-width: 769px) {
+  .start-page-card-info{
+    padding: 20px;
+  }
+  .start-page-card-info h4{
+    margin-top: 10px;
   }
 
-  .start-page-container{
-    grid-gap: 8px;
+  .start-page-card-image{
+    flex-direction: row;
+    margin-left: 10px;
+  }
+
+  .start-page-card-image img {
+    height: 270px;
+    width: 270px;
+    border-radius: 20%;
+  }
+
+  .user-project-wrapper-grid{
+    justify-content: center;
   }
 
   .vertical-line{
@@ -575,24 +619,6 @@ overflow: hidden;
     margin-bottom: 10px;
   }
 
-  .user-image{
-    display: flex;
-    justify-content: center;
-    background-color: rgba(255, 0, 0, 0);
-  }
-
-  .fixed{
-    width: 100%;
-  }
-
-  .flex-item {
-      width: 100%;
-  }
-
-  .profile-containter{
-    flex-direction: column;
-  }
-
   .form-authentication h1{
     text-align: center;
     padding: 0 0 20px 0;
@@ -607,5 +633,21 @@ overflow: hidden;
   .form-authentication form{
     padding: 0 0;
     box-sizing: border-box;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .container{
+    padding: 0;
+  }
+
+  .user-project-wrapper-grid{
+    grid-template-columns: none;
+  }
+
+  .start-page-card-image img {
+      height: 70px;
+      width: 70px;
+      border-radius: 50%;
   }
 }
