@@ -2,6 +2,34 @@
 namespace App\Includes;
 
 class Validate{
+  public static function hasInvalidUpload($file){
+    if(!(file_exists($file)) || !(is_uploaded_file($file))) {
+        return true;
+    }
+    return false;
+  }
+
+  public static function hasEmptyProject($project){
+    $result;
+    if(empty($project->getLink()) || empty($project->getName()) || empty($project->getImage()) || empty($project->getDescription())){
+      $result = true;
+    }else{
+      $result = false;
+    }
+    return $result;
+  }
+
+  public static function hasInvalidImageExtension($fileType){
+    $allowed = array("image/jpeg", "image/gif", "image/png");
+    $result;
+    if(!in_array($fileType, $allowed)) {
+      $result = true;
+    }else{
+      $result = false;
+    }
+    return $result;
+  }
+
   public static function hasEmptyInputsRegister($user){
     $result;
     if(empty($user->getFirst_name()) || empty($user->getLast_name())
