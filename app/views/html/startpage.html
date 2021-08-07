@@ -4,96 +4,107 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Title</title>
     <meta name="description" content="A simple HTML5 Template for new projects.">
-    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../../css/style.css">
+    <link rel="stylesheet" href="../../../css/header.css">
   </head>
   <body>
-    <div class="start-page-filter-box">
-      <div class="start-page-filter-bar">
-        <form action="../views/startpage.php" method="get">
-          <p>
-            Sort by
-          </p>
-          <select name="filter_option">
-            <option value="none">None</option>
-            <option value="visits">Visits</option>
+    ---header---
+    <div class="container">
+      <div class="start-page-filter-box">
+        <div class="start-page-filter-bar">
+          <form action="startpage.php" method="get">
+            <p>
+              Sort by
+            </p>
+            <select name="filter_option">
+              <option value="none">None</option>
+              <option value="visits">Visits</option>
 
-            <option value="last_online">Last online</option>
-          </select>
-          <fieldset name="filter_order">
-              <legend>Order by</legend>
-              <input type="radio" name="action" id="track" value="ASC" /><label for="track">ASC</label><br />
-              <input type="radio" name="action" id="event" value="DESC" /><label for="event">DESC</label><br />
-          </fieldset>
-          <button type="submit" width="50px" height="50px" name="filter_button" value="GO">Filter</button>
-        </form>
-      </div>
-    </div>
-
-    <hr />
-
-    <div class="start-page-container">
-      <p class="txt-small">
-        Total page count: ---page-count---
-      </p>
-
-      <p class="txt-small">
-        Page index: ---page---
-      </p>
-
-      <p class="txt-small">
-        Range: ---range---
-      </p>
-      <!--===edit===-->
-      <div class="start-page-content-user">
-        <div class="start-page-card-image">
-          <img src="---SRC---" alt="USER IMAGE">
-        </div>
-
-        <span class="vertical-line"></span>
-
-        <div class="start-page-card-info">
-          <h4><b>Personal information</b></h4>
-          <p><b>First name:</b> ---first_name---</p>
-          <p><b>Last name:</b> ---last_name---</p>
-          <p><b>Email: </b>---email---</p>
-        </div>
-
-        <span class="vertical-line"></span>
-
-        <div class="start-page-card-info">
-          <h4><b>Profile information</b></h4>
-          <p><b>Visits:</b> ---visits---</p>
-          <p><b>Projects:</b> ---projects---</p>
-          <p><b>Courses:</b> ---courses---</p>
-          <p><b>Last online:</b> ---last_online---</p>
-        </div>
-
-        <span class="vertical-line"></span>
-
-        <div class="start-page-card-info">
-          <form action="./profile.php" method="get">
-            <input type="hidden" name="ID" value="---ID---" />
-            <button type="submit" class="user-profile-project-button-visit ">Visit</button>
+              <option value="last_online">Last online</option>
+            </select>
+            <fieldset name="filter_order">
+                <legend>Order by</legend>
+                <input type="radio" name="action" id="track" value="ASC" /><label for="track">ASC</label><br />
+                <input type="radio" name="action" id="event" value="DESC" /><label for="event">DESC</label><br />
+            </fieldset>
+            <button type="submit" width="50px" height="50px" name="filter_button" value="GO">Filter</button>
           </form>
         </div>
       </div>
-      <!--===edit===-->
-    </div>
 
-    <hr />
+      <hr />
 
-    <div class="start-page-pagination-bar">
-      <form action="./index.php?page=---page---&filter_option=---filter_option---&action=---action---" method="get">
-        <input type="text" name="page_number" required>
-        <button type="submit" width="50px" height="50px" name="submit" value="GO">Go to page</button>
-      </form>
+      <div class="start-page-container">
+        <p class="txt-small">
+          Total page count: ---page-count---
+        </p>
 
-      <div>
+        <p class="txt-small">
+          Page index: ---page---
+        </p>
+
+        <p class="txt-small">
+          Range: ---range---
+        </p>
+
         <!--===edit===-->
-        <a href="startpage.php?page=---page---&filter_option=---filter_option---&action=---action---"> previous</a>
+        <div class="start-page-content-user">
+          <div class="start-page-card-image">
+            <img src="---SRC---" alt="USER IMAGE">
+          </div>
+
+          <span class="vertical-line"></span>
+
+          <div class="start-page-card-info">
+            <h4><b>Personal information</b></h4>
+            <p><b>First name:</b> ---first_name---</p>
+            <p><b>Last name:</b> ---last_name---</p>
+            <p><b>Email: </b>---email---</p>
+          </div>
+
+          <span class="vertical-line"></span>
+
+          <div class="start-page-card-info">
+            <h4><b>Profile information</b></h4>
+            <p><b>Visits:</b> ---visits---</p>
+            <p><b>Projects:</b> ---projects---</p>
+            <p><b>Courses:</b> ---courses---</p>
+            <p><b>Last online:</b> ---last_online---</p>
+          </div>
+
+          <span class="vertical-line"></span>
+
+          <div class="start-page-card-info">
+            <form action="./profile.php" method="get">
+              <input type="hidden" name="ID" value="---ID---" />
+              <button type="submit" class="user-profile-project-button-visit ">Visit</button>
+            </form>
+          </div>
+
+          <span class="vertical-line"></span>
+
+        </div>
+
         <!--===edit===-->
-        <a href="startpage.php?page=---page---&filter_option=---filter_option---&action=---action---"> next</a>
-        <!--===edit===-->
+      </div>
+
+      <hr />
+
+      <div class="start-page-pagination-bar">
+        <form action="startpage.php" method="get">
+          <input type="text" name="filter_option" value="---filter_option---" hidden>
+          <input type="text" name="action" value="---action---" hidden>
+          <input type="text" name="page" required>
+          <button type="submit" width="50px" height="50px" name="submit" value="GO">Go to page</button>
+        </form>
+
+        <div>
+          <!--===edit===-->
+          <a href="startpage.php?page=---page---&filter_option=---filter_option---&action=---action---"> previous</a>
+          <!--===edit===-->
+          <a href="startpage.php?page=---page---&filter_option=---filter_option---&action=---action---"> next</a>
+          <!--===edit===-->
+        </div>
       </div>
     </div>
   </body>

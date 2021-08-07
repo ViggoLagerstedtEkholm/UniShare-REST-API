@@ -12,11 +12,11 @@ class ProfileController extends MVCModels\Profiles implements IDatabase{
   }
 
   public function add_visitor($ID, $user){
-    $this->addVisitor($ID, $user);
+    return $this->addVisitor($ID, $user);
   }
 
   public function add_visit_date($ID){
-    $this->addVisitDate($ID);
+    return $this->addVisitDate($ID);
   }
 
   public function connect_database(){

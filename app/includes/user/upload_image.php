@@ -6,13 +6,13 @@ require_once realpath($_SERVER['DOCUMENT_ROOT'] . "/UniShare/vendor/autoload.php
 session_start();
 
 use \App\Controllers;
+use \App\Includes;
 
-$didUpload = false;
-if(file_exists($_FILES['file']['tmp_name']) || is_uploaded_file($_FILES['file']['tmp_name'])) {
-    $didUpload = true;
+if(Includes\Validate::hasInvalidUpload($_FILES['file']['tmp_name']) !== false){
+  redirect("?error=noupload");
 }
 
-if(isset($_POST["submit_image"]) && $didUpload)
+if(isset($_POST["submit_image"]))
 {
   if(isset($_SESSION["userID"])){
     $profileController = new Controllers\ProfileController();
@@ -25,20 +25,18 @@ if(isset($_POST["submit_image"]) && $didUpload)
     $fileType = $_FILES['file']['type'];
 
     $image_data = file_get_contents($_FILES['file']['tmp_name']);
-    $allowed = array("image/jpeg", "image/gif", "image/png");
 
-    $ID = $_SESSION["userID"];
-
-    if(!in_array($fileType, $allowed)) {
-      $error_message = 'Only jpg, gif, and png files are allowed.';
+    if(Includes\Validate::hasInvalidImageExtension($fileType) !== false){
       header("location: ../../profile.php?ID=$ID&error=illegaltype");
       exit();
     }
 
+    $ID = $_SESSION["userID"];
+
     //Check if file upload had any errors.
     if($fileErr === 0){
       //Enable max file size. 500 000 bytes
-      if($fileSize < 2000000){
+      if($fileSize < 20000000){
         $profileController->upload_image($image_data, $ID);
         $profileController->close_database();
       }else{

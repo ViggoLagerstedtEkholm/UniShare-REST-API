@@ -4,130 +4,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Title</title>
     <meta name="description" content="A simple HTML5 Template for new projects.">
-    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../../css/style.css">
   </head>
   <body>
-    <div class="profile-containter">
-      <div class="fixed">
-        <div class="user-profile">
-          <div class="user-image">
-            <img src="---SRC---" width="360" height="360" alt="USER IMAGE">
-          </div>
+    <div class="container">
+      <div class="profile-containter">
+        <div class="fixed">
+          <div class="user-profile">
+            <div class="user-image">
+              <img src="---SRC---" alt="USER IMAGE">
+            </div>
 
-          <!--===edit===-->
-          <div class='user-upload-image-center'>
-            <form method='post' enctype='multipart/form-data' action='../includes/user/upload_image.php'>
-              <p>
-                <input type='file' name='file' value='Upload'/>
-              </p>
-              <p>
-                <input type='submit' name='submit_image' value='Upload'/>
-              </p>
-            </form>
-          </div>
-          <!--===edit===-->
-
-          <hr />
-
-          <div>
-            <h2>
-              First name
-            </h2>
-          </div>
-
-          <div>
-            ---First_name---
-          </div>
-
-          <div>
-            <h2>
-              Last name
-            </h2>
-          </div>
-
-          <div>
-            ---Last_name---
-          </div>
-
-          <div>
-            <h2>
-              Last online
-            </h2>
-          </div>
-
-          <div>
-            ---Date---
-          </div>
-
-          <div>
-            <h2>
-              Visits
-            </h2>
-          </div>
-
-          <div>
-            ---Visits---
-          </div>
-
-          <div>
-            <h2>
-              Added projects
-            </h2>
-          </div>
-
-          <div>
-            ---Added_projects---
-          </div>
-
-          <div>
-            <h2>
-              Completed courses
-            </h2>
-          </div>
-
-          <div>
-            ---Completed_courses---
-          </div>
-
-          <hr />
-
-          <div>
-            <h2>
-              Description
-            </h2>
-          </div>
-          <div class="user-description">
-            testadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwa
-          </div>
-        </div>
-      </div>
-      <div class="flex-item">
-        <div class="user-content">
-
-          <!-- Tabs -->
-          <div class="profile-tab">
-            <button class="tablinks" onclick="openCity(event, 'Projects')">Projects</button>
-           <button class="tablinks" onclick="openCity(event, 'Degrees')">Degrees</button>
-          </div>
-
-          <div id="Projects" class="profile-tabcontent">
-            <h2 class="user-input-form-box">
-              Projects
-            </h2>
             <!--===edit===-->
-            <div class="user-input-form-box">
-              <h3> Enter project information</h3>
-              <form method="post" enctype='multipart/form-data' action= '../includes/projects/register-project.php'>
-                <input class="user-project-input" type="text" name="URL" placeholder="Enter link">
-                <input class="user-project-input" type="text" name="name" placeholder="Project name">
-                <br />
-                <textarea class="user-project-input" type="text" name="description" placeholder="Enter description"></textarea>
+            <div class='user-upload-image-center'>
+              <form method='post' enctype='multipart/form-data' action='../../includes/user/upload_image.php'>
                 <p>
-                  Project image
-                  <input type='file' name='project-file' value='Upload'/>
+                  <input type='file' name='file' value='Upload'/>
                 </p>
                 <p>
-                  <input class="user-profile-project-button-upload" type="submit" name="submit_project" value="Upload">
+                  <input type='submit' name='submit_image' value='Upload'/>
                 </p>
               </form>
             </div>
@@ -135,51 +30,102 @@
 
             <hr />
 
-            <!-- Projects -->
-              <div class="user-project-wrapper-grid">
-                <!--===edit===-->
-                <div class="user-projects-container">
-                   <img src='---PROJECT-SRC---' alt='profile image' class="user-project-github-logo">
+            <div>
+              <h2>
+                First name
+              </h2>
+            </div>
 
-                   <div class="user-profile-project-description-box">
-                     <h1>---name---</h1>
-                   </div>
+            <div>
+              ---First_name---
+            </div>
 
-                   <form action="./projects.php">
-                     <input hidden value="---ID---" name="ID"></input>
-                     <button type="submit" class="user-profile-project-button-visit">Go to project details</button>
-                   </form>
+            <div>
+              <h2>
+                Last name
+              </h2>
+            </div>
 
-                   <a href="---LINK---"><button type="submit" class="user-profile-project-button-link">Go to link</button></a>
+            <div>
+              ---Last_name---
+            </div>
 
-                   <form action='../includes/projects/remove-project.php' method="post">
-                     <input hidden value="Delete" name="---ID---"></input>
-                     <button type="submit" class="user-profile-project-button-delete">Delete</button>
-                   </form>
+            <div>
+              <h2>
+                Last online
+              </h2>
+            </div>
 
-                </div>
-                <!--===edit===-->
-              </div>
-              <!-- Projects -->
+            <div>
+              ---Date---
+            </div>
+
+            <div>
+              <h2>
+                Visits
+              </h2>
+            </div>
+
+            <div>
+              ---Visits---
+            </div>
+
+            <div>
+              <h2>
+                Added projects
+              </h2>
+            </div>
+
+            <div>
+              ---Added_projects---
+            </div>
+
+            <div>
+              <h2>
+                Completed courses
+              </h2>
+            </div>
+
+            <div>
+              ---Completed_courses---
+            </div>
+
+            <hr />
+
+            <div>
+              <h2>
+                Description
+              </h2>
+            </div>
+            <div class="user-description">
+              testadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwa
+            </div>
           </div>
+        </div>
+        <div class="flex-item">
+          <div class="user-content">
 
-          <div id="Degrees" class="profile-tabcontent">
-            <!--===Degrees===-->
-            <h2 class="user-input-form-box">
-              Degrees and courses
-            </h2>
+            <!-- Tabs -->
+            <div class="profile-tab">
+              <button class="tablinks" onclick="openTab(event, 'Projects')">Projects</button>
+             <button class="tablinks" onclick="openTab(event, 'Degrees')">Degrees</button>
+            </div>
 
-            <!--===edit===-->
-            <div class="user-input-form-box">
-              <h3> Enter degree</h3>
-                <form method="post" enctype='multipart/form-data' action="includes/register-project-inc.php">
+            <div id="Projects" class="profile-tabcontent">
+              <h2 class="user-input-form-box">
+                Projects
+              </h2>
+              <!--===edit===-->
+              <div class="user-input-form-box">
+                <h3> Enter project information</h3>
+                <form method="post" enctype='multipart/form-data' action= '../../includes/projects/register-project.php'>
                   <input class="user-project-input" type="text" name="URL" placeholder="Enter link">
-                  <input class="user-project-input" type="text" name="name" placeholder="Degree name">
+                  <input class="user-project-input" type="text" name="name" placeholder="Project name">
                   <br />
                   <textarea class="user-project-input" type="text" name="description" placeholder="Enter description"></textarea>
                   <p>
-                    Degree image
-                    <input type='file' name='degree-file' value='Upload'/>
+                    Project image
+                    <input type='file' name='project-file' value='Upload'/>
                   </p>
                   <p>
                     <input class="user-profile-project-button-upload" type="submit" name="submit_project" value="Upload">
@@ -190,34 +136,91 @@
 
               <hr />
 
-              <div class="user-degree-wrapper-grid">
-                <!--===edit===-->
-                <div class="user-degree-container">
-                   <p>
-                     test
-                   </p>
-                   <p>
-                     test
-                   </p>
-                   <p>
-                     test
-                   </p>
-                   <p>
-                     test
-                   </p>
+              <!-- Projects -->
+                <div class="user-project-wrapper-grid">
+                  <!--===edit===-->
+                  <div class="user-projects-container">
+                     <img src='---PROJECT-SRC---' alt='profile image' class="user-project-github-logo">
+
+                     <div class="user-profile-project-description-box">
+                       <h1>---name---</h1>
+                     </div>
+
+                     <form action="./projects.php">
+                       <input hidden value="---ID---" name="ID"></input>
+                       <button type="submit" class="user-profile-project-button-visit">Go to project details</button>
+                     </form>
+
+                     <a href="---LINK---"><button type="submit" class="user-profile-project-button-link">Go to link</button></a>
+
+                     <form action='../includes/projects/remove-project.php' method="post">
+                       <input hidden value="Delete" name="---ID---"></input>
+                       <button type="submit" class="user-profile-project-button-delete">Delete</button>
+                     </form>
+
+                  </div>
+                  <!--===edit===-->
+                </div>
+                <!-- Projects -->
+            </div>
+
+            <div id="Degrees" class="profile-tabcontent">
+              <!--===Degrees===-->
+              <h2 class="user-input-form-box">
+                Degrees and courses
+              </h2>
+
+              <!--===edit===-->
+              <div class="user-input-form-box">
+                <h3> Enter degree</h3>
+                  <form method="post" enctype='multipart/form-data' action="../../includes/register-project-inc.php">
+                    <input class="user-project-input" type="text" name="URL" placeholder="Enter link">
+                    <input class="user-project-input" type="text" name="name" placeholder="Degree name">
+                    <br />
+                    <textarea class="user-project-input" type="text" name="description" placeholder="Enter description"></textarea>
+                    <p>
+                      Degree image
+                      <input type='file' name='degree-file' value='Upload'/>
+                    </p>
+                    <p>
+                      <input class="user-profile-project-button-upload" type="submit" name="submit_project" value="Upload">
+                    </p>
+                  </form>
                 </div>
                 <!--===edit===-->
+
+                <hr />
+
+                <div class="user-degree-wrapper-grid">
+                  <!--===edit===-->
+                  <div class="user-degree-container">
+                     <p>
+                       test
+                     </p>
+                     <p>
+                       test
+                     </p>
+                     <p>
+                       test
+                     </p>
+                     <p>
+                       test
+                     </p>
+                  </div>
+                  <!--===edit===-->
+                  </div>
               </div>
             </div>
-          </div>
-      </div>
+        </div>
+    </div>
+
     </div>
 
     <script>
 
-      openCity(event, 'Projects');
+      openTab(event, 'Projects');
 
-      function openCity(evt, cityName) {
+      function openTab(evt, tabName) {
         var i, tabcontent, tablinks;
         tabcontent = document.getElementsByClassName("profile-tabcontent");
         for (i = 0; i < tabcontent.length; i++) {
@@ -227,7 +230,7 @@
         for (i = 0; i < tablinks.length; i++) {
           tablinks[i].className = tablinks[i].className.replace(" active", "");
         }
-        document.getElementById(cityName).style.display = "block";
+        document.getElementById(tabName).style.display = "block";
         evt.currentTarget.className += " active";
       }
     </script>
