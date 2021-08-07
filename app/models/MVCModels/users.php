@@ -140,7 +140,7 @@ class Users extends Database{
     $stmt = mysqli_stmt_init($this->getConnection());
 
     if(!mysqli_stmt_prepare($stmt, $sql)){
-      header("location: ../register.php?error=failedstmt");
+      header("location: ../../register.php?error=failedstmt");
       exit();
     }
 
@@ -155,7 +155,7 @@ class Users extends Database{
     mysqli_stmt_bind_param($stmt, "sssss", $first_name, $last_name, $email, $display_name, $hashPassword);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
-    header("location: ../views/register.php?error=none");
+    header("location: ../../views/register.php?error=none");
     exit();
   }
 
@@ -163,7 +163,7 @@ class Users extends Database{
     $usernameExists = $this->usernameExists($user->getEmail(), $user->getEmail());
 
     if($usernameExists === false){
-      header("location: ../views/login.php?error=wrongemailorpassword");
+      header("location: ../../views/login.php?error=wrongemailorpassword");
       exit();
     }
 
@@ -171,13 +171,13 @@ class Users extends Database{
     $comparePassword = password_verify($user->getPassword(), $passwordHash);
 
     if($comparePassword === false){
-      header("location: ../views/login.php?error=wrongemailorpassword");
+      header("location: ../../views/login.php?error=wrongemailorpassword");
       exit();
     }else if($comparePassword === true){
       session_start();
       $_SESSION["userID"] =  $usernameExists["usersID"];
       $_SESSION["userEmail"] =  $usernameExists["userEmail"];
-      header("location: ../views/startpage.php");
+      header("location: ../../views/startpage.php");
       exit();
     }
   }

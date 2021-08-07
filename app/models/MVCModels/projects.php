@@ -12,7 +12,7 @@ class Projects extends Database{
     $stmt = mysqli_stmt_init($this->getConnection());
 
     if(!mysqli_stmt_prepare($stmt, $sql)){
-      header("location: ../../views/profile.php?ID=$currentID&error=deleteprojectfail");
+      header("location: ../../views/view/profile.php?ID=$currentID&error=deleteprojectfail");
 
       exit();
     }
@@ -20,7 +20,7 @@ class Projects extends Database{
     mysqli_stmt_bind_param($stmt, "s", $ID);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
-    header("location: ../../views/profile.php?ID=$currentID");
+    header("location: ../../views/view/profile.php?ID=$currentID");
     exit();
   }
 
@@ -68,7 +68,7 @@ class Projects extends Database{
     $stmt = mysqli_stmt_init($this->getConnection());
 
     if(!mysqli_stmt_prepare($stmt, $sql)){
-      header("location: ../../views/profile.php?ID=$ID&error=uploadqueryerror");
+      header("location: ../../views/view/profile.php?ID=$ID&error=uploadqueryerror");
       exit();
     }
 
@@ -81,10 +81,10 @@ class Projects extends Database{
 
     $result = mysqli_stmt_execute($stmt);
     if($result){
-      header("location: ../../views/profile.php?ID=$ID");
+      header("location: ../../views/view/profile.php?ID=$ID");
       exit();
     }else{
-      header("location: ../../views/profile.php?ID=$ID&error=uploadfail");
+      header("location: ../../views/view/profile.php?ID=$ID&error=uploadfail");
       exit();
     }
     mysqli_stmt_close($stmt);

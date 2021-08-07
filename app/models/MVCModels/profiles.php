@@ -12,7 +12,7 @@ class Profiles extends Database{
     $stmt = mysqli_stmt_init($this->getConnection());
 
     if(!mysqli_stmt_prepare($stmt, $sql)){
-      header("location: ../../views/profile.php?ID=$ID&error=uploadfail");
+      header("location: ../../views/view/profile.php?ID=$ID&error=uploadfail");
       exit();
     }
 
@@ -20,11 +20,11 @@ class Profiles extends Database{
     mysqli_stmt_execute($stmt);
     if (!mysqli_stmt_execute($stmt))
     {
-        echo "Failed to insert image! " . $stmt->error;
+      header("location: ../../views/view/profile.php?ID=$ID&error=failinsertimage");
     }
     mysqli_stmt_close($stmt);
 
-    header("location: ../../views/profile.php?ID=$ID");
+    header("location: ../../views/view/profile.php?ID=$ID");
     exit();
   }
 
@@ -38,7 +38,7 @@ class Profiles extends Database{
     $stmt = mysqli_stmt_init($this->getConnection());
 
     if(!mysqli_stmt_prepare($stmt, $sql)){
-      header("location: ../profile.php?error=visitcounterror");
+      header("location: ../../views/profile.php?error=visitcounterror");
       exit();
     }
 
@@ -58,7 +58,7 @@ class Profiles extends Database{
     $stmt = mysqli_stmt_init($this->getConnection());
 
     if(!mysqli_stmt_prepare($stmt, $sql)){
-      header("location: ../views/profile.php?error=dateinsertfail");
+      header("location: ../../views/profile.php?error=dateinsertfail");
       exit();
     }
 
