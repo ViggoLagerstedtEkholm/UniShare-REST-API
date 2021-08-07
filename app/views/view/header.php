@@ -23,7 +23,7 @@ session_start();
             echo "<li><a>$Email</a></li>";
             echo "<li><a>$Id</a></li>";
             echo "<li><a href='profile.php?ID=$Id'>Profile</a></li>";
-            echo "<li><a href='classes\includes\logout-inc.php'>Logout</a></li>";
+            echo "<li><a href='../includes/authenticate/logout.php'>Logout</a></li>";
           }else{
             echo "<li><a href='login.php'>Login</a></li>";
             echo "<li><a href='register.php'>Register</a></li>";
