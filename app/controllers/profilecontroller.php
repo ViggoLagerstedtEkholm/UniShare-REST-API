@@ -9,16 +9,20 @@ use App\Core\Session;
 use App\Includes\Validate;
 use App\Includes\Constants;
 use App\Models\Project;
+use App\Middleware\AuthenticationMiddleware;
 
-class ProfileController
+class ProfileController extends Controller
 {
+  public function __construct(){
+    $this->setMiddlewares(new AuthenticationMiddleware(['uploadImage', 'uploadProject', 'deleteProject', 'pubishCourse']));
+  }
+
   public function view()
   {
     $profile = new Profiles();
     $users = new Users();
     $projects = new Projects();
 
-    $sessionID = Session::get('userID');
     $ID = $_GET["ID"];
 
     if(!empty($ID)){
@@ -29,9 +33,14 @@ class ProfileController
       $updatedVisitCount = $profile->addVisitor($ID, $user);
       $projects = $projects->getProjects($ID);
       $user_image = 'data:image/jpeg;base64,' . $image;
+
       $date = $user["lastOnline"];
-      if($ID == $sessionID){
-        $date = $profile->addVisitDate($sessionID);
+
+      if(Session::isLoggedIn()){
+        $sessionID = Session::get('userID');
+        if($ID == $sessionID){
+          $date = $profile->addVisitDate($sessionID);
+        }
       }
 
       $params = [
@@ -39,34 +48,27 @@ class ProfileController
         'updatedVisitCount' => $updatedVisitCount,
         'projects' => $projects,
         'user_image' => $user_image,
-        'sessionID' => Session::exists('userID') ? $sessionID : "Guest",
         'currentPageID' => $ID,
         'profile' => $profile,
         'visitDate' => $date,
         'first_name' => $first_name,
         'last_name' => $last_name
       ];
-
-      return Application::$app->router->renderView('profile', $params);
+      return $this->display('profile', $params);
     }
     header("location: ./");
   }
 
   public function uploadImage(Request $request){
     $validImage = Validate::validateImage('file', Constants::MAX_UPLOAD_SIZE);
+
     if($validImage != 0){
-      if(Session::exists('userID')){
-        $ID = Session::get('userID');
-        $profile = new Profiles();
-        $profile->uploadImage($validImage, $ID);
-      }else{
-        header("location: ../../login");
-      }
+      $ID = Session::get('userID');
+      $profile = new Profiles();
+      $profile->uploadImage($validImage, $ID);
     }else{
-        if(Session::exists('userID')){
-          $ID = Session::get('userID');
-          header("location: ../../profile?ID=$ID&error=invalidupload");
-        }
+      $ID = Session::get('userID');
+      header("location: ../../profile?ID=$ID&error=invalidupload");
     }
   }
 
@@ -74,7 +76,6 @@ class ProfileController
   {
     $validImage = Validate::validateImage('project-file', Constants::MAX_UPLOAD_SIZE);
     if($validImage != 0){
-      if(Session::exists('userID')){
         $ID = Session::get('userID');
 
         $projects = new Projects();
@@ -83,19 +84,11 @@ class ProfileController
         $project->populateAttributes($request->getBody());
         $project->image = $validImage;
         $projects->uploadProject($project, $ID);
-
-      }else{
-        header("location: ./login");
       }
-    }else{
-      if(Session::exists('userID')){
-        $ID = Session::get('userID');
-        header("location: ../../profile?ID=$ID&error=invalidupload");
-      }
+    else{
+      $ID = Session::get('userID');
+      header("location: ../../profile?ID=$ID&error=invalidupload");
     }
-    Application::$app->request->getBody();
-
-    return 'Handling submitted project data.';
   }
 
   public function deleteProject(Request $request){
