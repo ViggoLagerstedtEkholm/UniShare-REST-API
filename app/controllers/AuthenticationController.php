@@ -7,8 +7,13 @@ use App\Models\Login;
 use App\Includes\Validate;
 use App\Models\MVCModels\Users;
 use App\Core\Session;
+use App\Middleware\AuthenticationMiddleware;
 
-class AuthenticationController{
+class AuthenticationController extends Controller{
+  public function __construct(){
+    $this->setMiddlewares(new AuthenticationMiddleware(['logout']));
+  }
+
   public function view_login(){
     return Application::$app->router->renderView('login', []);
   }
