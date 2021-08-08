@@ -7,7 +7,6 @@ use App\Models\Project;
 class Projects extends Database
 {
  function DeleteProject($ID, $currentID){
-   $this->connect();
     $sql = "DELETE FROM projects WHERE projectID = ?;";
     $stmt = mysqli_stmt_init($this->getConnection());
 
@@ -20,12 +19,10 @@ class Projects extends Database
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
     header("location: ../../profile?ID=$currentID");
-    $this->close();
     exit();
   }
 
  function GetMaxID(){
-   $this->connect();
     if($this->getConnection()->connect_error){
       die('Connection Failed: ' . $this->getConnection()->connect_error);
     }else{
@@ -34,12 +31,10 @@ class Projects extends Database
         $result = $this->getConnection()->query($sql)->fetch_assoc();
         return $result;
     }
-    $this->close();
     return 0;
   }
 
  function getProjects($ID){
-    $this->connect();
     $projects = array();
     if($this->getConnection()->connect_error){
       die('Connection Failed: ' . $this->conn->connect_error);
@@ -67,12 +62,10 @@ class Projects extends Database
             $projects[] = $project;
         }
     }
-    $this->close();
     return $projects;
   }
 
   function uploadProject(Project $project, $ID){
-    $this->connect();
     $sql = "INSERT INTO projects (name, description, link, userID, image) values (?,?,?,?,?);";
     $stmt = mysqli_stmt_init($this->getConnection());
 
@@ -97,6 +90,5 @@ class Projects extends Database
       exit();
     }
     mysqli_stmt_close($stmt);
-    $this->close();
   }
 }

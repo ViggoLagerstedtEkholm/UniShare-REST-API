@@ -11,24 +11,19 @@ use App\Models;
 
 class Users extends Database{
  function getUserCount(){
-    $this->connect();
-
     if($this->getConnection()->connect_error){
       die('Connection Failed: ' . $this->getConnection()->connect_error);
     }else{
       $changedate = "";
         $sql = "SELECT COUNT(*) FROM users";
         $result = $this->getConnection()->query($sql)->fetch_assoc();
-        $this->close();
         return $result;
     }
-    $this->close();
     return 0;
   }
 
  function getShowcaseUsersPage($from, $to, $option, $filterOrder){
     $sql = "";
-    $this->connect();
     switch($option){
       case "none":
       $sql = "SELECT usersID, userFirstName, userLastName, userEmail, userDisplayName, userImage, visits, lastOnline FROM users LIMIT ?, ?;";
@@ -88,14 +83,11 @@ class Users extends Database{
         $users[] = $user;
     }
     mysqli_stmt_close($stmt);
-    $this->close();
 
     return $users;
   }
 
  function userExists($email){
-    $this->connect();
-
     $sql = "SELECT * FROM users WHERE userEmail = ?;";
 
     $stmt = mysqli_stmt_init($this->getConnection());
@@ -117,12 +109,9 @@ class Users extends Database{
     }
 
     mysqli_stmt_close($stmt);
-    $this->close();
   }
 
  function getUser($ID){
-   $this->connect();
-
     $sql = "SELECT * FROM users WHERE usersID = ?;";
 
     $stmt = mysqli_stmt_init($this->getConnection());
@@ -145,13 +134,9 @@ class Users extends Database{
       $result = false;
       return $result;
     }
-
-    $this->close();
   }
 
  function register(Register $register){
-    $this->connect();
-
     $sql = "INSERT INTO users (userFirstName, userLastName, userEmail, userDisplayName, usersPassword) values(?,?,?,?,?);";
     $stmt = mysqli_stmt_init($this->getConnection());
 
@@ -173,14 +158,10 @@ class Users extends Database{
     mysqli_stmt_close($stmt);
 
     header("location: ./");
-
-    $this->close();
     exit();
   }
 
  function login(Login $login){
-    $this->connect();
-
     $user = $this->userExists($login->email);
 
     if($user === false){
@@ -200,7 +181,5 @@ class Users extends Database{
       header("location: ./");
       exit();
     }
-
-    $this->close();
   }
 }

@@ -1,8 +1,5 @@
 <?php
 namespace App\Models\MVCModels;
-
-require_once realpath($_SERVER['DOCUMENT_ROOT'] . "/UniShare/vendor/autoload.php");
-
 use App\Models;
 use App\Models\MVCModels\Database;
 
@@ -10,7 +7,6 @@ class Profiles extends Database
 {
   function uploadImage($image, $ID)
   {
-    $this->connect();
     $sql = "UPDATE users SET userImage =? WHERE usersID = ?;";
     $stmt = mysqli_stmt_init($this->getConnection());
 
@@ -29,12 +25,10 @@ class Profiles extends Database
     mysqli_stmt_close($stmt);
 
     header("location: ../../profile?ID=$ID");
-    $this->close();
     exit();
   }
 
   function addVisitor($ID, $user){
-    $this->connect();
     $visits = $user["visits"];
 
     $updatedVisits = $visits + 1;
@@ -51,12 +45,10 @@ class Profiles extends Database
     mysqli_stmt_bind_param($stmt, "ii", $updatedVisits , $ID);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
-    $this->close();
     return $updatedVisits;
   }
 
   function addVisitDate($ID){
-    $this->connect();
     $sql = "UPDATE users SET lastOnline =? WHERE usersID = ?;";
 
     date_default_timezone_set("Europe/Stockholm");
@@ -72,7 +64,6 @@ class Profiles extends Database
     mysqli_stmt_bind_param($stmt, "si", $Date, $ID);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
-    $this->close();
     return $Date;
   }
 }
