@@ -30,6 +30,17 @@ class Router{
       exit;
     }
 
+    if(is_array($callback)){
+      $controller = new $callback[0]();
+      $controller->action = $callback[1];
+      $callback[0] = $controller;
+      Application::$app->setController($controller);
+
+      foreach (Application::$app->getController()->getMiddlewares() as $middleware) {
+          $middleware->performCheck();
+      }
+    }
+
     if(is_string($callback)){
       return $this->renderView($callback);
     }
@@ -37,38 +48,21 @@ class Router{
     return call_user_func($callback, $this->request);
   }
 
-  public function renderView($view, $params = [])
+  public function renderView($view, $params = [], $errorParams = ['isError' => false])
   {
     $layoutContent = $this->layoutContent();
     $viewContent = $this->renderOnlyView($view, $params);
+    $header = $this->renderOnlyView('header', $errorParams);
 
-    $layoutContent = $this->headerDisplay($layoutContent); //Get the header display.
-
-    return str_replace('---content---', $viewContent, $layoutContent);
-  }
-
-  protected function headerDisplay($layoutContent){
-    if(Session::exists('userID')){
-      $ID = Session::get('userID');
-      $headerLinks = "<li><a href='./'>Home</a></li>
-                      <li><a href='./profile?ID=$ID'>Profile</a></li>
-                      <li><a href='./logout'>Logout</a></li>";
-
-      $layoutContent = str_replace('---navigation---', $headerLinks, $layoutContent);
-    }else{
-      $headerLinks = "<li><a href='./'>Home</a></li>
-                      <li><a href='./login'>Login</a></li>
-                      <li><a href='./register'>Register</a></li>";
-
-      $layoutContent = str_replace('---navigation---', $headerLinks, $layoutContent);
-    }
-
-    return $layoutContent;
+    $temp;
+    $temp = str_replace('---header---', $header, $layoutContent);
+    $temp = str_replace('---content---', $viewContent, $temp);
+    return $temp;
   }
 
   protected function layoutContent(){
     ob_start();
-    include_once Application::$ROOT_DIR . "/UniShare/app/views/html/main.html";
+    include_once Application::$ROOT_DIR . "/UniShare/app/views/html/Main.html";
     return ob_get_clean();
   }
 
