@@ -1,0 +1,7 @@
+<?php
+define('SESSION_USERID', 'userID');
+
+define('MAX_PROJECTS_PROFILE', 60);
+define('MAX_DEGREES_PROFILE', 10);
+define('MAX_COURSES_PROFILE', 200);
+define('MAX_UPLOAD_SIZE', 500000);
