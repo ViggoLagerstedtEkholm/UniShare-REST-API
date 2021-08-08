@@ -1,15 +1,6 @@
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Title</title>
-    <meta name="description" content="A simple HTML5 Template for new projects.">
-    <link rel="stylesheet" href="../../../css/style.css">
-  </head>
-  <body>
     <div class="form-authentication">
       <h1>Register</h1>
-      <form action="../includes/authenticate/register.php" method="post">
+      <form method="post">
         <div class="text_field">
           <input type="text" name="first_name" required>
           <label>First name</label>
@@ -23,7 +14,7 @@
           <label>Email</label>
         </div>
         <div class="text_field">
-          <input type="text" name="username" required>
+          <input type="text" name="display_name" required>
           <label>Display name</label>
         </div>
         <div class="text_field">
@@ -120,5 +111,3 @@
         return result;
     }
     </script>
-  </body>
-</html>

@@ -1,12 +1,3 @@
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Title</title>
-    <meta name="description" content="A simple HTML5 Template for new projects.">
-    <link rel="stylesheet" href="../../../css/style.css">
-  </head>
-  <body>
     <div class="container">
       <div class="profile-containter">
         <div class="fixed">
@@ -17,7 +8,7 @@
 
             <!--===edit===-->
             <div class='user-upload-image-center'>
-              <form method='post' enctype='multipart/form-data' action='../../includes/user/upload_image.php'>
+              <form method='post' enctype='multipart/form-data' action='./profile/upload/image'>
                 <p>
                   <input type='file' name='file' value='Upload'/>
                 </p>
@@ -118,8 +109,8 @@
               <!--===edit===-->
               <div class="user-input-form-box">
                 <h3> Enter project information</h3>
-                <form method="post" enctype='multipart/form-data' action= '../../includes/projects/register-project.php'>
-                  <input class="user-project-input" type="text" name="URL" placeholder="Enter link">
+                <form method="post" enctype='multipart/form-data' action= './profile/upload/project'>
+                  <input class="user-project-input" type="text" name="link" placeholder="Enter link">
                   <input class="user-project-input" type="text" name="name" placeholder="Project name">
                   <br />
                   <textarea class="user-project-input" type="text" name="description" placeholder="Enter description"></textarea>
@@ -234,5 +225,3 @@
         evt.currentTarget.className += " active";
       }
     </script>
-  </body>
-</html>

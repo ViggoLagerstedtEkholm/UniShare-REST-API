@@ -1,4 +1,3 @@
 <?php
-include_once 'header.php';
-$html = file_get_contents("../html/register.html");
+$html = file_get_contents('app/views/html/register.html');
 echo $html;

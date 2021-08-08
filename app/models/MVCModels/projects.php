@@ -1,42 +1,45 @@
 <?php
 namespace App\Models\MVCModels;
-
-require_once realpath($_SERVER['DOCUMENT_ROOT'] . "/UniShare/vendor/autoload.php");
-
 use App\Models;
 use App\Models\MVCModels\Database;
+use App\Models\Project;
 
-class Projects extends Database{
-  function DeleteProject($ID, $currentID){
+class Projects extends Database
+{
+ function DeleteProject($ID, $currentID){
+   $this->connect();
     $sql = "DELETE FROM projects WHERE projectID = ?;";
     $stmt = mysqli_stmt_init($this->getConnection());
 
     if(!mysqli_stmt_prepare($stmt, $sql)){
-      header("location: ../../views/view/profile.php?ID=$currentID&error=deleteprojectfail");
-
+      header("location: ./profile?ID=$currentID&error=deleteprojectfail");
       exit();
     }
 
     mysqli_stmt_bind_param($stmt, "s", $ID);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
-    header("location: ../../views/view/profile.php?ID=$currentID");
+    header("location: ./profile?ID=$currentID&error=deleteprojectfail");
+    $this->close();
     exit();
   }
 
-  function GetMaxID(){
-      if($this->getConnection()->connect_error){
-        die('Connection Failed: ' . $this->getConnection()->connect_error);
-      }else{
-        $changedate = "";
-          $sql = "SELECT MAX(projectID) FROM projects";
-          $result = $this->getConnection()->query($sql)->fetch_assoc();
-          return $result;
-      }
-      return 0;
+ function GetMaxID(){
+   $this->connect();
+    if($this->getConnection()->connect_error){
+      die('Connection Failed: ' . $this->getConnection()->connect_error);
+    }else{
+      $changedate = "";
+        $sql = "SELECT MAX(projectID) FROM projects";
+        $result = $this->getConnection()->query($sql)->fetch_assoc();
+        return $result;
+    }
+    $this->close();
+    return 0;
   }
 
-  function getProjects($ID){
+ function getProjects($ID){
+    $this->connect();
     $projects = array();
     if($this->getConnection()->connect_error){
       die('Connection Failed: ' . $this->conn->connect_error);
@@ -55,38 +58,45 @@ class Projects extends Database{
             $link = $row["link"];
             $image = $row["image"];
 
-            $project = new Models\Project($name, $description, $link, base64_encode($image));
-            $project->setID($ID);
+            $project = new Project();
+            $project->ID = $ID;
+            $project->name = $name;
+            $project->description = $description;
+            $project->link = $link;
+            $project->image = base64_encode($image);
             $projects[] = $project;
         }
     }
+    $this->close();
     return $projects;
   }
 
-  function uploadProject($project, $ID){
+  function uploadProject(Project $project, $ID){
+    $this->connect();
     $sql = "INSERT INTO projects (name, description, link, userID, image) values (?,?,?,?,?);";
     $stmt = mysqli_stmt_init($this->getConnection());
 
     if(!mysqli_stmt_prepare($stmt, $sql)){
-      header("location: ../../views/view/profile.php?ID=$ID&error=uploadqueryerror");
+      header("location: ../../profile?ID=$ID&error=uploadqueryerror");
       exit();
     }
 
-    $name = $project->getName();
-    $description = $project->getDescription();
-    $link = $project->getLink();
-    $image = $project->getImage();
+    $name = $project->name;
+    $description = $project->description;
+    $link = $project->link;
+    $image = $project->image;
 
     mysqli_stmt_bind_param($stmt, "sssss", $name, $description, $link, $ID, $image);
 
     $result = mysqli_stmt_execute($stmt);
     if($result){
-      header("location: ../../views/view/profile.php?ID=$ID");
+      header("location: ../../profile?ID=$ID");
       exit();
     }else{
-      header("location: ../../views/view/profile.php?ID=$ID&error=uploadfail");
+      header("location: ../../profile?ID=$ID&error=uploadfail");
       exit();
     }
     mysqli_stmt_close($stmt);
+    $this->close();
   }
 }

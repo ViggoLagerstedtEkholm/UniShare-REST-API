@@ -1,28 +1,28 @@
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Title</title>
-    <meta name="description" content="A simple HTML5 Template for new projects.">
-    <link rel="stylesheet" href="../../../css/style.css">
-  </head>
-  <body>
-    <div class="form-authentication">
-      <h1>Login</h1>
-      <form action="../includes/authenticate/login.php" method="post">
-        <div class="text_field">
-          <input type="text" name="email" required>
-          <label>Email</label>
-        </div>
-        <div class="text_field">
-          <input type="password" name="password" required>
-          <label>Password</label>
-        </div>
-        <input type="submit" name="submit_login" value="Login">
-      </form>
-      <h4 class="form-authentication-text">Do not have an account? <a href="register.php">Register</a></h4>
-    </div>
-  </body>
+  <div class="form-authentication">
+    <h1>Login</h1>
+    <form action="./login" method="post">
+      <div class="text_field">
+        <input type="text" name="email" required>
+        <label>Email</label>
+      </div>
+      <div class="text_field">
+        <input type="password" name="password" required>
+        <label>Password</label>
+      </div>
+      <input type="submit" name="submit_login" value="Login">
+    </form>
+    <h4 class="form-authentication-text">Do not have an account? <a href="register.php">Register</a></h4>
+  </div>
+
+  <h1>Test 1</h1>
+  <form action="./login/test1" method="post">
+    <input type="submit" name="submit_login" value="Login">
+  </form>
+
+  <h1>Test 2</h1>
+  <form action="./login/test2" method="post">
+    <input type="submit" name="submit_login" value="Login">
+  </form>
 
   <script>
   var result = findGetParameter("error");
@@ -68,4 +68,3 @@
       return result;
   }
   </script>
-</html>

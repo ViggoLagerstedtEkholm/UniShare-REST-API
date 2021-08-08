@@ -1,18 +1,7 @@
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Title</title>
-    <meta name="description" content="A simple HTML5 Template for new projects.">
-    <link rel="stylesheet" href="../../../css/style.css">
-    <link rel="stylesheet" href="../../../css/header.css">
-  </head>
-  <body>
-    ---header---
     <div class="container">
       <div class="start-page-filter-box">
         <div class="start-page-filter-bar">
-          <form action="startpage.php" method="get">
+          <form method="get">
             <p>
               Sort by
             </p>
@@ -75,7 +64,7 @@
           <span class="vertical-line"></span>
 
           <div class="start-page-card-info">
-            <form action="./profile.php" method="get">
+            <form action="./profile" method="get">
               <input type="hidden" name="ID" value="---ID---" />
               <button type="submit" class="user-profile-project-button-visit ">Visit</button>
             </form>
@@ -91,7 +80,7 @@
       <hr />
 
       <div class="start-page-pagination-bar">
-        <form action="startpage.php" method="get">
+        <form method="get">
           <input type="text" name="filter_option" value="---filter_option---" hidden>
           <input type="text" name="action" value="---action---" hidden>
           <input type="text" name="page" required>
@@ -100,12 +89,10 @@
 
         <div>
           <!--===edit===-->
-          <a href="startpage.php?page=---page---&filter_option=---filter_option---&action=---action---"> previous</a>
+          <a href="./?page=---page---&filter_option=---filter_option---&action=---action---"> previous</a>
           <!--===edit===-->
-          <a href="startpage.php?page=---page---&filter_option=---filter_option---&action=---action---"> next</a>
+          <a href="./?page=---page---&filter_option=---filter_option---&action=---action---"> next</a>
           <!--===edit===-->
         </div>
       </div>
     </div>
-  </body>
-</html>

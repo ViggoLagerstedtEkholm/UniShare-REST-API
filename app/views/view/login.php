@@ -1,5 +1,4 @@
 <?php
-include_once 'header.php';
-$html = file_get_contents("../html/login.html");
+$html = file_get_contents('app/views/html/login.html');
 echo $html;
 ?>
