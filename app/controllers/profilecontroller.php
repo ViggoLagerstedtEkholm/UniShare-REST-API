@@ -60,10 +60,13 @@ class ProfileController
         $profile = new Profiles();
         $profile->uploadImage($validImage, $ID);
       }else{
-        header("location: ./login");
+        header("location: ../../login");
       }
     }else{
-      header("location: ../../profile?ID=$ID&error=invalidupload");
+        if(Session::exists('userID')){
+          $ID = Session::get('userID');
+          header("location: ../../profile?ID=$ID&error=invalidupload");
+        }
     }
   }
 
@@ -85,7 +88,10 @@ class ProfileController
         header("location: ./login");
       }
     }else{
-      header("location: ../../profile?ID=$ID&error=invalidupload");
+      if(Session::exists('userID')){
+        $ID = Session::get('userID');
+        header("location: ../../profile?ID=$ID&error=invalidupload");
+      }
     }
     Application::$app->request->getBody();
 
