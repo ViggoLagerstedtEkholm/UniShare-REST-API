@@ -3,7 +3,7 @@ namespace App\Controllers;
 use App\Core\Application;
 use App\Models\MVCModels\Users;
 
-class HomeController
+class HomeController extends Controller
 {
   public function view()
   {
@@ -43,7 +43,7 @@ class HomeController
       'results_per_page' => $results_per_page
     ];
 
-    return Application::$app->router->renderView('startpage', $params);
+    return $this->display('startpage', $params);
   }
 }
 ?>
