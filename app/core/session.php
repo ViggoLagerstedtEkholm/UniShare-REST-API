@@ -25,6 +25,14 @@ class Session
     }
   }
 
+  public static function isLoggedIn(){
+    if(self::exists('userID')){
+      return true;
+    }else{
+      return false;
+    }
+  }
+
   public static function deleteAll(){
     session_unset();
     session_destroy();
