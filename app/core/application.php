@@ -1,5 +1,7 @@
 <?php
 namespace App\Core;
+use App\Controllers\Controller;
+use \Exception;
 
 class Application{
   public static string $ROOT_DIR;
@@ -7,6 +9,7 @@ class Application{
   public Request $request;
   public Response $response;
   public static Application $app;
+  private ?Controller $controller = null;
 
   public function __construct($rootPath){
     self::$ROOT_DIR = $rootPath;
@@ -18,6 +21,18 @@ class Application{
   }
 
   public function run(){
-    echo $this->router->resolve();
+    try{
+      echo $this->router->resolve();
+    }catch(Exception $e){
+      echo $this->router->renderView('unauthorized', [] ,['isError' => true]);
+    }
+  }
+
+  public function setController(Controller $controller){
+    $this->controller = $controller;
+  }
+
+  public function getController(){
+    return $this->controller;
   }
 }
