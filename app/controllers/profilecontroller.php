@@ -92,6 +92,17 @@ class ProfileController
     return 'Handling submitted project data.';
   }
 
+  public function deleteProject(Request $request){
+    $projects = new Projects();
+    $MAXID = $projects->GetMaxID();
+    foreach($request->getBody() as $key => $value){
+       //Delete the feed if it matches the ID of the clicked feed.
+       $projects->deleteProject($key, Session::get('userID'));
+     }
+     header("location: ../../profile?ID=$ID");
+  }
+
+
   public function pubishCourse(Request $request){
     Application::$app->request->getBody();
 

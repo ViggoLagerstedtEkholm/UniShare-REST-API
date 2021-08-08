@@ -12,14 +12,14 @@ class Projects extends Database
     $stmt = mysqli_stmt_init($this->getConnection());
 
     if(!mysqli_stmt_prepare($stmt, $sql)){
-      header("location: ./profile?ID=$currentID&error=deleteprojectfail");
+      header("location: ../../profile?ID=$currentID&error=deleteprojectfail");
       exit();
     }
 
     mysqli_stmt_bind_param($stmt, "s", $ID);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
-    header("location: ./profile?ID=$currentID&error=deleteprojectfail");
+    header("location: ../../profile?ID=$currentID");
     $this->close();
     exit();
   }
