@@ -3,9 +3,6 @@ namespace App\Models\MVCModels;
 use App\Models\Register;
 use App\Models\Login;
 use App\Core\Session;
-
-require_once realpath($_SERVER['DOCUMENT_ROOT'] . "/UniShare/vendor/autoload.php");
-
 use App\Models\MVCModels\Database;
 use App\Models;
 
@@ -53,12 +50,7 @@ class Users extends Database{
     }
 
     $stmt = mysqli_stmt_init($this->getConnection());
-
-    if(!mysqli_stmt_prepare($stmt, $sql)){
-      echo $sql;
-      //header("location: ../index.php?error=failedpaginationquery");
-      //exit();
-    }
+    mysqli_stmt_prepare($stmt, $sql);
     mysqli_stmt_bind_param($stmt, "ss", $from, $to);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
@@ -82,6 +74,7 @@ class Users extends Database{
         $user->setVistiors($visitors);
         $users[] = $user;
     }
+
     mysqli_stmt_close($stmt);
 
     return $users;
@@ -92,35 +85,25 @@ class Users extends Database{
 
     $stmt = mysqli_stmt_init($this->getConnection());
 
-    if(!mysqli_stmt_prepare($stmt, $sql)){
-      exit();
-    }
-
+    mysqli_stmt_prepare($stmt, $sql);
     mysqli_stmt_bind_param($stmt, "s", $email);
     mysqli_stmt_execute($stmt);
-
     $resultData = mysqli_stmt_get_result($stmt);
     $row = mysqli_fetch_assoc($resultData);
+    mysqli_stmt_close($stmt);
 
     if(is_null($row)){
-      return false;
+      return null;
     }else{
       return $row;
     }
-
-    mysqli_stmt_close($stmt);
   }
 
  function getUser($ID){
     $sql = "SELECT * FROM users WHERE usersID = ?;";
 
     $stmt = mysqli_stmt_init($this->getConnection());
-
-    if(!mysqli_stmt_prepare($stmt, $sql)){
-      header("location: ../views/startpage.php?error=fetchusererror");
-      exit();
-    }
-
+    mysqli_stmt_prepare($stmt, $sql);
     mysqli_stmt_bind_param($stmt, "s",$ID);
     mysqli_stmt_execute($stmt);
 
@@ -131,19 +114,14 @@ class Users extends Database{
       return $row;
     }else{
       mysqli_stmt_close($stmt);
-      $result = false;
-      return $result;
+      return false;
     }
   }
 
  function register(Register $register){
     $sql = "INSERT INTO users (userFirstName, userLastName, userEmail, userDisplayName, usersPassword) values(?,?,?,?,?);";
     $stmt = mysqli_stmt_init($this->getConnection());
-
-    if(!mysqli_stmt_prepare($stmt, $sql)){
-      header("location: ./?error=fatalsqlerror");
-      exit();
-    }
+    mysqli_stmt_prepare($stmt, $sql);
 
     $first_name = $register->first_name;
     $last_name = $register->last_name;
@@ -156,30 +134,24 @@ class Users extends Database{
     mysqli_stmt_bind_param($stmt, "sssss", $first_name, $last_name, $email, $display_name, $hashPassword);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
-
-    header("location: ./");
-    exit();
   }
 
  function login(Login $login){
     $user = $this->userExists($login->email);
 
     if($user === false){
-      header("location: ./login?error=invalidlogin");
-      exit();
+      return false;
     }
 
     $passwordHash = $user["usersPassword"];
     $comparePassword = password_verify($login->password, $passwordHash);
 
     if($comparePassword === false){
-      header("location: ./login?error=invalidlogin");
-      exit();
+      return false;
     }else if($comparePassword === true){
       Session::set('userID', $user["usersID"]);
       Session::set('userEmail', $user["userEmail"]);
-      header("location: ./");
-      exit();
+      return true;
     }
   }
 }

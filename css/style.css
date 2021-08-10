@@ -218,7 +218,7 @@ height: 100%; width: 100%;
   text-align: center;
   border-radius: 5px;
   position: relative;
-  margin: 0.5rem;
+  margin: 1rem;
 }
 
 .user-input-form-box{
@@ -333,7 +333,6 @@ height: 100%; width: 100%;
 
 .user-profile-project-description-box h1{
   width: 100%;
-  border: 3px solid blue;
   padding: 30px;
   text-overflow: clip;
 }
@@ -550,6 +549,10 @@ height: 100%; width: 100%;
 /*Profile resizing*/
 @media screen and (max-width: 984px)
 {
+  .user-project-wrapper-grid{
+    justify-content: center;
+  }
+
   .container{
     padding-left: 10px;
     padding-right: 10px;

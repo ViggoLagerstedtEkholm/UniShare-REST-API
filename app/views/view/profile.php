@@ -13,7 +13,7 @@ if(Session::isLoggedIn()){
 if($image == ""){
     echo str_replace('---SRC---', "images/user.png", $fragments[0]);
   }else{
-    echo str_replace('---SRC---', $user_image, $fragments[0]);
+    echo str_replace('---SRC---', 'data:image/jpeg;base64,'.$image, $fragments[0]);
 }
 if($sessionID != false){
   if($currentPageID == $sessionID){

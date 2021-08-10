@@ -3,12 +3,12 @@ namespace App\Includes;
 use App\Models\Register;
 use App\Models\Login;
 use App\Core\Session;
+use App\Models\Project;
 
 class Validate{
-  public static function validateImage($global, $MAX_UPLOAD_SIZE){
+  public static function validateImage($global){
     if(Validate::hasInvalidUpload($_FILES[$global]['tmp_name']) !== false){
-      $ID = Session::get('userID');
-      header("location: ../../profile?ID=$ID&error=invalidupload");
+      return false;
     }
 
     $fileSize = $_FILES[$global]['size'];
@@ -17,18 +17,17 @@ class Validate{
     $fileTmpName = $_FILES[$global]['tmp_name'];
     $fileType = $_FILES[$global]['type'];
 
-    $image_data = file_get_contents($_FILES[$global]['tmp_name']);
+    $image_data = $_FILES[$global]['tmp_name'];
 
     if(Validate::hasInvalidImageExtension($fileType) !== false){
-       header("location: ../../profile?ID=$ID&error=illegaltype");
-       exit();
+      return false;
     }
 
     //Check if file upload had any errors.
     if($fileErr === 0){
        //Enable max file size. 500 000 bytes
-       if($fileSize < $MAX_UPLOAD_SIZE){
-         return $image_data;
+       if($fileSize < MAX_UPLOAD_SIZE){
+         return $file;
        }else{
          return false;
        }
@@ -44,9 +43,27 @@ class Validate{
     return false;
   }
 
-  public static function hasEmptyProject($project){
+  public static function hasEmptyProject(Project $project){
     $result;
-    if(empty($project->getLink()) || empty($project->getName()) || empty($project->getImage()) || empty($project->getDescription())){
+    if($project->customCheck=="on"){
+      if(empty($project->name) || empty($project->description) || empty($project->link)|| empty($project->custom)){
+        $result = true;
+      }else{
+        $result = false;
+      }
+    }else{
+      if(empty($project->name) || empty($project->description) || empty($project->image) || empty($project->link)){
+        $result = true;
+      }else{
+        $result = false;
+      }
+    }
+    return $result;
+  }
+
+  public static function hasInvalidProjectLink($link){
+    $result;
+    if(filter_var($link, FILTER_VALIDATE_URL) === FALSE){
       $result = true;
     }else{
       $result = false;

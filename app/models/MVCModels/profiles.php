@@ -2,30 +2,19 @@
 namespace App\Models\MVCModels;
 use App\Models;
 use App\Models\MVCModels\Database;
+use App\Core\Application;
 
 class Profiles extends Database
 {
   function uploadImage($image, $ID)
   {
     $sql = "UPDATE users SET userImage =? WHERE usersID = ?;";
+
     $stmt = mysqli_stmt_init($this->getConnection());
-
-    if(!mysqli_stmt_prepare($stmt, $sql)){
-      header("location: ../../profile?ID=$ID&error=uploadfail");
-      exit();
-    }
-
+    mysqli_stmt_prepare($stmt, $sql);
     mysqli_stmt_bind_param($stmt, "si", $image, $ID);
     mysqli_stmt_execute($stmt);
-
-    if (!mysqli_stmt_execute($stmt))
-    {
-      header("location: ../../profile?ID=$ID&error=failinsertimage");
-    }
     mysqli_stmt_close($stmt);
-
-    header("location: ../../profile?ID=$ID");
-    exit();
   }
 
   function addVisitor($ID, $user){
@@ -36,12 +25,7 @@ class Profiles extends Database
     $sql = "UPDATE users SET visits =? WHERE usersID = ?;";
 
     $stmt = mysqli_stmt_init($this->getConnection());
-
-    if(!mysqli_stmt_prepare($stmt, $sql)){
-      header("location: ./profile?error=visitcounterror");
-      exit();
-    }
-
+    mysqli_stmt_prepare($stmt, $sql);
     mysqli_stmt_bind_param($stmt, "ii", $updatedVisits , $ID);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
@@ -55,12 +39,7 @@ class Profiles extends Database
     $Date = date("Y-m-d",time());
 
     $stmt = mysqli_stmt_init($this->getConnection());
-
-    if(!mysqli_stmt_prepare($stmt, $sql)){
-      header("location: ./profile?error=dateinserterror");
-      exit();
-    }
-
+    mysqli_stmt_prepare($stmt, $sql);
     mysqli_stmt_bind_param($stmt, "si", $Date, $ID);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);

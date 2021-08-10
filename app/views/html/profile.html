@@ -99,7 +99,8 @@
             <!-- Tabs -->
             <div class="profile-tab">
               <button class="tablinks" onclick="openTab(event, 'Projects')">Projects</button>
-             <button class="tablinks" onclick="openTab(event, 'Degrees')">Degrees</button>
+              <button class="tablinks" onclick="openTab(event, 'Degrees')">Degrees</button>
+              <button class="tablinks" onclick="openTab(event, 'Courses')">Courses</button>
             </div>
 
             <div id="Projects" class="profile-tabcontent">
@@ -117,6 +118,13 @@
                   <p>
                     Project image
                     <input type='file' name='project-file' value='Upload'/>
+                  </p>
+
+                  <br />
+                  Render image with only text.
+                  <input type="checkbox" name="customCheck">
+                  <p>
+                    <input class="user-project-input" type="text" name="custom" placeholder="TEXT">
                   </p>
                   <p>
                     <input class="user-profile-project-button-upload" type="submit" name="submit_project" value="Upload">

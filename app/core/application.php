@@ -20,6 +20,10 @@ class Application{
     $this->router = new Router($this->request, $this->response);
   }
 
+  public function redirect($path){
+    header('location: ' . $path);
+  }
+
   public function run(){
     try{
       echo $this->router->resolve();

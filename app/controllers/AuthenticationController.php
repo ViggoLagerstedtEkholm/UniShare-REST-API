@@ -8,10 +8,13 @@ use App\Includes\Validate;
 use App\Models\MVCModels\Users;
 use App\Core\Session;
 use App\Middleware\AuthenticationMiddleware;
+use App\Core\ImageHandler;
 
 class AuthenticationController extends Controller{
+
   public function __construct(){
     $this->setMiddlewares(new AuthenticationMiddleware(['logout']));
+    $this->users = new Users();
   }
 
   public function view_login(){
@@ -24,25 +27,27 @@ class AuthenticationController extends Controller{
 
   public function logout(){
     Session::deleteAll();
-    header("location: ./");
+    Application::$app->redirect("./");
   }
 
   public function login(Request $request)
   {
     if($request->isPost()){
       $login = new Login();
-      $users = new Users();
 
       $login->populateAttributes($request->getBody());
 
-      var_dump($login);
-
       if(Validate::hasEmptyInputsLogin($login) !== false){
-        header("location: ./login?error=emptyfield");
+        Application::$app->redirect("./login?error=" . INVALID_CREDENTIALS);
         exit();
       }
 
-      $users->login($login);
+      $success = $this->users->login($login);
+      if($success){
+        Application::$app->redirect("./");
+      }else{
+        Application::$app->redirect("./login?error=" . INVALID_CREDENTIALS);
+      }
     }
 
     return Application::$app->router->renderView('login', $params);
@@ -52,33 +57,38 @@ class AuthenticationController extends Controller{
   {
     if($request->isPost()){
       $register = new Register();
-      $users = new Users();
 
       $register->populateAttributes($request->getBody());
 
-      if(Validate::hasEmptyInputsRegister($register) !== false){
-        header("location: ./register?error=emptyfield");
-        exit();
+      $error = array();
+
+      if(Validate::hasEmptyInputsRegister($register) === true){
+        $error [] = EMPTY_FIELDS;
       }
-      if(Validate::invalidUsername($register->display_name) !== false){
-        header("location: ./register?error=invalidUsername");
-        exit();
+      if(Validate::invalidUsername($register->display_name) === true){
+        $error [] = INVALID_USERNAME;
       }
-      if(Validate::invalidEmail($register->email) !== false){
-        header("location: ./register?error=invalidEmail");
-        exit();
+      if(Validate::invalidEmail($register->email) === true){
+        $error [] = INVALID_MAIL;
       }
-      if(Validate::match($register->password, $register->password_repeat) !== false){
-        header("location: ./register?error=invalidPasswordMatch");
-        exit();
+      if(Validate::match($register->password, $register->password_repeat) === true){
+        $error [] = INVALID_PASSWORD_MATCH;
       }
       if(!is_null($users->userExists($register->email))){
-        header("location: ./register?error=emailtaken");
+        $error [] = EMAIL_TAKEN;
+      }
+
+      $URL;
+      $errorCount = count($error);
+      if($errorCount > 0){
+        for ($x = 0; $x < $errorCount; $x++) {
+          $x == $errorCount - 1 ? $URL .= $error[$x] : $URL .= $error[$x] . "&error=";
+        }
+        Application::$app->redirect("./register?error=" . $URL);
         exit();
       }
-      $users->register($register);
+
+      $this->users->register($register);
     }
   }
 }
-
-?>

@@ -8,18 +8,12 @@ class Projects extends Database
 {
  function DeleteProject($ID, $currentID){
     $sql = "DELETE FROM projects WHERE projectID = ?;";
+
     $stmt = mysqli_stmt_init($this->getConnection());
-
-    if(!mysqli_stmt_prepare($stmt, $sql)){
-      header("location: ../../profile?ID=$currentID&error=deleteprojectfail");
-      exit();
-    }
-
+    mysqli_stmt_prepare($stmt, $sql);
     mysqli_stmt_bind_param($stmt, "s", $ID);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
-    header("location: ../../profile?ID=$currentID");
-    exit();
   }
 
  function GetMaxID(){
@@ -66,29 +60,22 @@ class Projects extends Database
   }
 
   function uploadProject(Project $project, $ID){
-    $sql = "INSERT INTO projects (name, description, link, userID, image) values (?,?,?,?,?);";
-    $stmt = mysqli_stmt_init($this->getConnection());
-
-    if(!mysqli_stmt_prepare($stmt, $sql)){
-      header("location: ../../profile?ID=$ID&error=uploadqueryerror");
-      exit();
-    }
-
     $name = $project->name;
     $description = $project->description;
     $link = $project->link;
     $image = $project->image;
 
+    $sql = "INSERT INTO projects (name, description, link, userID, image) values (?,?,?,?,?);";
+    $stmt = mysqli_stmt_init($this->getConnection());
+    mysqli_stmt_prepare($stmt, $sql);
     mysqli_stmt_bind_param($stmt, "sssss", $name, $description, $link, $ID, $image);
-
     $result = mysqli_stmt_execute($stmt);
-    if($result){
-      header("location: ../../profile?ID=$ID");
-      exit();
-    }else{
-      header("location: ../../profile?ID=$ID&error=uploadfail");
-      exit();
-    }
     mysqli_stmt_close($stmt);
+
+    if($result){
+      return true;
+    }else{
+      return false;
+    }
   }
 }

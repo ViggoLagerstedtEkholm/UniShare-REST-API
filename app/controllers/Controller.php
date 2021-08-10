@@ -6,6 +6,10 @@ use App\Core\Application;
 abstract class Controller{
   public string $action = '';
   protected array $middlewares = [];
+  private ?ImageHandler $imageHandler;
+  private ?Profiles $profiles;
+  private ?Users $users;
+  private ?Projects $projects;
 
   public function setMiddlewares(Middleware $middleware)
   {

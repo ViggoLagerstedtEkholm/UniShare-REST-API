@@ -6,6 +6,8 @@ use App\Controllers\HomeController;
 use App\Controllers\AuthenticationController;
 use App\Controllers\ProfileController;
 
+require_once(__DIR__ . '/config.php');
+
 session_start();
 
 $homeController = new HomeController();
@@ -13,7 +15,6 @@ $authenticationController = new AuthenticationController();
 $profileController = new ProfileController();
 
 $app = new Application(dirname(__DIR__));
-
 
 $app->router->get('/', [$homeController, 'view']);
 
@@ -27,6 +28,5 @@ $app->router->get('/profile', [$profileController, 'view']);
 $app->router->post('/profile/upload/image', [$profileController, 'uploadImage']);
 $app->router->post('/profile/upload/project', [$profileController, 'uploadProject']);
 $app->router->post('/profile/delete/project', [$profileController, 'deleteProject']);
-
 
 $app->run();

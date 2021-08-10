@@ -2,9 +2,19 @@
 namespace App\Controllers;
 use App\Core\Application;
 use App\Models\MVCModels\Users;
+use App\Models\MVCModels\Profiles;
+use App\Models\MVCModels\Projects;
+use App\Core\ImageHandler;
 
 class HomeController extends Controller
 {
+  public function __construct()
+  {
+    $this->imageHandler = new ImageHandler();
+    $this->users = new Users();
+    $this->projects = new Projects();
+  }
+
   public function view()
   {
     $usersModel = new Users();
