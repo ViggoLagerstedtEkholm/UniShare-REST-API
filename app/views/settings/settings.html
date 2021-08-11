@@ -1,0 +1,68 @@
+  <div class="container">
+    <div class="settings-container">
+      <div class="user-input-form-box">
+        <h3> User information</h3>
+        <form method="post" enctype='multipart/form-data' action= './settings/update'>
+          <p>
+            Display name
+            <input class="user-input-text" id="display_name" type="text" name="display_name" placeholder="Display name">
+          </p>
+          <p>
+            First name
+            <input class="user-input-text" id="first_name" type="text" name="first_name" placeholder="First name">
+          </p>
+          <p>
+            Last name
+            <input class="user-input-text" id="last_name" type="text" name="last_name" placeholder="Last name">
+          </p>
+          <p>
+            Email
+            <input class="user-input-text" id="email" type="text" name="email" placeholder="Email">
+          </p>
+          <p>
+            Current password
+            <input class="user-input-text" id="current_password" type="password" name="current_password" placeholder="Current password">
+          </p>
+          <p>
+            New password
+            <input class="user-input-text" id="new_password" type="password" name="new_password" placeholder="New password">
+          </p>
+
+          <hr />
+          <br />
+          <p>
+            Privacy settings
+          </p>
+
+          <br />
+
+          <p>
+            Hide account
+            <input type="checkbox" name="link">
+          </p>
+
+          <button type="submit" class="user-profile-project-button-delete">Delete account</button>
+          <button id="update" type="submit" class="user-profile-project-button-visit">Update</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    $.ajax ( {
+          url: "./settings/getsettings",
+          type: 'GET',
+          dataType: "json",
+          success: function ( res ){
+            var first_name = res['data']['first_name'];
+            var last_name = res['data']['last_name'];
+            var email = res['data']['email'];
+            var display_name = res['data']['display_name'];
+
+            document.getElementById("first_name").value = first_name;
+            document.getElementById("last_name").value = last_name;
+            document.getElementById("email").value = email;
+            document.getElementById("display_name").value = display_name;
+          }
+      });
+  </script>

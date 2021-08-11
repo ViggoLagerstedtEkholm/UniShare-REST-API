@@ -1,9 +1,9 @@
 <?php
 namespace App\Includes;
-use App\Models\Register;
-use App\Models\Login;
+use App\Models\Templates\Register;
+use App\Models\Templates\Login;
+use App\Models\Templates\Project;
 use App\Core\Session;
-use App\Models\Project;
 
 class Validate{
   public static function validateImage($global){
@@ -118,6 +118,16 @@ class Validate{
   public static function invalidEmail($email){
     $result;
     if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+      $result = true;
+    }else{
+      $result = false;
+    }
+    return $result;
+  }
+
+  public static function emptyValue($input){
+    $result;
+    if($input == ''){
       $result = true;
     }else{
       $result = false;

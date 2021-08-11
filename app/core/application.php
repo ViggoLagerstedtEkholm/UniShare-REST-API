@@ -28,7 +28,7 @@ class Application{
     try{
       echo $this->router->resolve();
     }catch(Exception $e){
-      echo $this->router->renderView('unauthorized', [] ,['isError' => true]);
+      echo $this->router->renderView('exceptions','unauthorized', [] , ['isError' => true]);
     }
   }
 

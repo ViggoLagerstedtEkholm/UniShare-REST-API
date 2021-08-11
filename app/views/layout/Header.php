@@ -2,7 +2,7 @@
 use App\Core\Session;
 
 if($isError == 0){
-  $html = file_get_contents('app/views/html/header.html');
+  $html = file_get_contents('app/views/layout/header.html');
 
   if(Session::exists('userID')){
     $ID = Session::get('userID');

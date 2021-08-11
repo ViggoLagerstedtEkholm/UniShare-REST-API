@@ -1,5 +1,5 @@
 <?php
-namespace App\Models;
+namespace App\Models\Templates;
 
 class Project extends Model{
   public $ID;

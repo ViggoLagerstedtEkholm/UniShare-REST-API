@@ -25,8 +25,15 @@ class Session
     }
   }
 
+  public static function uagent_no_version() {
+    $uagent = $_SERVER['HTTP_USER_AGENT'];
+    $regx = '/\/[a-zA-Z0-9.]+/';
+    $newString = preg_replace($regx, '', $uagent);
+    return $newString;
+  }
+
   public static function isLoggedIn(){
-    if(self::exists('userID')){
+    if(self::exists(SESSION_USERID)){
       return true;
     }else{
       return false;

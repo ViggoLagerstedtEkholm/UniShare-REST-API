@@ -9,7 +9,7 @@ use App\Models\MVCModels\Users;
 use App\Models\MVCModels\Projects;
 use App\Includes\Validate;
 use App\Includes\Constants;
-use App\Models\Project;
+use App\Models\Templates\Project;
 use App\Middleware\AuthenticationMiddleware;
 
 class ProfileController extends Controller
@@ -23,37 +23,42 @@ class ProfileController extends Controller
     $this->projects = new Projects();
   }
 
-  public function view()
+  public function view(Request $request)
   {
-    $ID = $_GET["ID"];
-    $sessionID = Session::get(SESSION_USERID);
+    if(isset($_GET["ID"])){
+      $ID = $_GET["ID"];
 
-    if(!empty($ID)){
-      $user = $this->users->getUser($ID);
-      $first_name = $user["userFirstName"];
-      $last_name = $user["userLastName"];
-      $image = base64_encode($user["userImage"]);
-      $updatedVisitCount = $this->profiles->addVisitor($ID, $user);
-      $projects = $this->projects->getProjects($ID);
+      if(!empty($ID)){
+        $user = $this->users->getUser($ID);
+        $first_name = $user["userFirstName"];
+        $last_name = $user["userLastName"];
+        $image = base64_encode($user["userImage"]);
+        $date = $user["lastOnline"];
+        $display_name = $user["userDisplayName"];
 
-      $date = $user["lastOnline"];
+        $updatedVisitCount = $this->profiles->addVisitor($ID, $user);
+        $projects = $this->projects->getProjects($ID);
 
-      if(Session::isLoggedIn()){
-        if($ID == $sessionID){
-          $date = $this->profiles->addVisitDate($sessionID);
+        if(Session::isLoggedIn()){
+          $sessionID = Session::get(SESSION_USERID);
+
+          if($ID == $sessionID){
+            $date = $this->profiles->addVisitDate($sessionID);
+          }
         }
-      }
 
-      $params = [
-        'image' => $image,
-        'updatedVisitCount' => $updatedVisitCount,
-        'projects' => $projects,
-        'currentPageID' => $ID,
-        'visitDate' => $date,
-        'first_name' => $first_name,
-        'last_name' => $last_name
-      ];
-      return $this->display('profile', $params);
+        $params = [
+          'image' => $image,
+          'updatedVisitCount' => $updatedVisitCount,
+          'projects' => $projects,
+          'currentPageID' => $ID,
+          'visitDate' => $date,
+          'first_name' => $first_name,
+          'last_name' => $last_name,
+          'display_name' => $display_name
+        ];
+        return $this->display('profile','profile', $params);
+      }
     }
     Application::$app->redirect("./");
   }

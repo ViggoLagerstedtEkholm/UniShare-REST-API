@@ -1,8 +1,7 @@
 <?php
 namespace App\Models\MVCModels;
-use App\Models;
 use App\Models\MVCModels\Database;
-use App\Models\Project;
+use App\Models\Templates\Project;
 
 class Projects extends Database
 {
@@ -57,6 +56,17 @@ class Projects extends Database
         }
     }
     return $projects;
+  }
+
+  function getProject($ID){
+    $SQL = "SELECT * FROM projects WHERE projectID = ?;";
+    $stmt = mysqli_stmt_init($this->getConnection());
+    mysqli_stmt_prepare($stmt, $SQL);
+    mysqli_stmt_bind_param($stmt, "s", $ID);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    mysqli_stmt_close($stmt);
+    return $result->fetch_assoc();
   }
 
   function uploadProject(Project $project, $ID){

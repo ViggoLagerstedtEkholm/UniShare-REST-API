@@ -1,7 +1,7 @@
 <?php
 use App\Core\Session;
 
-$html = file_get_contents('app/views/html/profile.html');
+$html = file_get_contents('app/views/profile/profile.html');
 $fragments = explode("<!--===edit===-->", $html);
 //print_r($fragments);
 
@@ -20,8 +20,8 @@ if($sessionID != false){
     echo $fragments[1];
   }
 }
-
 $info_panel = str_replace('---First_name---', $first_name, $fragments[2]);
+$info_panel = str_replace('---display_name---', $display_name, $info_panel);
 $info_panel = str_replace('---Last_name---', $last_name, $info_panel);
 $info_panel = str_replace('---Date---', $visitDate, $info_panel);
 $info_panel = str_replace('---Visits---', $updatedVisitCount , $info_panel);

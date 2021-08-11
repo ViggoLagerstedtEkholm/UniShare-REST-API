@@ -1,10 +1,12 @@
 <?php
 namespace App\Models\MVCModels;
-use App\Models\Register;
-use App\Models\Login;
+use App\Models\Templates\Register;
+use App\Models\Templates\Login;
+use App\Models\Templates\User;
 use App\Core\Session;
+use App\Core\Cookie;
 use App\Models\MVCModels\Database;
-use App\Models;
+use App\Models\MVCModels\UserSession;
 
 class Users extends Database{
  function getUserCount(){
@@ -67,7 +69,7 @@ class Users extends Database{
         $last_online = $row['lastOnline'];
         $visitors = $row['visits'];
 
-        $user = new Models\User($first_name, $last_name, $email, $display_name);
+        $user = new User($first_name, $last_name, $email, $display_name);
         $user->setImage($image);
         $user->setID($ID);
         $user->setLastOnline($last_online);
@@ -80,13 +82,12 @@ class Users extends Database{
     return $users;
   }
 
- function userExists($email){
-    $sql = "SELECT * FROM users WHERE userEmail = ?;";
-
+ function userExists($attribute, $value){
+    $sql = "SELECT * FROM users WHERE $attribute = ?;";
     $stmt = mysqli_stmt_init($this->getConnection());
 
     mysqli_stmt_prepare($stmt, $sql);
-    mysqli_stmt_bind_param($stmt, "s", $email);
+    mysqli_stmt_bind_param($stmt, "s", $value);
     mysqli_stmt_execute($stmt);
     $resultData = mysqli_stmt_get_result($stmt);
     $row = mysqli_fetch_assoc($resultData);
@@ -97,6 +98,15 @@ class Users extends Database{
     }else{
       return $row;
     }
+  }
+
+  function updateUser($attribute, $value, $ID){
+    $sql = "UPDATE users SET $attribute = ? WHERE usersID = ?;";
+    $stmt = mysqli_stmt_init($this->getConnection());
+    mysqli_stmt_prepare($stmt, $sql);
+    mysqli_stmt_bind_param($stmt, "ss", $value, $ID);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
   }
 
  function getUser($ID){
@@ -118,6 +128,24 @@ class Users extends Database{
     }
   }
 
+  function logout(){
+    $userSession = new UserSession();
+    $session = $userSession->getSessionFromCookie();
+    $ID = Session::get(SESSION_USERID);
+    $user_agent = Session::uagent_no_version();
+
+    if(!empty($session)){
+      $userSession->deleteExistingSession($ID, $user_agent);
+    }
+
+    Session::delete(SESSION_USERID);
+    Session::delete(SESSION_MAIL);
+
+    if(Cookie::exists(REMEMBER_ME_COOKIE_NAME)) {
+      Cookie::delete(REMEMBER_ME_COOKIE_NAME);
+    }
+  }
+
  function register(Register $register){
     $sql = "INSERT INTO users (userFirstName, userLastName, userEmail, userDisplayName, usersPassword) values(?,?,?,?,?);";
     $stmt = mysqli_stmt_init($this->getConnection());
@@ -136,8 +164,25 @@ class Users extends Database{
     mysqli_stmt_close($stmt);
   }
 
+ function loginFromCOOKIE(){
+   $userSession = new UserSession();
+
+   $userSession = $userSession->getSessionFromCookie();
+   $ID = $userSession['userID'];
+   $session = $userSession['session'];
+
+   if($session != '' && $ID != '' && !empty($userSession)){
+    $user = $this->getUser($ID);
+    $email = $user["userEmail"];
+
+    Session::set(SESSION_USERID, $ID);
+    Session::set(SESSION_MAIL, $email);
+  }
+ }
+
  function login(Login $login){
-    $user = $this->userExists($login->email);
+    $userSession = new UserSession();
+    $user = $this->userExists("userEmail", $login->email);
 
     if($user === false){
       return false;
@@ -149,8 +194,19 @@ class Users extends Database{
     if($comparePassword === false){
       return false;
     }else if($comparePassword === true){
-      Session::set('userID', $user["usersID"]);
-      Session::set('userEmail', $user["userEmail"]);
+      $ID = $user["usersID"];
+      $Email = $user["userEmail"];
+
+      Session::set(SESSION_USERID, $ID);
+      Session::set(SESSION_MAIL, $Email);
+
+      if($login->rememberMe == "on"){
+          $hash = md5(uniqid(rand(), true));
+          $user_agent = Session::uagent_no_version();
+          Cookie::set(REMEMBER_ME_COOKIE_NAME, $hash, REMEMBER_ME_COOKIE_EXPIRY);
+          $userSession->deleteExistingSession($ID, $user_agent); //If any previous session exists, remove.
+          $userSession->insertSession($ID,$user_agent,$hash); //Insert the new session ID.
+      }
       return true;
     }
   }

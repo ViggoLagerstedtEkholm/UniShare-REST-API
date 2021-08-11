@@ -17,7 +17,6 @@ class HomeController extends Controller
 
   public function view()
   {
-    $usersModel = new Users();
 
     if(isset($_GET["filter_option"])){
         $filterOption = $_GET['filter_option'];
@@ -37,11 +36,11 @@ class HomeController extends Controller
       $page = 1;
     }
 
-    $user_count = $usersModel->getUserCount()["COUNT(*)"];
+    $user_count = $this->users->getUserCount()["COUNT(*)"];
     $results_per_page = 6;
     $number_of_pages = ceil($user_count / $results_per_page);
     $start_page_first_result = ($page-1) * $results_per_page;
-    $users = $usersModel->getShowcaseUsersPage($start_page_first_result, $results_per_page, $filterOption, $filterOrder);
+    $users = $this->users->getShowcaseUsersPage($start_page_first_result, $results_per_page, $filterOption, $filterOrder);
 
     $params = [
       'users' => $users,
@@ -53,7 +52,7 @@ class HomeController extends Controller
       'results_per_page' => $results_per_page
     ];
 
-    return $this->display('startpage', $params);
+    return $this->display('startpage', 'startpage', $params);
   }
 }
 ?>

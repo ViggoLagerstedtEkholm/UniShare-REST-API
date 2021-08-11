@@ -1,5 +1,5 @@
 <?php
-$html = file_get_contents('app/views/html/startpage.html');
+$html = file_get_contents('app/views/startpage/startpage.html');
 $fragments = explode("<!--===edit===-->", $html);
 /*
   Render filtering bar and total page-count / page-index / range

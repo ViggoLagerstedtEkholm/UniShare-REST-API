@@ -1,5 +1,5 @@
 <?php
-namespace App\Models;
+namespace App\Models\Templates;
 
 abstract class Model{
   public function populateAttributes($data){

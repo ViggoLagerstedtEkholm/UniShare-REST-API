@@ -26,7 +26,7 @@ class Router{
 
     if($callback === false){
       $this->response->setStatusCode(404);
-      return "Not found";
+      return "This path does not exist!";
       exit;
     }
 
@@ -48,31 +48,32 @@ class Router{
     return call_user_func($callback, $this->request);
   }
 
-  public function renderView($view, $params = [], $errorParams = ['isError' => false])
+  public function renderView($folder, $view, $params = [], $errorParams = ['isError' => false])
   {
     $layoutContent = $this->layoutContent();
-    $viewContent = $this->renderOnlyView($view, $params);
-    $header = $this->renderOnlyView('header', $errorParams);
+    $viewContent = $this->renderOnlyView($folder, $view, $params);
+    $header = $this->renderOnlyView('layout','header', $errorParams);
+    $footer = $this->renderOnlyView('layout','footer', $errorParams);
 
-    $temp;
     $temp = str_replace('---header---', $header, $layoutContent);
+    $temp = str_replace('---footer---', $footer, $temp);
     $temp = str_replace('---content---', $viewContent, $temp);
     return $temp;
   }
 
   protected function layoutContent(){
     ob_start();
-    include_once Application::$ROOT_DIR . "/UniShare/app/views/html/Main.html";
+    include_once Application::$ROOT_DIR . "/UniShare/app/views/layout/Main.html";
     return ob_get_clean();
   }
 
-  protected function renderOnlyView($view, $params){
+  protected function renderOnlyView($folder, $view, $params){
     foreach($params as $key => $value){
       $$key = $value;
     }
 
     ob_start();
-    include_once Application::$ROOT_DIR . "/UniShare/app/views/view/$view.php";
+    include_once Application::$ROOT_DIR . "/UniShare/app/views/$folder/$view.php";
     return ob_get_clean();
   }
 }

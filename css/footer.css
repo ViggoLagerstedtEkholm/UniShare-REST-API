@@ -1,0 +1,26 @@
+.footer {
+  position:relative;
+  width:100%;
+  height:auto;
+  background-color:#423F3E;
+}
+
+.footer-content{
+  display: flex;
+  padding: 20px;
+  color: white;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.footer-links{
+  display: flex;
+  justify-content: space-around;
+  width: 40%;
+}
+
+.footer-links li{
+  list-style: none;
+  font-size: 12px;
+  font-family:monospace;
+}

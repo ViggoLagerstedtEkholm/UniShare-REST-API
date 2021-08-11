@@ -1,5 +1,5 @@
 <?php
-namespace App\Models;
+namespace App\Models\Templates;
 
 class Register extends Model{
   public string $first_name;
