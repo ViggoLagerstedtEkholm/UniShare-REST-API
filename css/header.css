@@ -3,14 +3,32 @@ nav{
   justify-content: space-around;
   background-color:#423F3E;
   align-items: center;
-  min-height: 8vh;
+  min-height: 5vh;
+}
+
+#header2{
+  display: flex;
+  justify-content: left;
+  background-color: #3e576b;
+  align-items: center;
+
+  height: 50px;
+}
+
+#adminHeader{
+  display: flex;
+  justify-content: left;
+  background-color: #57b4ff;
+  align-items: center;
+
+  height: 20px;
 }
 
 .logo{
   color: rgb(226, 226, 226);
   text-transform: uppercase;
   letter-spacing: 5px;
-  font-size: 20px;
+  font-size: 15px;
 }
 
 .nav-links{

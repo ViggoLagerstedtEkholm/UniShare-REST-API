@@ -1,96 +1,73 @@
     <div class="container">
-      <div class="start-page-filter-box">
-        <div class="start-page-filter-bar">
-          <form method="get">
-            <p>
-              Sort by
-            </p>
-            <select name="filter_option">
-              <option value="none">None</option>
-              <option value="visits">Visits</option>
-
-              <option value="last_online">Last online</option>
-            </select>
-            <fieldset name="filter_order">
-                <legend>Order by</legend>
-                <input type="radio" name="action" id="track" value="ASC" /><label for="track">ASC</label><br />
-                <input type="radio" name="action" id="event" value="DESC" /><label for="event">DESC</label><br />
-            </fieldset>
-            <button type="submit" width="50px" height="50px" name="filter_button" value="GO">Filter</button>
-          </form>
-        </div>
-      </div>
-
-      <div class="start-page-users">
-        <p class="txt-small">
-          Total page count: ---page-count---
-        </p>
-
-        <p class="txt-small">
-          Page index: ---page---
-        </p>
-
-        <p class="txt-small">
-          Range: ---range---
-        </p>
-
-        <!--===edit===-->
-        <div class="start-page-content-user">
-          <div class="start-page-card-image">
-            <img src="---SRC---" alt="USER IMAGE">
-          </div>
-
-          <span class="vertical-line"></span>
-
-          <div class="start-page-card-info">
-            <h4><b>Personal information</b></h4>
-            <p><b>First name:</b> ---first_name---</p>
-            <p><b>Last name:</b> ---last_name---</p>
-            <p><b>Email: </b>---email---</p>
-          </div>
-
-          <span class="vertical-line"></span>
-
-          <div class="start-page-card-info">
-            <h4><b>Profile information</b></h4>
-            <p><b>Visits:</b> ---visits---</p>
-            <p><b>Projects:</b> ---projects---</p>
-            <p><b>Courses:</b> ---courses---</p>
-            <p><b>Last online:</b> ---last_online---</p>
-          </div>
-
-          <span class="vertical-line"></span>
-
-          <div class="start-page-card-info">
-            <form action="./profile" method="get">
-              <input type="hidden" name="ID" value="---ID---" />
-              <button type="submit" class="user-profile-project-button-visit ">Visit</button>
-            </form>
-          </div>
-
-          <span class="vertical-line"></span>
-
-        </div>
-
-        <!--===edit===-->
-      </div>
-
-      <hr />
-
-      <div class="start-page-pagination-bar">
-        <form method="get">
-          <input type="text" name="filter_option" value="---filter_option---" hidden>
-          <input type="text" name="action" value="---action---" hidden>
-          <input type="text" name="page" required>
-          <button type="submit" width="50px" height="50px" name="submit" value="GO">Go to page</button>
-        </form>
-
-        <div>
+      <div class="content-container">
+        <div class="startpage-flex-item">
           <!--===edit===-->
-          <a href="./?page=---page---&filter_option=---filter_option---&action=---action---"> previous</a>
+          <h1>Your statistics</h1>
+          <div id="statistics-box">
+            <div class="content-user">
+              <div class="content-card-image">
+                <img src="---SRC---" alt="USER IMAGE">
+              </div>
+
+              <span class="vertical-line"></span>
+
+              <div class="content-card-info">
+                <h4><b>Personal information</b></h4>
+                <p><b>First name:</b> ---first_name---</p>
+                <p><b>Last name:</b> ---last_name---</p>
+                <p><b>Email: </b>---email---</p>
+              </div>
+
+              <span class="vertical-line"></span>
+
+              <div class="content-card-info">
+                <h4><b>Profile information</b></h4>
+                <p><b>Visits:</b> ---visits---</p>
+                <p><b>Projects:</b> ---projects---</p>
+                <p><b>Courses:</b> ---courses---</p>
+                <p><b>Last online:</b> ---last_online---</p>
+              </div>
+              <span class="vertical-line"></span>
+
+              <div class="content-card-info">
+                <form action="./profile" method="get">
+                  <input type="hidden" name="ID" value="---ID---" />
+                  <button type="submit" class="user-profile-project-button-visit">Profile</button>
+                </form>
+              </div>
+
+              <span class="vertical-line"></span>
+            </div>
+          </div>
           <!--===edit===-->
-          <a href="./?page=---page---&filter_option=---filter_option---&action=---action---"> next</a>
-          <!--===edit===-->
+
+          <hr />
+          <h1>Top ranked courses</h1>
+          <div class="wrapper-grid">
+            <!--===edit===-->
+            <div class="wrapper-container-item">
+              <img src='images/books.png' alt='profile image' class="small-image">
+
+              <div class="startpage-top-ranked-box">
+                  <p>
+                    Name: ---course_name---
+                  </p>
+                  <p class="startpage-top-ranked-score">
+                     Score: <b>---score---</b>
+                  </p>
+                  <p>
+                    Total votes: ---total-votes---
+                  </p>
+              </div>
+
+              <form action="./project">
+                <input hidden value="---ID---" name="ID"></input>
+                <button type="submit" class="user-profile-project-button-visit">Go to course</button>
+              </form>
+            </div>
+            <!--===edit===-->
+          </div>
+          <h1>Trending discussions</h1>
         </div>
       </div>
     </div>

@@ -86,8 +86,9 @@ class SettingsController extends Controller{
     $last_name = $user["userLastName"];
     $email = $user["userEmail"];
     $display_name = $user["userDisplayName"];
+    $description = $user["description"];
 
-    $resp = ['success'=>true,'data'=>['email'=>$email,'first_name'=>$first_name,'last_name'=>$last_name,'display_name'=>$display_name]];
+    $resp = ['success'=>true,'data'=>['email'=>$email,'first_name'=>$first_name,'last_name'=>$last_name,'display_name'=>$display_name, 'description' => $description]];
 
     return $this->jsonResponse($resp);
   }

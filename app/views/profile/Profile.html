@@ -1,5 +1,5 @@
     <div class="container">
-      <div class="profile-containter">
+      <div class="content-container">
         <div class="fixed">
           <div class="user-profile">
             <div class="user-image">
@@ -153,10 +153,10 @@
               <hr />
 
               <!-- Projects -->
-              <div class="user-project-wrapper-grid">
+              <div class="wrapper-grid">
                 <!--===edit===-->
-                <div class="user-projects-container">
-                  <img src='---PROJECT-SRC---' alt='profile image' class="user-project-github-logo">
+                <div class="wrapper-container-item">
+                  <img src='---PROJECT-SRC---' alt='profile image' class="medium-image">
 
                   <div class="user-profile-project-description-box">
                     <h1>---name---</h1>
@@ -168,9 +168,6 @@
                   </form>
 
                   <!--===edit===-->
-
-                  <a href="---LINK---"><button type="submit" class="user-profile-project-button-link">Go to link</button></a>
-
                   <form action='./profile/delete/project' method="post">
                     <input hidden value="Delete" name="---ID---"></input>
                     <button type="submit" class="user-profile-project-button-delete">Delete</button>

@@ -84,7 +84,6 @@ class AuthenticationController extends Controller{
       $error [] = INVALID_USERNAME;
     }
 
-
     $URL;
     $errorCount = count($error);
     if($errorCount > 0){

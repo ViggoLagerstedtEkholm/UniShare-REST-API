@@ -3,6 +3,7 @@ use App\Core\Session;
 
 if($isError == 0){
   $html = file_get_contents('app/views/layout/header.html');
+  $fragments = explode("<!--admin-->", $html);
 
   if(Session::exists('userID')){
     $ID = Session::get('userID');

@@ -10,6 +10,8 @@ use App\Controllers\AuthenticationController;
 use App\Controllers\ProfileController;
 use App\Controllers\ProjectController;
 use App\Controllers\SettingsController;
+use App\Controllers\ContentController;
+use App\Controllers\AdminController;
 
 require_once(__DIR__ . '/config.php');
 
@@ -20,6 +22,8 @@ $authenticationController = new AuthenticationController();
 $profileController = new ProfileController();
 $projectController = new ProjectController();
 $settingsController = new SettingsController();
+$contentController = new ContentController();
+$adminController = new AdminController();
 
 if(Cookie::exists(REMEMBER_ME_COOKIE_NAME) && !Session::exists(SESSION_USERID)){
   $authenticationController->loginWithCookie();
@@ -48,5 +52,18 @@ $app->router->get('/settings', [$settingsController, 'view']);
 $app->router->get('/settings/getsettings', [$settingsController, 'fetch']);
 $app->router->post('/settings/deleteAccount', [$settingsController, 'deleteAccount']);
 $app->router->post('/settings/update', [$settingsController, 'update']);
+
+
+$app->router->get('/searchPeople', [$contentController, 'people']);
+$app->router->get('/searchDegrees', [$contentController, 'degrees']);
+$app->router->get('/searchCourses', [$contentController, 'courses']);
+
+$app->router->get('/admin', [$adminController, 'view']);
+$app->router->post('/admin/course/add', [$adminController, 'addCourse']);
+$app->router->post('/admin/course/remove', [$adminController, 'removeCourse']);
+$app->router->post('/admin/course/update', [$adminController, 'updateCourse']);
+$app->router->post('/admin/users/add', [$adminController, 'addUser']);
+$app->router->post('/admin/users/remove', [$adminController, 'removeUser']);
+$app->router->post('/admin/users/update', [$adminController, 'updateUser']);
 
 $app->run();

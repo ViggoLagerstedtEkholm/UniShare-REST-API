@@ -11,6 +11,7 @@ use App\Core\ImageHandler;
 use App\Models\MVCModels\Users;
 use App\Models\MVCModels\Profiles;
 use App\Models\MVCModels\Projects;
+use App\Models\MVCModels\Courses;
 
 use App\Includes\Validate;
 
@@ -21,13 +22,8 @@ abstract class Controller{
   private ?Profiles $profiles;
   private ?Users $users;
   private ?Projects $projects;
-
-  function __construct(){
-    $this->users = new Users();
-    $this->profiles = new Profiles();
-    $this->projects = new Projects();
-    $this->imageHandler = new ImageHandler();
-  }
+  private ?Courses $courses;
+  private ?Degrees $degrees;
 
   public function setMiddlewares(Middleware $middleware)
   {
