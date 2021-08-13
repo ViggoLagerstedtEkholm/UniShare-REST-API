@@ -24,7 +24,7 @@ abstract class Controller{
   private ?Projects $projects;
   private ?Courses $courses;
   private ?Degrees $degrees;
-
+  
   public function setMiddlewares(Middleware $middleware)
   {
       $this->middlewares[] = $middleware;

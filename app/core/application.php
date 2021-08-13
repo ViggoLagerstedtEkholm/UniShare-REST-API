@@ -2,6 +2,8 @@
 namespace App\Core;
 use App\Controllers\Controller;
 use \Exception;
+use App\Core\Exceptions\ForbiddenException;
+use App\Core\Exceptions\PrivilegeException;
 
 class Application{
   public static string $ROOT_DIR;
@@ -27,8 +29,12 @@ class Application{
   public function run(){
     try{
       echo $this->router->resolve();
-    }catch(Exception $e){
+    }catch(ForbiddenException $e){
+      $this->response->setStatusCode(403);
       echo $this->router->renderView('exceptions','unauthorized', [] , ['isError' => true]);
+    }catch(PrivilegeException $e){
+      $this->response->setStatusCode(401);
+      echo $this->router->renderView('exceptions','privilege', [] , ['isError' => true]);
     }
   }
 

@@ -15,45 +15,49 @@ class Users extends Database{
     }else{
       $changedate = "";
         $sql = "SELECT COUNT(*) FROM users";
-        $result = $this->getConnection()->query($sql)->fetch_assoc();
-        return $result;
+        $result = $this->getConnection()->query($sql);
+        $count = $result->fetch_assoc()["COUNT(*)"];
+        return $count;
     }
     return 0;
   }
 
- function getShowcaseUsersPage($from, $to, $option, $filterOrder){
-    $sql = "";
-    switch($option){
-      case "none":
-      $sql = "SELECT usersID, userFirstName, userLastName, userEmail, userDisplayName, userImage, visits, lastOnline FROM users LIMIT ?, ?;";
-      break;
-      case "visits":
-        switch($filterOrder){
-          case "DESC":
-          $sql = "SELECT usersID, userFirstName, userLastName, userEmail, userDisplayName, userImage, visits, lastOnline FROM users ORDER BY visits DESC LIMIT ?, ?; ";
-          break;
-          case "ASC":
-          $sql = "SELECT usersID, userFirstName, userLastName, userEmail, userDisplayName, userImage, visits, lastOnline FROM users ORDER BY visits ASC LIMIT ?, ?; ";
-          break;
-        }
-      break;
-      case "last_online":
-        switch($filterOrder){
-          case "DESC":
-          $sql = "SELECT usersID, userFirstName, userLastName, userEmail, userDisplayName, userImage, visits, lastOnline FROM users ORDER BY lastOnline DESC LIMIT ?, ?; ";
-          break;
-          case "ASC":
-          $sql = "SELECT usersID, userFirstName, userLastName, userEmail, userDisplayName, userImage, visits, lastOnline FROM users ORDER BY lastOnline ASC LIMIT ?, ?; ";
-          break;
-        }
-      break;
-      default:
-      header("location: ../index.php?error=failedorderquery");
+ function getUserCountSearch($search){
+   $sql = "SELECT Count(*) FROM users WHERE userDisplayName LIKE ?";
+   $stmt = mysqli_stmt_init($this->getConnection());
+   mysqli_stmt_prepare($stmt, $sql);
+   $search = '%' . $search . '%';
+   mysqli_stmt_bind_param($stmt, "s", $search);
+   mysqli_stmt_execute($stmt);
+   $result = mysqli_stmt_get_result($stmt);
+   $count = $result->fetch_assoc()["Count(*)"];
+   return $count;
+ }
+
+ function fetchPeopleSearch($from, $to, $option, $filterOrder, $search = null){
+    $queryBuilder = [
+      "select" => "SELECT usersID, userFirstName, userLastName, userEmail, userDisplayName, userImage, visits, lastOnline FROM users ",
+      "condition" => "WHERE userDisplayName LIKE ? ",
+      "ordering" => "ORDER BY $option $filterOrder ",
+      "LIMIT" => "LIMIT ?, ?;"
+    ];
+
+    if(is_null($search)){
+      $sql = $queryBuilder["select"] . $queryBuilder["ordering"] . $queryBuilder["LIMIT"];
+    }else{
+      $sql = $queryBuilder["select"] . $queryBuilder["condition"] . $queryBuilder["ordering"] . $queryBuilder["LIMIT"];
     }
 
     $stmt = mysqli_stmt_init($this->getConnection());
     mysqli_stmt_prepare($stmt, $sql);
-    mysqli_stmt_bind_param($stmt, "ss", $from, $to);
+
+    if(is_null($search)){
+      mysqli_stmt_bind_param($stmt, "ss", $from, $to);
+    }else{
+      $search = '%' . $search . '%';
+      mysqli_stmt_bind_param($stmt, "sss", $search, $from, $to);
+    }
+
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
 
@@ -70,10 +74,10 @@ class Users extends Database{
         $visitors = $row['visits'];
 
         $user = new User($first_name, $last_name, $email, $display_name);
-        $user->setImage($image);
-        $user->setID($ID);
-        $user->setLastOnline($last_online);
-        $user->setVistiors($visitors);
+        $user->image = $image;
+        $user->ID = $ID;
+        $user->last_online = $last_online;
+        $user->visitors = $visitors;
         $users[] = $user;
     }
 
@@ -140,6 +144,7 @@ class Users extends Database{
 
     Session::delete(SESSION_USERID);
     Session::delete(SESSION_MAIL);
+    Session::delete(SESSION_PRIVILEGE);
 
     if(Cookie::exists(REMEMBER_ME_COOKIE_NAME)) {
       Cookie::delete(REMEMBER_ME_COOKIE_NAME);
@@ -196,9 +201,11 @@ class Users extends Database{
     }else if($comparePassword === true){
       $ID = $user["usersID"];
       $Email = $user["userEmail"];
+      $privilege = $user["privilege"];
 
       Session::set(SESSION_USERID, $ID);
       Session::set(SESSION_MAIL, $Email);
+      Session::set(SESSION_PRIVILEGE, $privilege);
 
       if($login->rememberMe == "on"){
           $hash = md5(uniqid(rand(), true));

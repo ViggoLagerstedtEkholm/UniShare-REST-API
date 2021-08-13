@@ -8,4 +8,5 @@ class Course extends Model{
   public float $duration;
   public string $added = "TODO";
   public string $field_of_study = "TODO";
+  public string $location;
 }

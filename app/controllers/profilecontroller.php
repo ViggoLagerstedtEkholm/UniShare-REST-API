@@ -35,6 +35,7 @@ class ProfileController extends Controller
         $image = base64_encode($user["userImage"]);
         $date = $user["lastOnline"];
         $display_name = $user["userDisplayName"];
+        $privilege = $user["privilege"];
 
         $updatedVisitCount = $this->profiles->addVisitor($ID, $user);
         $projects = $this->projects->getProjects($ID);
@@ -55,7 +56,8 @@ class ProfileController extends Controller
           'visitDate' => $date,
           'first_name' => $first_name,
           'last_name' => $last_name,
-          'display_name' => $display_name
+          'display_name' => $display_name,
+          'privilege' => $privilege
         ];
         return $this->display('profile','profile', $params);
       }

@@ -3,6 +3,10 @@ define('SESSION_USERID', 'userID');
 define('SESSION_MAIL', 'userEmail');
 define('REMEMBER_ME_COOKIE_EXPIRY', 2592000);
 define('REMEMBER_ME_COOKIE_NAME', 'rememberMe');
+define('SESSION_PRIVILEGE', 'Standard');
+define('STANDARD', 'Standard');
+define('MODERATOR', 'Moderator');
+define('ADMIN', 'Admin');
 
 define('MAX_PROJECTS_PROFILE', 60);
 define('MAX_DEGREES_PROFILE', 10);

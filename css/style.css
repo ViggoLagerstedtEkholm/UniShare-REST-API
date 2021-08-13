@@ -17,12 +17,64 @@ hr{
   margin-bottom: 5px;
 }
 
+p{
+  color:white;
+}
+
+.score{
+  font-size: 35px;
+  font-family: monospace;
+  color:
+}
+
+.txt-small{
+  color:white;
+  font-size: 15px;
+}
+
 .vertical-line{
   display: inline-block;
    border-left: 1px solid #ccc;
    margin: 0 10px;
    height: 100px;
 }
+
+/* Courses page */
+
+.course-container{
+  display: relative;
+  padding: 10px;
+  color: white;
+}
+
+.course-sections-statistics{
+  padding: 10px;
+  background-color: #474646;
+  border-radius: 5px;
+}
+
+.course-sections{
+  padding: 10px;
+  background-color: #474646;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.comment{
+  padding: 10px;
+  background-color: #2b2b2b;
+  border-radius: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.course-info p{
+  font-size: 20px;
+  margin-top: 5px;
+}
+
+/* Courses page */
+
 
 /*BUTTON STYLES */
 .user-profile-project-button-upload {
@@ -41,7 +93,6 @@ hr{
 
 .user-profile-project-button-delete {
   background-color: #c72a44;
-  border: none;
   color: white;
   padding: 16px 32px;
   text-align: center;
@@ -55,7 +106,6 @@ hr{
 
 .user-profile-project-button-visit {
   background-color: #2121db;
-  border: none;
   color: white;
   padding: 16px 32px;
   text-align: center;
@@ -69,7 +119,6 @@ hr{
 
 .user-profile-project-button-link {
   background-color: gray;
-  border: none;
   color: white;
   text-align: center;
   text-decoration: none;
@@ -163,7 +212,7 @@ form .text_field{
 
 /* DESIGN */
 .container{
-  background-image: linear-gradient(to bottom, #00ccff 0%, #3333cc 100%);
+  background-color: #1F1F1F;
   padding-top: 20px;
   padding-left: 50px;
   padding-right: 50px;
@@ -172,28 +221,30 @@ form .text_field{
 }
 
 .content-container{
-  background-color: white;
+  background-color: #313131;
   display:flex;
   height:auto;
   padding: 10px;
+  min-height: 1000px;
 }
 
 .filter-bar{
-  background-color: white;
+  background-color: #313131;
   display:flex;
   height:auto;
   padding: 10px;
   border-radius: 5px;
+  color:white;
 }
 
 .fixed {
-    background-color:#4F628E;
+    background-color:#313131;
     width: 400px;
     padding: 10px;
 }
 
 .flex-item {
-    background-color:#7887AB;
+    background-color:#313131;
     flex-grow: 1;
     padding: 10px;
 }
@@ -232,8 +283,7 @@ form .text_field{
 
 .profile-tab {
   overflow: hidden;
-  border: 1px solid #ccc;
-  background-color: #f1f1f1;
+  background-color: #6e6e6e;
 }
 
 .profile-tab button {
@@ -245,6 +295,7 @@ form .text_field{
   padding: 14px 16px;
   transition: 0.3s;
   font-size: 17px;
+  color:white;
 }
 
 .profile-tab button:hover {
@@ -258,25 +309,29 @@ form .text_field{
 .profile-tabcontent {
   display: none;
   padding: 6px 12px;
-  border: 1px solid #ccc;
   border-top: none;
-  background-color: #ced6eb;
+  background-color: #474646;
 }
 
 .user-profile {
   padding: 10px;
-  background-color: white;
+  background-color: #403f3f;
   border-radius: 5px;
   height: 100%;
 }
 
-.user-profile h2{
+.user-profile p{
+ color: white;
+}
+
+.user-profile h3{
+  color: white;
   margin-top: 15px;
 }
 
 .user-content{
   padding: 10px;
-  background-color: white;
+  background-color: #403f3f;
   border-radius: 5px;
   height: 100%;
 }
@@ -326,7 +381,7 @@ height: 100%; width: 100%;
   margin-bottom: 5px;
 }
 
-.user-degree-container{
+.user-degree-{
   overflow: hidden;
   box-shadow: 0px 2px 8px 0px var(--clr-gray-light);
   background-color: black;
@@ -340,6 +395,7 @@ height: 100%; width: 100%;
     display: grid;
     grid-template-columns: repeat(auto-fit, 20rem);
     justify-content: flex-start;
+    background-color:#474646;
 }
 
 .wrapper-container-item{
@@ -377,30 +433,36 @@ height: 100%; width: 100%;
 /*START PAGE*/
 
 #statistics-box{
-  border-style: solid;
+  border-style: solid gray 2px;
 }
 
 .display-result-box{
   margin-top: 10px;
-  background-color: white;
+  background-color: #313131;
   padding: 10px 20px 20px;
-  border-style: dashed;
   min-height: 725px;
 }
 
 .display-result-box > div {
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: #474646;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   text-align: center;
   font-size: 30px;
   margin-top: 5px;
   margin-bottom: 5px;
+  color:white;
 }
 
 .startpage-flex-item {
-    background-color: white;
-    flex-grow: 1;
-    padding: 10px;
+  background-color:#313131;
+  flex-grow: 1;
+  padding: 10px;
+}
+
+.startpage-flex-item h1{
+  color: white;
+  flex-grow: 1;
+  padding: 10px;
 }
 
 .startpage-top-ranked-box{
@@ -408,6 +470,7 @@ height: 100%; width: 100%;
   height: 100px;
   text-align: left;
   padding: 10px;
+  background-color: #383838;
 }
 
 .startpage-top-ranked-box p{
@@ -420,13 +483,13 @@ height: 100%; width: 100%;
 }
 
 .content-pagination{
-  background-color: white;
+  background-color: #313131;
   padding: 10px;
 }
 
 .content-pagination-bar{
   width: 100%;
-  background-color: white;
+  background-color: #474646;
   display: flex;
 }
 
@@ -452,7 +515,7 @@ height: 100%; width: 100%;
     display: flex;
     flex-wrap: nowrap;
     justify-content: left;
-    background-color: white;
+    background-color: #474646;
 }
 
 .content-card-image{
@@ -477,16 +540,8 @@ height: 100%; width: 100%;
   width: 100%;
 }
 
-.content-card-info a{
-  height: 50%;
-  background-color: #347aeb;
-  color: white;
-  padding: 15px 25px;
-  text-decoration: none;
-}
-
 .content-card-info h4{
-  color: blue;
+  color: #8cb8ff;
   font-family: monospace ;
 }
 
@@ -498,6 +553,10 @@ height: 100%; width: 100%;
 .content-card-info button{
   height: 100%;
   width: 100%;
+}
+
+.content-card-info select{
+  width: 90%;
 }
 
 .user-input-text{

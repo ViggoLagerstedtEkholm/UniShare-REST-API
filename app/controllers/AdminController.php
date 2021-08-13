@@ -15,46 +15,7 @@ class AdminController extends Controller{
   }
 
   public function view(){
-    $model = new Courses();
-    $courses = $model->getCourses();
-
-    if(isset($_GET["filter_option"])){
-        $filterOption = $_GET['filter_option'];
-    }else{
-      $filterOption = "none";
-    }
-
-    if(isset($_GET['action'])){
-      $filterOrder = $_GET["action"];
-    }else{
-      $filterOrder = "DESC";
-    }
-
-    if(isset($_GET['page'])){
-      $page = $_GET['page'];
-    }else{
-      $page = 1;
-    }
-
-    $user_count = $this->users->getUserCount()["COUNT(*)"];
-    $results_per_page = 6;
-    $number_of_pages = ceil($user_count / $results_per_page);
-    $start_page_first_result = ($page-1) * $results_per_page;
-    $users = $this->users->getShowcaseUsersPage($start_page_first_result, $results_per_page, $filterOption, $filterOrder);
-
-    if($page > $number_of_pages){
-      Application::$app->redirect('./');
-    }
-
-    $params = [
-      "courses" => $courses,
-      'number_of_pages' => $number_of_pages,
-      'start_page_first_result' => $start_page_first_result,
-      'results_per_page' => $results_per_page,
-      'page' => $page
-    ];
-
-    return $this->display('admin', 'admin', $params);
+    return $this->display('admin', 'admin', []);
   }
 
   public function updateUser()

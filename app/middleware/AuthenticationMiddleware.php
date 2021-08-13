@@ -2,6 +2,7 @@
 namespace App\Middleware;
 use App\Core\Session;
 use App\Core\Exceptions\ForbiddenException;
+use App\Core\Exceptions\PrivilegeException;
 use App\Core\Application;
 use App\Models\MVCModels\Users;
 
@@ -20,8 +21,8 @@ class AuthenticationMiddleware extends Middleware{
       $user = $model->getUser(Session::get(SESSION_USERID));
       $privilege = $user['privilege'];
 
-      if($privilege != 10) {
-        throw new ForbiddenException();
+      if($privilege != ADMIN) {
+        throw new PrivilegeException();
       }
     }
 

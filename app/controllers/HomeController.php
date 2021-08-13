@@ -22,7 +22,7 @@ class HomeController extends Controller
 
   public function view()
   {
-    //$topRankedCourses = $this->courses->getTopCourses($this->displayTopCount);
+    $topRankedCourses = $this->courses->getCourses();
     $currentUser = NULL;
     if(Session::exists(SESSION_USERID)){
       $ID = Session::get(SESSION_USERID);
@@ -30,7 +30,8 @@ class HomeController extends Controller
     }
 
     $params = [
-      "currentUser" => $currentUser
+      "currentUser" => $currentUser,
+      "courses" => $topRankedCourses
     ];
 
     return $this->display('startpage', 'startpage', $params);

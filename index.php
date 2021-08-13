@@ -11,6 +11,7 @@ use App\Controllers\ProfileController;
 use App\Controllers\ProjectController;
 use App\Controllers\SettingsController;
 use App\Controllers\ContentController;
+use App\Controllers\CourseController;
 use App\Controllers\AdminController;
 
 require_once(__DIR__ . '/config.php');
@@ -23,6 +24,7 @@ $profileController = new ProfileController();
 $projectController = new ProjectController();
 $settingsController = new SettingsController();
 $contentController = new ContentController();
+$courseController = new CourseController();
 $adminController = new AdminController();
 
 if(Cookie::exists(REMEMBER_ME_COOKIE_NAME) && !Session::exists(SESSION_USERID)){
@@ -53,6 +55,9 @@ $app->router->get('/settings/getsettings', [$settingsController, 'fetch']);
 $app->router->post('/settings/deleteAccount', [$settingsController, 'deleteAccount']);
 $app->router->post('/settings/update', [$settingsController, 'update']);
 
+$app->router->get('/courses', [$courseController, 'view']);
+$app->router->get('/course/getrate', [$courseController, 'getRate']);
+$app->router->post('/course/setrate', [$courseController, 'setRate']);
 
 $app->router->get('/searchPeople', [$contentController, 'people']);
 $app->router->get('/searchDegrees', [$contentController, 'degrees']);
