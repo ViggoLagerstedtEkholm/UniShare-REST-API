@@ -110,6 +110,7 @@ class Users extends Database{
     mysqli_stmt_prepare($stmt, $sql);
     mysqli_stmt_bind_param($stmt, "ss", $value, $ID);
     mysqli_stmt_execute($stmt);
+
     mysqli_stmt_close($stmt);
   }
 
@@ -183,6 +184,32 @@ class Users extends Database{
     Session::set(SESSION_USERID, $ID);
     Session::set(SESSION_MAIL, $email);
   }
+ }
+
+ function userHasDegreeID($newActiveDegreeID){
+   $sql = "SELECT degreeID FROM degrees
+           JOIN users
+           ON degrees.userID = users.usersID
+           WHERE usersID = ?;";
+   $stmt = $this->getConnection()->prepare($sql);
+   $ID = Session::get(SESSION_USERID);
+   $stmt->bind_param("i", $ID);
+   $stmt->execute();
+   $result = $stmt->get_result();
+   var_dump($result);
+   $IDs = array();
+
+   while( $row = $result->fetch_array()){
+      $IDs[] = $row["degreeID"];
+   }
+
+   $exists = in_array($newActiveDegreeID, $IDs);
+
+   if($exists){
+     return true;
+   }else{
+     return false;
+   }
  }
 
  function login(Login $login){

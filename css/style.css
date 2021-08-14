@@ -1,7 +1,9 @@
-*{
-  margin: 0px;
-  padding: 0px;
-  box-sizing: border-box;
+html,body {
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    overflow-x: hidden;
 }
 
 fieldset{
@@ -12,13 +14,30 @@ textarea{
   resize: vertical;
 }
 
-hr{
-  margin-top: 15px;
-  margin-bottom: 5px;
-}
-
 p{
   color:white;
+}
+
+
+.degree-info-panel{
+  padding: 10px;
+  text-align: left;
+  color:white;
+  word-wrap: break-word;
+}
+
+.degree-box{
+  margin-top: 10px;
+  background-color: #313131;
+  margin-top: 20px;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.degree-box > div{
+  background-color: #474646;
+  margin-top: 10px;
+  border-radius: 5px;
 }
 
 .score{
@@ -30,13 +49,6 @@ p{
 .txt-small{
   color:white;
   font-size: 15px;
-}
-
-.vertical-line{
-  display: inline-block;
-   border-left: 1px solid #ccc;
-   margin: 0 10px;
-   height: 100px;
 }
 
 /* Courses page */
@@ -240,13 +252,11 @@ form .text_field{
 .fixed {
     background-color:#313131;
     width: 400px;
-    padding: 10px;
 }
 
 .flex-item {
     background-color:#313131;
     flex-grow: 1;
-    padding: 10px;
 }
 
 .small-image{
@@ -268,19 +278,6 @@ form .text_field{
 /*END*/
 
 /*PROFILE STYLES */
-.user-upload-image-center input[type="submit"]{
-  width: 100%;
-  height: 50px;
-  border: 1px solid;
-  background: #2691d9;
-  border-radius: 25px;
-  font-size: 14px;
-  color: #e9f4fb;
-  cursor: pointer;
-  outline: none;
-}
-
-
 .profile-tab {
   overflow: hidden;
   background-color: #6e6e6e;
@@ -317,7 +314,6 @@ form .text_field{
   padding: 10px;
   background-color: #403f3f;
   border-radius: 5px;
-  height: 100%;
 }
 
 .user-profile p{
@@ -333,7 +329,7 @@ form .text_field{
   padding: 10px;
   background-color: #403f3f;
   border-radius: 5px;
-  height: 100%;
+  margin-left: 10px;
 }
 
 .user-content input{
@@ -348,26 +344,13 @@ form .text_field{
 }
 
 .user-image img{
-object-fit: cover;
-height: 100%; width: 100%;
-}
-
-.user-upload-image-center{
-  width: 50%;
-  padding: 10px;
-  margin: 0 auto;
-  height: 100px;
-}
-
-.user-upload-image-center input{
-  width: 100%;
-  height: 50%;
+  object-fit: cover;
+  height: 100%; width: 100%;
 }
 
 .user-description{
   word-wrap: break-word;
 }
-
 
 .user-input-form-box{
   padding: 10px;
@@ -379,16 +362,6 @@ height: 100%; width: 100%;
 .user-input-form-box button{
   margin-top: 5px;
   margin-bottom: 5px;
-}
-
-.user-degree-{
-  overflow: hidden;
-  box-shadow: 0px 2px 8px 0px var(--clr-gray-light);
-  background-color: black;
-  text-align: center;
-  border-radius: 5px;
-  position: relative;
-  margin: 0.5rem;
 }
 
 .wrapper-grid{
@@ -405,17 +378,16 @@ height: 100%; width: 100%;
   text-align: center;
   border-radius: 5px;
   position: relative;
-  margin: 1rem;
+  margin: 5%;
 }
 
 .user-profile-project-description-box{
   width:100%;
-  height: 100px;
+  height: auto;
 }
 
 .user-profile-project-description-box h1{
   width: 100%;
-  padding: 30px;
   text-overflow: clip;
 }
 
@@ -431,11 +403,6 @@ height: 100%; width: 100%;
 }
 
 /*START PAGE*/
-
-#statistics-box{
-  border-style: solid gray 2px;
-}
-
 .display-result-box{
   margin-top: 10px;
   background-color: #313131;
@@ -446,17 +413,14 @@ height: 100%; width: 100%;
 .display-result-box > div {
   background-color: #474646;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  text-align: center;
-  font-size: 30px;
   margin-top: 5px;
   margin-bottom: 5px;
-  color:white;
+  border-radius: 5px;
 }
 
 .startpage-flex-item {
   background-color:#313131;
   flex-grow: 1;
-  padding: 10px;
 }
 
 .startpage-flex-item h1{
@@ -518,11 +482,17 @@ height: 100%; width: 100%;
     background-color: #474646;
 }
 
+.startpage-display-user{
+  background-color: #474646;
+  border-radius: 5px;
+}
+
 .content-card-image{
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-left: 10px;
+  margin-left: 30px;
+  margin-right: 50px;
 }
 
 .content-card-image img{
@@ -531,12 +501,29 @@ height: 100%; width: 100%;
   border-radius: 50%;
 }
 
+.content-card-body{
+  padding-right: 20px;
+}
+
 .content-card-info{
   display: flex;
   font-size: 15px;
   flex-direction: column;
-  justify-content: center;
   text-align: left;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.content-card-info-buttons{
+  display: flex;
+  font-size: 15px;
+  flex-direction: column;
+  text-align: left;
+  justify-content: center;
+  width: 100%;
+}
+
+.content-card-info-buttons button{
   width: 100%;
 }
 
@@ -573,20 +560,26 @@ height: 100%; width: 100%;
 /*Profile resizing*/
 @media screen and (max-width: 984px)
 {
+  .user-image{
+    width: 50%;
+    margin: 0 auto;
+  }
+
   .wrapper-grid{
     justify-content: center;
   }
 
   .container{
-    padding-left: 10px;
-    padding-right: 10px;
+    padding: 0;
   }
+
   .fixed{
     width: 100%;
   }
 
   .flex-item {
       width: 100%;
+      margin-top: 10px;
   }
 
   .startpage-flex-item {
@@ -604,17 +597,23 @@ height: 100%; width: 100%;
   }
 }
 
-@media screen and (max-width: 769px) {
-  .content-card-info{
-    padding: 20px;
+@media screen and (max-width: 1301px) {
+  .content-user{
+    flex-direction: column;
   }
+  .content-card-body{
+    padding: 10px;
+  }
+}
+
+@media screen and (max-width: 769px) {
+
   .content-card-info h4{
     margin-top: 10px;
   }
 
   .content-card-image{
     flex-direction: row;
-    margin-left: 10px;
   }
 
   .content-card-image img {
@@ -627,16 +626,8 @@ height: 100%; width: 100%;
     justify-content: center;
   }
 
-  .vertical-line{
-    display: none;
-  }
-
   .content-container > div {
     height: auto;
-  }
-
-  .content-user{
-    flex-direction: column;
   }
 
   .content-user img{
@@ -667,12 +658,11 @@ height: 100%; width: 100%;
 }
 
 @media screen and (max-width: 480px) {
+  .wrapper-container-item{
+    margin: 0;
+  }
   .content-pagination-bar{
     flex-direction: column;
-  }
-
-  .container{
-    padding: 0;
   }
 
   .wrapper-grid{

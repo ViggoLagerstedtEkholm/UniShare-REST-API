@@ -33,6 +33,10 @@
             <textarea class="user-input-text" id="description" type="text" name="description" placeholder="Enter description"></textarea>
           </p>
 
+          <select id="degrees" name="activeDegreeID">
+
+          </select>
+
           <hr />
           <br />
           <p>
@@ -72,4 +76,19 @@
             document.getElementById("description").value = description;
           }
       });
+
+      $.ajax ( {
+            url: "./degrees/get",
+            type: 'GET',
+            dataType: "json",
+            success: function ( res ){
+              var degrees = res['data']['degrees'];
+              let result = degrees.map(a => a.name);
+              let ID = degrees.map(a => a.ID);
+              console.log(result.length);
+              for (var i = 0 ; i < result.length; i++){
+                 $('<option/>').val(ID[i]).html(result[i]).appendTo('#degrees');
+              }
+            }
+        });
   </script>

@@ -12,6 +12,7 @@ use App\Models\MVCModels\Users;
 use App\Models\MVCModels\Profiles;
 use App\Models\MVCModels\Projects;
 use App\Models\MVCModels\Courses;
+use App\Models\MVCModels\Degrees;
 
 use App\Includes\Validate;
 
@@ -24,7 +25,14 @@ abstract class Controller{
   private ?Projects $projects;
   private ?Courses $courses;
   private ?Degrees $degrees;
-  
+
+  protected function loadModel($model){
+    $path = 'App\Models\Templates' .$model;
+    if(class_exists($path)) {
+    $this->{$model.'Model'} = new $path();
+  }
+  }
+
   public function setMiddlewares(Middleware $middleware)
   {
       $this->middlewares[] = $middleware;
@@ -40,6 +48,8 @@ abstract class Controller{
   }
 
   public function jsonResponse($resp){
+    header("Access-Control-Allow-Origin: *");
+    header("Content-Type: applicaton/json; charset=UTF-8");
     http_response_code(200);
     return json_encode($resp);
   }

@@ -7,6 +7,7 @@ use App\Core\ImageHandler;
 use App\Models\MVCModels\Profiles;
 use App\Models\MVCModels\Users;
 use App\Models\MVCModels\Projects;
+use App\Models\MVCModels\Degrees;
 use App\Includes\Validate;
 use App\Includes\Constants;
 use App\Models\Templates\Project;
@@ -15,12 +16,13 @@ use App\Middleware\AuthenticationMiddleware;
 class ProfileController extends Controller
 {
   public function __construct(){
-    $this->setMiddlewares(new AuthenticationMiddleware(['uploadImage', 'uploadProject', 'deleteProject', 'pubishCourse']));
+    $this->setMiddlewares(new AuthenticationMiddleware(['uploadImage', 'uploadProject', 'deleteProject', 'pubishCourse', 'getDegrees']));
 
     $this->imageHandler = new ImageHandler();
     $this->profiles = new Profiles();
     $this->users = new Users();
     $this->projects = new Projects();
+    $this->degrees = new Degrees();
   }
 
   public function view(Request $request)
@@ -37,6 +39,8 @@ class ProfileController extends Controller
         $display_name = $user["userDisplayName"];
         $privilege = $user["privilege"];
 
+        $degrees = $this->degrees->getDegrees(Session::get(SESSION_USERID));
+
         $updatedVisitCount = $this->profiles->addVisitor($ID, $user);
         $projects = $this->projects->getProjects($ID);
 
@@ -50,6 +54,7 @@ class ProfileController extends Controller
 
         $params = [
           'image' => $image,
+          'degrees' => $degrees,
           'updatedVisitCount' => $updatedVisitCount,
           'projects' => $projects,
           'currentPageID' => $ID,
@@ -126,18 +131,5 @@ class ProfileController extends Controller
      }
 
      Application::$app->redirect("../../profile?ID=$sessionID");
-  }
-
-
-  public function pubishCourse(Request $request){
-    Application::$app->request->getBody();
-
-    return 'Handling submitted course data.';
-  }
-
-  public function pubishDegree(Request $request){
-    Application::$app->request->getBody();
-
-    return 'Handling submitted degree data.';
   }
 }

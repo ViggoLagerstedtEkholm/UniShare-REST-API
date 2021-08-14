@@ -12,7 +12,7 @@ nav{
   background-color: #3e576b;
   align-items: center;
 
-  height: 50px;
+  height: auto;
 }
 
 #adminHeader{
@@ -21,7 +21,7 @@ nav{
   background-color: #57b4ff;
   align-items: center;
 
-  height: 20px;
+  height: auto;
 }
 
 .logo{
@@ -64,10 +64,19 @@ nav{
     flex-direction: column;
   }
 
+  #header2{
+    flex-direction: column;
+  }
+
+  #adminHeader{
+    flex-direction: column;
+  }
+
   .logo{
     display: block;
     float: none;
     text-align: center;
+    justify-content: center;
   }
 
   .nav-links{

@@ -7,22 +7,17 @@
             </div>
 
             <!--===edit===-->
-            <div class='user-upload-image-center'>
-              <form method='post' enctype='multipart/form-data' action='./profile/upload/image'>
-                <p>
-                  <input type='file' name='file' value='Upload' />
-                </p>
-                <p>
-                  <input type='submit' name='submit_image' value='Upload' />
-                </p>
-              </form>
-            </div>
-            <!--===edit===-->
-
+            <form method='post' enctype='multipart/form-data' action='./profile/upload/image'>
+              <p>
+                <input type='file' name='file' value='Upload' />
+              </p>
+              <p>
+                <input class="user-profile-project-button-upload" type='submit' name='submit_image' value='Upload' />
+              </p>
+            </form>
             <hr />
             <br />
 
-            <!--===edit===-->
             <form action="./settings">
               <button type="submit" class="user-profile-project-button-visit">Settings</button>
             </form>
@@ -124,19 +119,16 @@
         </div>
         <div class="flex-item">
           <div class="user-content">
-
-            <!-- Tabs -->
             <div class="profile-tab">
               <button class="tablinks" onclick="openTab(event, 'Projects')">Projects</button>
               <button class="tablinks" onclick="openTab(event, 'Degrees')">Degrees</button>
-              <button class="tablinks" onclick="openTab(event, 'Courses')">Courses</button>
             </div>
 
             <div id="Projects" class="profile-tabcontent">
               <h3 class="user-input-form-box">
                 Projects
               </h3>
-              <!--===edit===-->
+
               <div class="user-input-form-box">
                 <h3> Enter project information</h3>
                 <form method="post" enctype='multipart/form-data' action='./profile/upload/project'>
@@ -160,11 +152,9 @@
                   </p>
                 </form>
               </div>
-              <!--===edit===-->
 
               <hr />
 
-              <!-- Projects -->
               <div class="wrapper-grid">
                 <!--===edit===-->
                 <div class="wrapper-container-item">
@@ -184,73 +174,73 @@
                     <input hidden value="Delete" name="---ID---"></input>
                     <button type="submit" class="user-profile-project-button-delete">Delete</button>
                   </form>
-                  <!--===edit===-->
-
                 </div>
                 <!--===edit===-->
               </div>
-              <!-- Projects -->
             </div>
 
             <div id="Degrees" class="profile-tabcontent">
-              <!--===Degrees===-->
               <h3 class="user-input-form-box">
                 Degrees
               </h3>
 
-              <!--===edit===-->
               <div class="user-input-form-box">
-                <h3> Enter degree</h3>
-                <form method="post" enctype='multipart/form-data' action="../../includes/register-project-inc.php">
+                <form method="post" enctype='multipart/form-data' action="./degree/upload">
+                  <h4>
+                    Degree name
+                  </h4>
                   <input class="user-input-text" type="text" name="name" placeholder="Degree name">
-                  <input class="user-input-text" type="text" name="name" placeholder="Field of study">
-                  <input class="user-input-text" type="date" name="name" placeholder="Start date">
-                  <input class="user-input-text" type="date" name="name" placeholder="End date">
-                  <input class="user-input-text" type="number" name="name" placeholder="Total credits">
-                  <br />
-                  <textarea class="user-input-text" type="text" name="description" placeholder="Enter description"></textarea>
-                  <p>
-                    Degree image
-                    <input type='file' name='degree-file' value='Upload' />
-                  </p>
+                  <h4>
+                    Field of study
+                  </h4>
+                  <input class="user-input-text" type="text" name="field_of_study" placeholder="Field of study">
+                  <h4>
+                    Start date
+                  </h4>
+                  <input class="user-input-text" type="date" name="start_date" placeholder="Start date">
+                  <h4>
+                    End date
+                  </h4>
+                  <input class="user-input-text" type="date" name="end_date" placeholder="End date">
+                  <h4>
+                    Location
+                  </h4>
+                  <input class="user-input-text" type="text" name="location" placeholder="Location">
                   <p>
                     <input class="user-profile-project-button-upload" type="submit" name="submit_project" value="Upload">
                   </p>
                 </form>
               </div>
-              <!--===edit===-->
 
-              <hr />
+              <div class="degree-box">
+                <div class="degree-info-panel">
+                  <h1>---degree_name---</h1>
+                  <h3>Included courses</h3>
+                </div>
 
-              <div class="user-degree-wrapper-grid">
                 <!--===edit===-->
-                <div class="user-degree-container">
+                <div class="content-card-body">
+                  <div class="content-user">
+                    <div class="content-card-image">
+                      <img src="images/books.png" alt="USER IMAGE">
+                    </div>
 
+                    <div class="content-card-info">
+                      <p><b>Name:</b> ---name---</p>
+                      <p><b>Credits: </b> ---credits---</p>
+                      <p><b>Location: </b>---location---</p>
+                    </div>
+
+                    <div class="content-card-info-buttons">
+                      <form action="./courses" method="get">
+                        <input type="hidden" name="ID" value="---ID---" />
+                        <button type="submit">Go to course page</button>
+                      </form>
+                    </div>
+                  </div>
                 </div>
                 <!--===edit===-->
-              </div>
-            </div>
 
-
-            <!--Courses-->
-
-            <div id="Courses" class="profile-tabcontent">
-              <!--===Degrees===-->
-              <h3 class="user-input-form-box">
-                Courses
-              </h3>
-
-              <div class="user-input-form-box">
-                <h3> Enter degree</h3>
-                <form method="post" enctype='multipart/form-data' action="./">
-                  <input class="user-input-text" type="text" name="name" placeholder="Course name">
-                  <input class="user-input-text" type="number" name="name" placeholder="Credits">
-                  <input class="user-input-text" type="text" name="name" placeholder="Link to degree:">
-                  <textarea class="user-input-text" type="text" name="description" placeholder="Enter description"></textarea>
-                  <p>
-                    <input class="user-profile-project-button-upload" type="submit" name="submit_project" value="Upload">
-                  </p>
-                </form>
               </div>
             </div>
           </div>

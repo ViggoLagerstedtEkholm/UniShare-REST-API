@@ -18,15 +18,17 @@ class SettingsController extends Controller{
   }
 
   public function update(Request $request){
-    $fields = ["userFirstName", "userLastName", "userEmail", "userDisplayName", "usersPassword"];
+    $fields = ["userFirstName", "userLastName", "userEmail", "userDisplayName", "usersPassword", "activeDegreeID"];
 
     $updatedInfo = $request->getBody();
+
     $updated_first_name = $updatedInfo["first_name"];
     $updated_last_name = $updatedInfo["last_name"];
     $updated_email = $updatedInfo["email"];
     $updated_display_name = $updatedInfo["display_name"];
     $updated_current_password = $updatedInfo["current_password"];
     $updated_new_password = $updatedInfo["new_password"];
+    $updated_activeDegreeID = $updatedInfo["activeDegreeID"];
 
     $user = $this->users->getUser(Session::get(SESSION_USERID));
     $ID = $user["usersID"];
@@ -35,20 +37,24 @@ class SettingsController extends Controller{
     $email = $user["userEmail"];
     $display_name = $user["userDisplayName"];
     $passwordHash = $user["usersPassword"];
+    $activeDegreeID = $user["activeDegreeID"];
 
     $error = array();
 
+    if(!$this->users->userHasDegreeID($updated_activeDegreeID)){
+      $error [] = INVALID_ACTIVEDEGREEID;
+    }
 
     if(!empty($updated_current_password) && !empty($updated_new_password)){
       $comparePassword = password_verify($updated_current_password, $passwordHash);
 
       if($comparePassword === false){
+        $error [] = INVALID_PASSWORD_MATCH;
       }else if($comparePassword === true){
         $hashPassword = password_hash($updated_new_password, PASSWORD_DEFAULT);
         $this->users->updateUser($fields[4], $hashPassword, $ID);
       }
     }
-
 
     if(Validate::emptyValue($updated_last_name) === true){
       $error [] = INVALID_LAST_NAME;
@@ -72,7 +78,7 @@ class SettingsController extends Controller{
       Application::$app->redirect("../settings?error=" . $URL);
       exit();
     }
-
+    if($updated_activeDegreeID != $activeDegreeID){$this->users->updateUser($fields[5], $updated_activeDegreeID, $ID);}
     if($updated_first_name != $first_name){$this->users->updateUser($fields[0], $updated_first_name, $ID);}
     if($updated_last_name != $last_name){$this->users->updateUser($fields[1], $updated_last_name, $ID);}
     if($updated_email != $email){$this->users->updateUser($fields[2], $updated_email, $ID);}

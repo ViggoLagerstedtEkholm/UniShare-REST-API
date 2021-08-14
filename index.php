@@ -13,6 +13,7 @@ use App\Controllers\SettingsController;
 use App\Controllers\ContentController;
 use App\Controllers\CourseController;
 use App\Controllers\AdminController;
+use App\Controllers\DegreeController;
 
 require_once(__DIR__ . '/config.php');
 
@@ -26,6 +27,7 @@ $settingsController = new SettingsController();
 $contentController = new ContentController();
 $courseController = new CourseController();
 $adminController = new AdminController();
+$degreeController = new DegreeController();
 
 if(Cookie::exists(REMEMBER_ME_COOKIE_NAME) && !Session::exists(SESSION_USERID)){
   $authenticationController->loginWithCookie();
@@ -43,10 +45,9 @@ $app->router->get('/logout', [$authenticationController, 'logout']);
 
 $app->router->get('/profile', [$profileController, 'view']);
 $app->router->post('/profile/upload/image', [$profileController, 'uploadImage']);
+$app->router->post('/profile/upload/image', [$profileController, 'uploadImage']);
 $app->router->post('/profile/upload/project', [$profileController, 'uploadProject']);
 $app->router->post('/profile/delete/project', [$profileController, 'deleteProject']);
-$app->router->post('/profile/upload/course', [$profileController, 'pubishCourse']);
-$app->router->post('/profile/upload/degree', [$profileController, 'pubishDegree']);
 
 $app->router->get('/project', [$projectController, 'view']);
 
@@ -58,6 +59,11 @@ $app->router->post('/settings/update', [$settingsController, 'update']);
 $app->router->get('/courses', [$courseController, 'view']);
 $app->router->get('/course/getrate', [$courseController, 'getRate']);
 $app->router->post('/course/setrate', [$courseController, 'setRate']);
+
+$app->router->post('/degree/upload', [$degreeController, 'uploadDegree']);
+$app->router->post('/degree/remove', [$degreeController, 'removeDegree']);
+$app->router->get('/degrees/get', [$degreeController, 'getDegrees']);
+$app->router->post('/degrees/addcourse', [$degreeController, 'addCourse']);
 
 $app->router->get('/searchPeople', [$contentController, 'people']);
 $app->router->get('/searchDegrees', [$contentController, 'degrees']);

@@ -3,6 +3,7 @@ namespace App\Includes;
 use App\Models\Templates\Register;
 use App\Models\Templates\Login;
 use App\Models\Templates\Project;
+use App\Models\Templates\Degree;
 use App\Core\Session;
 
 class Validate{
@@ -97,6 +98,30 @@ class Validate{
   public static function hasEmptyInputsLogin(Login $login){
     $result;
     if(empty($login->email) || empty($login->password))
+    {
+      $result = true;
+    }else{
+      $result = false;
+    }
+    return $result;
+  }
+
+  public static function hasEmptyInputDegree(Degree $degree){
+    $result;
+    if(empty($degree->name) || empty($degree->field_of_study) || empty($degree->start_date) || empty($degree->end_date))
+    {
+      $result = true;
+    }else{
+      $result = false;
+    }
+    return $result;
+  }
+
+  public static function hasInvalidDates($start_date, $end_date){
+    $start_date_converted = strtotime($start_date);
+    $end_date_converted = strtotime($end_date);
+    $result;
+    if($start_date_converted > $end_date_converted)
     {
       $result = true;
     }else{

@@ -2,43 +2,44 @@
       <div class="content-container">
         <div class="startpage-flex-item">
           <!--===edit===-->
-          <h1>Your statistics</h1>
-          <div id="statistics-box">
-            <div class="content-user">
-              <div class="content-card-image">
-                <img src="---SRC---" alt="USER IMAGE">
+          <h1>Your profile</h1>
+            <div class="startpage-display-user">
+              <div class="content-card-body">
+                <div class="content-user">
+                  <div class="content-card-image">
+                    <img src="---SRC---" alt="USER IMAGE">
+                  </div>
+
+                  <span class="vertical-line"></span>
+
+                  <div class="content-card-info">
+                    <h4><b>Personal information</b></h4>
+                    <p><b>First name:</b> ---first_name---</p>
+                    <p><b>Last name:</b> ---last_name---</p>
+                    <p><b>Email: </b>---email---</p>
+                  </div>
+
+                  <span class="vertical-line"></span>
+
+                  <div class="content-card-info">
+                    <h4><b>Profile information</b></h4>
+                    <p><b>Visits:</b> ---visits---</p>
+                    <p><b>Projects:</b> ---projects---</p>
+                    <p><b>Courses:</b> ---courses---</p>
+                    <p><b>Last online:</b> ---last_online---</p>
+                  </div>
+                  <span class="vertical-line"></span>
+
+                  <div class="content-card-info-buttons">
+                    <form action="./profile" method="get">
+                      <input type="hidden" name="ID" value="---ID---" />
+                      <button type="submit">Profile</button>
+                      </form>
+                    </div>
+                  <span class="vertical-line"></span>
+                </div>
               </div>
-
-              <span class="vertical-line"></span>
-
-              <div class="content-card-info">
-                <h4><b>Personal information</b></h4>
-                <p><b>First name:</b> ---first_name---</p>
-                <p><b>Last name:</b> ---last_name---</p>
-                <p><b>Email: </b>---email---</p>
-              </div>
-
-              <span class="vertical-line"></span>
-
-              <div class="content-card-info">
-                <h4><b>Profile information</b></h4>
-                <p><b>Visits:</b> ---visits---</p>
-                <p><b>Projects:</b> ---projects---</p>
-                <p><b>Courses:</b> ---courses---</p>
-                <p><b>Last online:</b> ---last_online---</p>
-              </div>
-              <span class="vertical-line"></span>
-
-              <div class="content-card-info">
-                <form action="./profile" method="get">
-                  <input type="hidden" name="ID" value="---ID---" />
-                  <button type="submit" class="user-profile-project-button-visit">Profile</button>
-                </form>
-              </div>
-
-              <span class="vertical-line"></span>
             </div>
-          </div>
           <!--===edit===-->
 
           <hr />

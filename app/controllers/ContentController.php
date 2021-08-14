@@ -3,18 +3,17 @@ namespace App\Controllers;
 use App\Core\Application;
 use App\Models\MVCModels\Users;
 use App\Models\MVCModels\Profiles;
-use App\Models\MVCModels\Projects;
 use App\Models\MVCModels\Courses;
-use App\Core\ImageHandler;
+use App\Models\MVCModels\Degrees;
+use App\Core\Session;
 
 class ContentController extends Controller
 {
   public function __construct()
   {
-    $this->imageHandler = new ImageHandler();
     $this->users = new Users();
     $this->courses = new Courses();
-    $this->projects = new Projects();
+    $this->degrees = new Degrees();
   }
 
   public function people()
@@ -95,6 +94,8 @@ class ContentController extends Controller
       $page = 1;
     }
 
+    $degrees = $this->degrees->getDegrees(Session::get(SESSION_USERID));
+
     if($search == ""){$course_count = $this->courses->getCoursesCount();}
     else{$course_count = $this->courses->getCourseCountSearch($search);}
     $results_per_page = 7;
@@ -110,6 +111,7 @@ class ContentController extends Controller
 
     $params = [
       'courses' => $courses,
+      'degrees' => $degrees,
       'page' => $page,
       'filterOption' => $filterOption,
       'filterOrder' => $filterOrder,

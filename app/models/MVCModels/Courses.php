@@ -147,6 +147,10 @@ class Courses extends Database
     return $course;
   }
 
+  function getCoursesForDegree(){
+    
+  }
+
   function getCourses(){
    $courses = array();
    $sql = "SELECT * FROM courses;";

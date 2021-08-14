@@ -39,7 +39,7 @@ class AuthenticationController extends Controller{
     $login = new Login();
     $login->populateAttributes($request->getBody());
 
-    if(Validate::hasEmptyInputsLogin($login) !== false){
+    if(Validate::hasEmptyInputsLogin($login) === true){
       Application::$app->redirect("./login?error=" . INVALID_CREDENTIALS);
       exit();
     }
