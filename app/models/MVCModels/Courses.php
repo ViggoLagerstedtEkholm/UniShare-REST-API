@@ -139,8 +139,8 @@ class Courses extends Database
             JOIN courses
             ON degrees_courses.courseID = courses.courseID
             WHERE courses.courseID = ? AND usersID = ?";
-            $currentUser = Session::get(SESSION_USERID);
-
+            
+    $currentUser = Session::get(SESSION_USERID);
     $result = $this->executeQuery($sql, 'ii', array($courseID, $currentUser));
     $count = $result->fetch_assoc()["COUNT(*)"] ?? null;
     if($count > 0){
