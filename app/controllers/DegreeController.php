@@ -1,13 +1,13 @@
 <?php
 namespace App\Controllers;
 use App\Core\Application;
-use App\Models\MVCModels\Degrees;
-use App\Models\MVCModels\Users;
-use App\Middleware\AuthenticationMiddleware;
 use App\Core\Session;
-use App\Models\Templates\Degree;
 use App\Core\Request;
 use App\Includes\Validate;
+use App\Models\MVCModels\Degrees;
+use App\Models\MVCModels\Users;
+use App\Models\Templates\Degree;
+use App\Middleware\AuthenticationMiddleware;
 
 class DegreeController extends Controller
 {
@@ -21,8 +21,7 @@ class DegreeController extends Controller
   public function uploadDegree(Request $request){
     $degree = new Degree();
     $degree->populateAttributes($request->getBody());
-    //var_dump($degree);
-    //exit();
+
     $error = array();
     if(Validate::hasEmptyInputDegree($degree) === true){
       $error [] = EMPTY_FIELDS;
@@ -47,7 +46,7 @@ class DegreeController extends Controller
   }
 
   public function deleteDegree(Request $request){
-
+    
   }
 
   public function getDegrees(){

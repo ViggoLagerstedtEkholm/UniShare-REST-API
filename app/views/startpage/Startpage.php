@@ -22,12 +22,16 @@ if(!is_null($currentUser)){
 }
 echo $fragments[2];
 
+$index = 1;
 foreach($courses as $item){
   $temp = str_replace('---ID---', $item->ID, $fragments[3]);
-  $temp = str_replace('---course_name---', $item->name, $temp);
-  $temp = str_replace('---score---', 0.0, $temp);
-  $temp = str_replace('---total-votes---', 0.0, $temp);
+  $temp = str_replace('---PLACEMENT---', $index, $temp);
+  $temp = str_replace('---name---', $item->name, $temp);
+  $temp = str_replace('---score---', $item->rating , $temp);
+  $temp = str_replace('---location---', $item->location, $temp);
+  $temp = str_replace('---added---', $item->added, $temp);
   echo $temp;
+  $index++;
 }
 
 echo $fragments[4];

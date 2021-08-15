@@ -9,7 +9,6 @@ use App\Models\MVCModels\Users;
 use App\Models\MVCModels\Projects;
 use App\Models\MVCModels\Degrees;
 use App\Includes\Validate;
-use App\Includes\Constants;
 use App\Models\Templates\Project;
 use App\Middleware\AuthenticationMiddleware;
 
@@ -39,8 +38,8 @@ class ProfileController extends Controller
         $display_name = $user["userDisplayName"];
         $privilege = $user["privilege"];
 
+        $comments = $this->profiles->getComments($ID);
         $degrees = $this->degrees->getDegrees($ID);
-
         $updatedVisitCount = $this->profiles->addVisitor($ID, $user);
         $projects = $this->projects->getProjects($ID);
 
@@ -54,6 +53,7 @@ class ProfileController extends Controller
 
         $params = [
           'image' => $image,
+          'comments' => $comments,
           'degrees' => $degrees,
           'updatedVisitCount' => $updatedVisitCount,
           'projects' => $projects,
@@ -131,5 +131,23 @@ class ProfileController extends Controller
      }
 
      Application::$app->redirect("../../profile?ID=$sessionID");
+  }
+
+  public function addComment(Request $request){
+    $body = $request->getBody();
+
+    $posterID = Session::get(SESSION_USERID);
+
+    $text = $body['text'];
+    $profileID = $body['pageID'];
+
+    $succeeded = $this->profiles->addComment($posterID, $profileID, $text);
+    if($succeeded){
+      $resp = ['success'=>true,'data'=>['Status'=>'Added comment']];
+      return $this->jsonResponse($resp);
+    }else{
+      $resp = ['success'=>true,'data'=>['Status'=>'Error']];
+      return $this->jsonResponse($resp);
+    }
   }
 }

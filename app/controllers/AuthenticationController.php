@@ -4,11 +4,9 @@ use App\Core\Application;
 use App\Core\Request;
 use App\Models\Templates\Register;
 use App\Models\Templates\Login;
-use App\Includes\Validate;
 use App\Models\MVCModels\Users;
-use App\Core\Session;
 use App\Middleware\AuthenticationMiddleware;
-use App\Core\ImageHandler;
+use App\Includes\Validate;
 
 class AuthenticationController extends Controller{
 

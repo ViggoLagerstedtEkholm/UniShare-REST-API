@@ -19,19 +19,13 @@ use App\Includes\Validate;
 abstract class Controller{
   public string $action = '';
   protected array $middlewares = [];
-  private ?ImageHandler $imageHandler;
-  private ?Profiles $profiles;
-  private ?Users $users;
-  private ?Projects $projects;
-  private ?Courses $courses;
-  private ?Degrees $degrees;
 
-  protected function loadModel($model){
-    $path = 'App\Models\Templates' .$model;
-    if(class_exists($path)) {
-    $this->{$model.'Model'} = new $path();
-  }
-  }
+  protected ?ImageHandler $imageHandler;
+  protected ?Profiles $profiles;
+  protected ?Users $users;
+  protected ?Projects $projects;
+  protected ?Courses $courses;
+  protected ?Degrees $degrees;
 
   public function setMiddlewares(Middleware $middleware)
   {

@@ -1,4 +1,5 @@
 <?php
+use App\Core\Session;
 $html = file_get_contents('app/views/content/courses/courses.html');
 $fragments = explode("<!--===edit===-->", $html);
 //print_r($fragments);
@@ -16,18 +17,20 @@ foreach($courses as $course){
   $temp = str_replace('---name---', $course->name , $fragments[1]);
   $temp = str_replace('---credits---', $course->credits , $temp);
   $temp = str_replace('---duration---', $course->duration, $temp);
-  $temp = str_replace('---score---', 0.0, $temp);
+  $temp = str_replace('---score---', $course->rating, $temp);
   $temp = str_replace('---location---', $course->location, $temp);
   $temp = str_replace('---added---', $course->added, $temp);
   $temp = str_replace('---score---', 0.0, $temp);
   echo str_replace('---courses---', 0, $temp);
 
-  if($course->existsInActiveDegree){
-    $temp = str_replace('---ADD_REMOVE---', "REMOVE from degree", $fragments[2]);
-    echo str_replace('---ID---', $course->ID, $temp);
-  }else{
-    $temp = str_replace('---ADD_REMOVE---', "ADD to degree", $fragments[2]);
-    echo str_replace('---ID---', $course->ID, $temp);
+  if(Session::isLoggedIn()){
+    if($course->existsInActiveDegree){
+      $temp = str_replace('---ADD_REMOVE---', "REMOVE from degree", $fragments[2]);
+      echo str_replace('---ID---', $course->ID, $temp);
+    }else{
+      $temp = str_replace('---ADD_REMOVE---', "ADD to degree", $fragments[2]);
+      echo str_replace('---ID---', $course->ID, $temp);
+    }
   }
 
   echo str_replace('---ID---', $course->ID, $fragments[3]);

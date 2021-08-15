@@ -6,8 +6,9 @@ class Course extends Model{
   public string $name;
   public float $credits;
   public float $duration;
-  public string $added = "TODO";
-  public string $field_of_study = "TODO";
-  public string $location;
+  public string $added = "DEFAULT";
+  public string $field_of_study = "DEFAULT";
+  public string $location = "DEFAULT";
+  public $rating;
   public bool $existsInActiveDegree = false;
 }

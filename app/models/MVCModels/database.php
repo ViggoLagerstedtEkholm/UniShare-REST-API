@@ -51,6 +51,26 @@ abstract class Database{
     $stmt->execute();
   }
 
+  protected function builtMatchQuery($table, $search, $avoidID){
+    $columns = $this->executeQuery("SELECT
+                                   COLUMN_NAME
+                                   FROM
+                                   information_schema.COLUMNS
+                                   WHERE TABLE_NAME = '$table'
+                                   AND TABLE_SCHEMA = '9.0'");
+
+     $searchTerms = array();
+     while($column = $columns->fetch_assoc()){
+       if($column['COLUMN_NAME'] != $avoidID){
+         $searchTerms[] = $column['COLUMN_NAME'] . " LIKE '%$search%' ";
+       }
+     }
+
+     $MATCH = implode(" OR ", $searchTerms);
+
+    return $MATCH;
+  }
+
   protected function getConnection(){
     return $this->conn;
   }

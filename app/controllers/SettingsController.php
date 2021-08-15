@@ -4,8 +4,8 @@ use App\Middleware\AuthenticationMiddleware;
 use App\Models\MVCModels\Users;
 use App\Core\Session;
 use App\Core\Request;
-use App\Includes\Validate;
 use App\Core\Application;
+use App\Includes\Validate;
 
 class SettingsController extends Controller{
   function __construct(){

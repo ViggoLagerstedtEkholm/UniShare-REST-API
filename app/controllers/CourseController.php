@@ -1,19 +1,16 @@
 <?php
 namespace App\Controllers;
 use App\Middleware\AuthenticationMiddleware;
-use App\Models\MVCModels\Users;
 use App\Models\MVCModels\Courses;
 use App\Core\Session;
-use App\Core\Response;
 use App\Core\Request;
-use App\Includes\Validate;
 use App\Core\Application;
+use App\Includes\Validate;
 
 class CourseController extends Controller{
   function __construct(){
     $this->setMiddlewares(new AuthenticationMiddleware(['setRate', 'getRate']));
     $this->courses = new Courses();
-    $this->users = new Users();
   }
 
   public function view(){
@@ -21,14 +18,9 @@ class CourseController extends Controller{
       $ID = $_GET["ID"];
       $course = $this->courses->getCourse($ID);
       $result = $this->courses->getArthimetricMeanScore($ID);
-      $SUM = $result["SUM(rating)"];
-      $result["COUNT(*)"] == 0 ? $arthimetricMean = "No rating" : $arthimetricMean = $SUM / $result["COUNT(*)"];
 
-      if($arthimetricMean == "No rating"){
-        $COUNT = 0;
-      }else{
-        $COUNT = $result["COUNT(*)"];
-      }
+      $arthimetricMean = $result["AVG(rating)"];
+      $COUNT = $result["COUNT(rating)"];
 
       $userRating = null;
       if(Session::isLoggedIn()){

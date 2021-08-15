@@ -252,9 +252,65 @@
           </div>
         </div>
       </div>
+
+      <div class="profile-comment-container">
+        <div class="profile-comment-form">
+          <h2>
+            Post comment
+          </h2>
+          <textarea id="text" name="text"></textarea>
+          <p>
+            <input class="user-profile-project-button-upload" value="Post comment" onclick="return addComment();">
+          </p>
+        </div>
+
+        <hr />
+
+        <h3 class="user-input-form-box">
+          Comments
+        </h3>
+
+        <div id="comment-list">
+          <!--===edit===-->
+          <div class="profile-comment">
+            # ---number---
+            <hr />
+
+            <br />
+            <div class="comment-image">
+              <img src="---SRC---" alt="USER IMAGE">
+            </div>
+
+            Username: ---DISPLAY_NAME---
+            <div class="comment-content">
+              <div class="user-description">
+                ---text---
+              </div>
+            </div>
+            <hr />
+            <b>Comment date: ---added---</b>
+            <!--===edit===-->
+            <input class="user-profile-project-button-delete" value="Delete comment" onclick="return addComment(---ID---);">
+            <!--===edit===-->
+          </div>
+          <!--===edit===-->
+        </div>
+      </div>
     </div>
 
     <script>
+
+      function findGetParameter(parameterName) {
+          var result = null,
+              tmp = [];
+          var items = location.search.substr(1).split("&");
+          for (var index = 0; index < items.length; index++) {
+              tmp = items[index].split("=");
+              if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+          }
+          return result;
+      }
+
       openTab(event, 'Projects');
 
       function openTab(evt, tabName) {
@@ -269,5 +325,27 @@
         }
         document.getElementById(tabName).style.display = "block";
         evt.currentTarget.className += " active";
+      }
+
+      function deleteComment(ID){
+
+      }
+
+      function addComment(){
+        var text = document.getElementById("text").value;
+
+        $.ajax({
+           url: "./profile/comment",
+           type: "POST",
+           data:{pageID: findGetParameter("ID"), text: text},
+           dataType: "json",
+           success:function(res){
+             location.reload();
+           },
+           error:function(res){
+             console.log("Error.");
+             console.log(res);
+           }
+         });
       }
     </script>

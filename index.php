@@ -48,6 +48,7 @@ $app->router->post('/profile/upload/image', [$profileController, 'uploadImage'])
 $app->router->post('/profile/upload/image', [$profileController, 'uploadImage']);
 $app->router->post('/profile/upload/project', [$profileController, 'uploadProject']);
 $app->router->post('/profile/delete/project', [$profileController, 'deleteProject']);
+$app->router->post('/profile/comment', [$profileController, 'addComment']);
 
 $app->router->get('/project', [$projectController, 'view']);
 

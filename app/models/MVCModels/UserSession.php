@@ -11,13 +11,13 @@ class userSession extends Database{
   }
 
   public function insertSession($ID, $user_agent, $hash){
-    $insertSQL = "INSERT INTO sessions (userID, userAgent, session) values(?, ?, ?);";
-    $this->insertOrUpdate($sql, 'sss', array($ID, $user_agent, $hash));
+    $sql = "INSERT INTO sessions (userID, userAgent, session) values(?, ?, ?);";
+    $this->insertOrUpdate($sql, 'iss', array($ID, $user_agent, $hash));
   }
 
   public function getSessionFromCookie(){
     if(Cookie::exists(REMEMBER_ME_COOKIE_NAME)){
-      $SQL = "SELECT * FROM sessions WHERE userAgent = ? AND session = ? LIMIT 1";
+      $sql = "SELECT * FROM sessions WHERE userAgent = ? AND session = ? LIMIT 1";
 
       $user_agent = Session::uagent_no_version();
       $session = Cookie::get(REMEMBER_ME_COOKIE_NAME);

@@ -2,9 +2,7 @@
 namespace App\Controllers;
 use App\Core\Application;
 use App\Models\MVCModels\Users;
-use App\Models\MVCModels\Profiles;
 use App\Models\MVCModels\Courses;
-use App\Models\MVCModels\Degrees;
 use App\Core\Request;
 use App\Core\Session;
 
@@ -14,27 +12,19 @@ class ContentController extends Controller
   {
     $this->users = new Users();
     $this->courses = new Courses();
-    $this->degrees = new Degrees();
   }
 
-  public function people()
-  {
+  private function getFilters(){
     if(isset($_GET["search"])){
       $search = $_GET["search"];
-    }else{
-      $search = "";
     }
 
     if(isset($_GET["filter_option"])){
         $filterOption = $_GET['filter_option'];
-    }else{
-      $filterOption = "userDisplayName";
     }
 
     if(isset($_GET['action'])){
       $filterOrder = $_GET["action"];
-    }else{
-      $filterOrder = "DESC";
     }
 
     if(isset($_GET['page'])){
@@ -43,14 +33,35 @@ class ContentController extends Controller
       $page = 1;
     }
 
-    if($search == ""){$user_count = $this->users->getUserCount();}
-    else{$user_count = $this->users->getUserCountSearch($search);}
-    $results_per_page = 7;
-    $number_of_pages = ceil($user_count / $results_per_page);
-    $start_page_first_result = ($page-1) * $results_per_page;
+    return ['search' => $search ?? null, 'filterOption' => $filterOption ?? null, 'filterOrder' => $filterOrder ?? null, 'page' => $page];
+  }
 
-    if($search == ""){ $users = $this->users->fetchPeopleSearch($start_page_first_result, $results_per_page, $filterOption, $filterOrder);}
-    else{$users = $this->users->fetchPeopleSearch($start_page_first_result, $results_per_page, $filterOption, $filterOrder, $search);}
+  public function people(){
+    $parameters = $this->getFilters();
+    $page = $parameters['page'];
+    $filterOption = $parameters['filterOption'];
+    $filterOrder = $parameters['filterOrder'];
+    $search = $parameters['search'];
+
+    if(is_null($search)){
+      $user_count = $this->users->getUserCount();
+    }
+    else{
+      $user_count = $this->users->getUserCountSearch($search);
+    }
+
+    $offsets = $this->calculateOffsets($user_count, $page);
+
+    $start_page_first_result = $offsets['start_page_first_result'];
+    $results_per_page = $offsets['results_per_page'];
+    $number_of_pages = $offsets['number_of_pages'];
+
+    if(is_null($search)){
+      $users = $this->users->fetchPeopleSearch($start_page_first_result, $results_per_page, $filterOption, $filterOrder);
+    }
+    else{
+      $users = $this->users->fetchPeopleSearch($start_page_first_result, $results_per_page, $filterOption, $filterOrder, $search);
+    }
 
     if($page > $number_of_pages){
       Application::$app->redirect('./searchPeople?error=nomatchesfound');
@@ -71,38 +82,31 @@ class ContentController extends Controller
   }
 
   public function courses(){
-    if(isset($_GET["search"])){
-      $search = $_GET["search"];
-    }else{
-      $search = "";
+    $parameters = $this->getFilters();
+    $page = $parameters['page'];
+    $filterOption = $parameters['filterOption'];
+    $filterOrder = $parameters['filterOrder'];
+    $search = $parameters['search'];
+
+    if(is_null($search)){
+      $course_count = $this->courses->getCoursesCount();
+    }
+    else{
+      $course_count = $this->courses->getCourseCountSearch($search);
     }
 
-    if(isset($_GET["filter_option"])){
-        $filterOption = $_GET['filter_option'];
-    }else{
-      $filterOption = "name";
+    $offsets = $this->calculateOffsets($course_count, $page);
+
+    $start_page_first_result = $offsets['start_page_first_result'];
+    $results_per_page = $offsets['results_per_page'];
+    $number_of_pages = $offsets['number_of_pages'];
+
+    if(is_null($search)){
+       $courses = $this->courses->fetchCoursesSearch($start_page_first_result, $results_per_page, $filterOption, $filterOrder);
+     }
+    else{
+      $courses = $this->courses->fetchCoursesSearch($start_page_first_result, $results_per_page, $filterOption, $filterOrder, $search);
     }
-
-    if(isset($_GET['action'])){
-      $filterOrder = $_GET["action"];
-    }else{
-      $filterOrder = "DESC";
-    }
-
-    if(isset($_GET['page'])){
-      $page = $_GET['page'];
-    }else{
-      $page = 1;
-    }
-
-    if($search == ""){$course_count = $this->courses->getCoursesCount();}
-    else{$course_count = $this->courses->getCourseCountSearch($search);}
-    $results_per_page = 7;
-    $number_of_pages = ceil($course_count / $results_per_page);
-    $start_page_first_result = ($page-1) * $results_per_page;
-
-    if($search == ""){ $courses = $this->courses->fetchCoursesSearch($start_page_first_result, $results_per_page, $filterOption, $filterOrder);}
-    else{$courses = $this->courses->fetchCoursesSearch($start_page_first_result, $results_per_page, $filterOption, $filterOrder, $search);}
 
     if($page > $number_of_pages){
       Application::$app->redirect('./searchCourses?error=nomatchesfound');
@@ -120,6 +124,18 @@ class ContentController extends Controller
     ];
 
     return $this->display('content/courses', 'courses', $params);
+  }
+
+  private function calculateOffsets($count, $page){
+    $values = array();
+    $results_per_page = 7;
+    $number_of_pages = ceil($count / $results_per_page);
+    $start_page_first_result = ($page-1) * $results_per_page;
+
+    $values['number_of_pages'] = $number_of_pages;
+    $values['results_per_page'] = $results_per_page;
+    $values['start_page_first_result'] = $start_page_first_result;
+    return $values;
   }
 
   public function toggleCourseToDegree(Request $request){

@@ -67,4 +67,23 @@ foreach($degrees as $degree){
   }
 }
 
-echo $fragments[9];
+echo str_replace('---page_id---', "AUTHOR NAME", $fragments[9]);
+
+$index = 1;
+foreach($comments as $comment){
+  $temp = str_replace('---number---', $index, $fragments[10]);
+  $temp = str_replace('---SRC---', 'data:image/jpeg;base64,' . base64_encode($comment->image), $temp);
+  $temp = str_replace('---DISPLAY_NAME---', $comment->display_name, $temp);
+  $temp = str_replace('---text---', $comment->text, $temp);
+  $temp = str_replace('---added---', $comment->added, $temp);
+  echo $temp;
+  if(Session::isLoggedIn()){
+    if($currentPageID == $sessionID || $comment->author == $sessionID){
+      echo str_replace('---ID---', $comment->ID, $fragments[11]);
+    }
+  }
+  echo $fragments[12];
+
+  $index++;
+}
+echo $fragments[13];

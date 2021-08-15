@@ -1,7 +1,7 @@
     <div class="container">
       <div class="filter-bar">
         <form method="get">
-          <h1>Search courses</h1>
+          <h1>Search profiles</h1>
 
           <p>
             Sort by
@@ -16,11 +16,11 @@
           <fieldset name="filter_order">
               <p>Order by</p>
               <input type="radio" name="action" id="track" value="ASC" /><label for="track">ASC</label><br />
-              <input type="radio" name="action" id="event" value="DESC" /><label for="event">DESC</label><br />
+              <input type="radio" name="action" id="event" value="DESC" checked/><label for="event">DESC</label><br />
           </fieldset>
 
           <p>
-            Search after username
+            Search
             <input class="user-input-text" id="email" type="text" name="search" placeholder="Search">
           </p>
 
@@ -62,14 +62,6 @@
             </div>
 
             <div class="content-card-info-buttons">
-              <form action="./profile" method="get">
-                <input type="hidden" name="ID" value="---ID---" />
-                <button type="submit">Visit</button>
-              </form>
-              <form action="./profile" method="get">
-                <input type="hidden" name="ID" value="---ID---" />
-                <button type="submit">Visit</button>
-              </form>
               <form action="./profile" method="get">
                 <input type="hidden" name="ID" value="---ID---" />
                 <button type="submit">Visit</button>

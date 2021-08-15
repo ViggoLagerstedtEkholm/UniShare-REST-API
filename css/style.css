@@ -12,10 +12,54 @@ fieldset{
 
 textarea{
   resize: vertical;
+  width: 100%;
 }
 
 p{
   color:white;
+}
+
+.profile-comment-container{
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #313131;
+  color: white;
+  border-radius: 5px;
+}
+
+.profile-comment-form{
+  background-color: white;
+  padding: 10px;
+  border-radius: 5px;
+  color:black;
+}
+
+.profile-comment{
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  background-color: #403F3F;
+  border-radius: 5px;
+}
+
+.comment-content{
+  margin-top: 5px;
+  padding: 10px;
+  background-color: #313131;
+  border-radius: 5px;
+}
+
+.comment-image{
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  margin-bottom: 15px;
+}
+
+.comment-image img{
+  height: 70px;
+  width: 70px;
+  border-radius: 50%;
 }
 
 
@@ -353,11 +397,13 @@ form .text_field{
 
 .user-description{
   word-wrap: break-word;
+  color: white;
 }
 
 .user-input-form-box{
   padding: 10px;
   background-color: white;
+  color:black;
   border-radius: 5px;
   margin-top: 10px;
 }
@@ -509,7 +555,6 @@ form .text_field{
 }
 
 .content-card-info{
-  display: flex;
   font-size: 15px;
   flex-direction: column;
   text-align: left;

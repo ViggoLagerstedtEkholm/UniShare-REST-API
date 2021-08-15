@@ -1,28 +1,19 @@
 <?php
 namespace App\Controllers;
-use App\Core\Application;
-use App\Core\Session;
 use App\Models\MVCModels\Users;
-use App\Models\MVCModels\Profiles;
-use App\Models\MVCModels\Projects;
 use App\Models\MVCModels\Courses;
-use App\Models\MVCModels\Degrees;
-use App\Core\ImageHandler;
+use App\Core\Session;
 
-class HomeController extends Controller
-{
-  private $displayTopCount = 5;
-
+class HomeController extends Controller{
   public function __construct()
   {
     $this->users = new Users();
     $this->courses = new Courses();
-    $this->degrees = new Degrees();
   }
 
   public function view()
   {
-    $topRankedCourses = $this->courses->getCourses();
+    $topRankedCourses = $this->courses->getTOP10Courses();
     $currentUser = NULL;
     if(Session::exists(SESSION_USERID)){
       $ID = Session::get(SESSION_USERID);

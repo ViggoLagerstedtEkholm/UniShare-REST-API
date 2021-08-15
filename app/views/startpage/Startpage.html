@@ -44,28 +44,41 @@
 
           <hr />
           <h1>Top ranked courses</h1>
-          <div class="wrapper-grid">
+
+
+          <div class="display-result-box">
+
             <!--===edit===-->
-            <div class="wrapper-container-item">
-              <img src='images/books.png' alt='profile image' class="small-image">
+            <p># TOP ---PLACEMENT---</p>
+            <div class="content-card-body">
+              <div class="content-user">
+                <div class="content-card-image">
+                  <img src="images/books.png" alt="USER IMAGE">
+                </div>
 
-              <div class="startpage-top-ranked-box">
-                  <p>Name: ---course_name---</p>
+                <div class="content-card-info">
+                  <h4><b>Course information</b></h4>
+                  <p><b>Name:</b> ---name---</p>
+                </div>
 
-                  <p class="startpage-top-ranked-score">
-                     Score: <b>---score---</b>
-                  </p>
+                <div class="content-card-info">
+                  <h4><b>More</b></h4>
+                  <p><b>Score:</b> ---score---</p>
+                  <p><b>Location:</b> ---location---</p>
+                  <p><b>Added:</b> ---added---</p>
+                </div>
 
-                  <p>Total votes: ---total-votes---</p>
+                <div class="content-card-info-buttons">
+                  <form action="./courses" method="get">
+                    <input type="hidden" name="ID" value="---ID---" />
+                    <button type="submit">Visit</button>
+                  </form>
+                </div>
               </div>
-
-              <form action="./courses" method="get">
-                <input hidden value="---ID---" name="ID"></input>
-                <button type="submit" class="user-profile-project-button-visit">Go to course</button>
-              </form>
             </div>
             <!--===edit===-->
           </div>
+
           <h1>Trending discussions</h1>
         </div>
       </div>

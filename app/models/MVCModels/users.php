@@ -16,35 +16,36 @@ class Users extends Database{
   }
 
  function getUserCountSearch($search){
-   $sql = "SELECT Count(*) FROM users WHERE userDisplayName LIKE ?";
-   $search = '%' . $search . '%';
-   $result = $this->executeQuery($sql, 's', array($search));
+   $MATCH = $this->builtMatchQuery('users', $search, 'usersID');
+   $sql = "SELECT Count(*) FROM users WHERE $MATCH";
+   $result = $this->executeQuery($sql);
    return $result->fetch_assoc()["Count(*)"];
  }
 
  function fetchPeopleSearch($from, $to, $option, $filterOrder, $search = null){
-    $queryBuilder = [
-      "select" => "SELECT usersID, userFirstName, userLastName, userEmail, userDisplayName, userImage, visits, lastOnline FROM users ",
-      "condition" => "WHERE userDisplayName LIKE ? ",
-      "ordering" => "ORDER BY $option $filterOrder ",
-      "LIMIT" => "LIMIT ?, ?;"
-    ];
+   $option ?? $option = "userDisplayName";
+   $filterOrder ?? $filterOrder = "DESC";
+   if(!is_null($search)){
+      $MATCH = $this->builtMatchQuery('users', $search, 'usersID');
 
-    if(is_null($search)){
-      $sql = $queryBuilder["select"] . $queryBuilder["ordering"] . $queryBuilder["LIMIT"];
-    }else{
-      $sql = $queryBuilder["select"] . $queryBuilder["condition"] . $queryBuilder["ordering"] . $queryBuilder["LIMIT"];
-    }
+      $searchQuery = "SELECT *
+                      FROM users
+                      WHERE $MATCH
+                      ORDER BY $option $filterOrder
+                      LIMIT ?, ?;";
 
-    if(is_null($search)){
-      $result = $this->executeQuery($sql, 'ss', array($from, $to));
-    }else{
-      $search = '%' . $search . '%';
-      $result = $this->executeQuery($sql, 'sss', array($search, $from, $to));
-    }
+     $result = $this->executeQuery($searchQuery, 'ii', array($from, $to));
+   }else{
+     $searchQuery = "SELECT *
+                     FROM users
+                     ORDER BY $option $filterOrder
+                     LIMIT ?, ?;";
+
+     $result = $this->executeQuery($searchQuery, 'ii', array($from, $to));
+   }
 
     $users = array();
-    while( $row = $result->fetch_array() )
+    while( $row = $result->fetch_array())
     {
         $ID = $row['usersID'];
         $first_name = $row['userFirstName'];
@@ -184,6 +185,7 @@ class Users extends Database{
       Session::set(SESSION_PRIVILEGE, $privilege);
 
       if($login->rememberMe == "on"){
+          echo "reached";
           $hash = md5(uniqid(rand(), true));
           $user_agent = Session::uagent_no_version();
           Cookie::set(REMEMBER_ME_COOKIE_NAME, $hash, REMEMBER_ME_COOKIE_EXPIRY);

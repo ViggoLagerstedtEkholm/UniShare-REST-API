@@ -12,32 +12,38 @@ class Courses extends Database
   }
 
   function getCourseCountSearch($search){
-    $sql = "SELECT Count(*) FROM courses WHERE name LIKE ?";
-    $search = '%' . $search . '%';
-    $result = $this->executeQuery($sql, 's', array($search));
+    $MATCH = $this->builtMatchQuery('courses', $search, 'courseID');
+    $sql = "SELECT Count(*) FROM courses WHERE $MATCH";
+    $result = $this->executeQuery($sql);
     return $result->fetch_assoc()["Count(*)"];
   }
 
   function fetchCoursesSearch($from, $to, $option, $filterOrder, $search = null){
-     $queryBuilder = [
-       "select" => "SELECT courseID, name, credits, duration, added, fieldOfStudy, location FROM courses ",
-       "condition" => "WHERE name LIKE ? ",
-       "ordering" => "ORDER BY $option $filterOrder ",
-       "LIMIT" => "LIMIT ?, ?;"
-     ];
+    $option ?? $option = "name";
+    $filterOrder ?? $filterOrder = "DESC";
+    if(!is_null($search)){
+       $MATCH = $this->builtMatchQuery('courses', $search, 'courseID');
+       $searchQuery = "SELECT AVG(rating) AS average_rating, courses.*
+                      FROM rating
+                      RIGHT JOIN courses
+                      ON rating.courseID = courses.courseID
+                      WHERE $MATCH
+                      GROUP BY courses.courseID
+                      ORDER BY $option $filterOrder
+                      LIMIT ?, ?;";
 
-     if(is_null($search)){
-       $sql = $queryBuilder["select"] . $queryBuilder["ordering"] . $queryBuilder["LIMIT"];
-     }else{
-       $sql = $queryBuilder["select"] . $queryBuilder["condition"] . $queryBuilder["ordering"] . $queryBuilder["LIMIT"];
-     }
+      $result = $this->executeQuery($searchQuery, 'ii', array($from, $to));
+    }else{
+      $searchQuery = "SELECT AVG(rating) AS average_rating, courses.*
+                      FROM rating
+                      RIGHT JOIN courses
+                      ON rating.courseID = courses.courseID
+                      GROUP BY courses.courseID
+                      ORDER BY $option $filterOrder
+                      LIMIT ?, ?;";
 
-     if(is_null($search)){
-       $result = $this->executeQuery($sql, 'ss', array($from, $to));
-     }else{
-       $search = '%' . $search . '%';
-       $result = $this->executeQuery($sql, 'sss', array($search, $from, $to));
-     }
+    $result = $this->executeQuery($searchQuery, 'ii', array($from, $to));
+    }
 
      $courses = array();
      while( $row = $result->fetch_array())
@@ -50,11 +56,40 @@ class Courses extends Database
          $course->added = $row['added'];
          $course->field_of_study = $row['fieldOfStudy'];
          $course->location = $row['location'];
-         $course->existsInActiveDegree = $this->checkIfCourseExistsInActiveDegree($course->ID);
+         $course->rating = $row['average_rating'] ?? "No ratings";
+         if(Session::isLoggedIn()){
+           $course->existsInActiveDegree = $this->checkIfCourseExistsInActiveDegree($course->ID);
+         }
          $courses[] = $course;
      }
      return $courses;
    }
+
+  function getTOP10Courses(){
+    $sql = "SELECT AVG(rating) AS average_rating, courses.*
+            FROM rating
+            JOIN courses
+            ON rating.courseID = courses.courseID
+            GROUP BY courses.courseID
+            ORDER BY average_rating DESC
+            LIMIT 10;";
+
+    $result = $this->executeQuery($sql);
+
+    $courses = array();
+    while ($row = $result->fetch_assoc())
+    {
+         $course = new Course();
+         $course->ID = $row["courseID"];
+         $course->name = $row["name"];
+         $course->credits = $row["credits"];
+         $course->duration = $row["duration"];
+         $course->fieldOfStudy = $row["fieldOfStudy"];
+         $course->rating = $row['average_rating'];
+         $courses[] = $course;
+     }
+     return $courses;
+  }
 
   function insertCourse(Course $course){
     $sql = "INSERT INTO courses (name, credits, duration, added, fieldOfStudy, location) values(?,?,?,?,?,?);";
@@ -67,7 +102,7 @@ class Courses extends Database
   }
 
   function getArthimetricMeanScore($courseID){
-    $sql = "SELECT SUM(rating), COUNT(*) FROM rating WHERE courseID = ?;";
+    $sql = "SELECT AVG(rating), COUNT(rating) FROM rating WHERE courseID = ?;";
     $result = $this->executeQuery($sql, 'i', array($courseID));
     return $result->fetch_assoc();
   }
@@ -112,7 +147,12 @@ class Courses extends Database
 
   function getCourses(){
    $courses = array();
-   $sql = "SELECT * FROM courses;";
+   $sql = "SELECT AVG(rating) AS average_rating, courses.*
+           FROM rating
+           JOIN courses
+           ON rating.courseID = courses.courseID
+           GROUP BY courses.courseID;";
+
    $result = $this->executeQuery($sql);
 
    while ($row = $result->fetch_assoc())
@@ -123,6 +163,7 @@ class Courses extends Database
         $course->credits = $row["credits"];
         $course->duration = $row["duration"];
         $course->fieldOfStudy = $row["fieldOfStudy"];
+        $course->rating = $row['average_rating'];
         $courses[] = $course;
     }
 
@@ -139,7 +180,7 @@ class Courses extends Database
             JOIN courses
             ON degrees_courses.courseID = courses.courseID
             WHERE courses.courseID = ? AND usersID = ?";
-            
+
     $currentUser = Session::get(SESSION_USERID);
     $result = $this->executeQuery($sql, 'ii', array($courseID, $currentUser));
     $count = $result->fetch_assoc()["COUNT(*)"] ?? null;
