@@ -337,15 +337,18 @@ form .text_field{
 }
 
 .user-image{
-  margin: 10px;
+  display: flex;
+  justify-content: center;
+  margin-left: 40px;
+  margin-right: 40px;
   outline: 2px solid #CCC;
   height: 300px;
   width: auto;
 }
 
 .user-image img{
-  object-fit: cover;
-  height: 100%; width: 100%;
+  width: 100%;
+  height: 100%;
 }
 
 .user-description{

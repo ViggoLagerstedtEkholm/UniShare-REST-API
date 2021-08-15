@@ -1,10 +1,9 @@
 <?php
 use App\Core\Session;
-
 $html = file_get_contents('app/views/profile/profile.html');
 $fragments = explode("<!--===edit===-->", $html);
 //print_r($fragments);
-
+//echo $html;
 $sessionID = false;
 if(Session::isLoggedIn()){
   $sessionID = Session::get('userID');
@@ -49,18 +48,23 @@ foreach ($projects as $item) {
 
   if($sessionID != false){
     if($currentPageID == $sessionID){
-      $project_panel = str_replace('---ID---', $projectID , $fragments[4]);
-      echo str_replace('---LINK---', $link , $project_panel);
+      echo str_replace('---ID---', $projectID , $fragments[4]);
     }
+  }
+  echo $fragments[5];
+}
+
+echo $fragments[6];
+
+foreach($degrees as $degree){
+  echo str_replace('---degree_name---', $degree->name, $fragments[7]);
+  $courses = $degree->courses;
+  foreach($courses as $course){
+    $temp = str_replace('---name---', $course->name, $fragments[8]);
+    $temp = str_replace('---credits---', $course->credits, $temp);
+    $temp = str_replace('---location---', $course->location, $temp);
+    echo str_replace('---ID---', $course->ID, $temp);
   }
 }
 
-echo $fragments[5];
-foreach($courses as $course){
-  $temp = str_replace('---name---', $course->name, $fragments[6]);
-  $temp = str_replace('---credits---', $course->credits, $temp);
-  $temp = str_replace('---location---', $course->location, $temp);
-  echo str_replace('---ID---', $course->ID, $temp);
-}
-
-echo $fragments[7];
+echo $fragments[9];

@@ -22,9 +22,14 @@ class CourseController extends Controller{
       $course = $this->courses->getCourse($ID);
       $result = $this->courses->getArthimetricMeanScore($ID);
       $SUM = $result["SUM(rating)"];
-      $COUNT = $result["COUNT(*)"];
+      $result["COUNT(*)"] == 0 ? $arthimetricMean = "No rating" : $arthimetricMean = $SUM / $result["COUNT(*)"];
 
-      $arthimetricMean = $SUM / $COUNT;
+      if($arthimetricMean == "No rating"){
+        $COUNT = 0;
+      }else{
+        $COUNT = $result["COUNT(*)"];
+      }
+
       $userRating = null;
       if(Session::isLoggedIn()){
         $userRating = $this->courses->getRate(Session::get(SESSION_USERID), $ID);

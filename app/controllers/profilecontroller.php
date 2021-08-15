@@ -39,7 +39,7 @@ class ProfileController extends Controller
         $display_name = $user["userDisplayName"];
         $privilege = $user["privilege"];
 
-        $degrees = $this->degrees->getDegrees(Session::get(SESSION_USERID));
+        $degrees = $this->degrees->getDegrees($ID);
 
         $updatedVisitCount = $this->profiles->addVisitor($ID, $user);
         $projects = $this->projects->getProjects($ID);

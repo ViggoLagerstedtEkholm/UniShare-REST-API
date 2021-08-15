@@ -63,11 +63,11 @@ $app->router->post('/course/setrate', [$courseController, 'setRate']);
 $app->router->post('/degree/upload', [$degreeController, 'uploadDegree']);
 $app->router->post('/degree/remove', [$degreeController, 'removeDegree']);
 $app->router->get('/degrees/get', [$degreeController, 'getDegrees']);
-$app->router->post('/degrees/addcourse', [$degreeController, 'addCourse']);
 
 $app->router->get('/searchPeople', [$contentController, 'people']);
 $app->router->get('/searchDegrees', [$contentController, 'degrees']);
 $app->router->get('/searchCourses', [$contentController, 'courses']);
+$app->router->post('/toggleCourseToDegree', [$contentController, 'toggleCourseToDegree']);
 
 $app->router->get('/admin', [$adminController, 'view']);
 $app->router->post('/admin/course/add', [$adminController, 'addCourse']);

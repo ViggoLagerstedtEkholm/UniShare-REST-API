@@ -10,28 +10,16 @@ use App\Models\MVCModels\UserSession;
 
 class Users extends Database{
  function getUserCount(){
-    if($this->getConnection()->connect_error){
-      die('Connection Failed: ' . $this->getConnection()->connect_error);
-    }else{
-      $changedate = "";
-        $sql = "SELECT COUNT(*) FROM users";
-        $result = $this->getConnection()->query($sql);
-        $count = $result->fetch_assoc()["COUNT(*)"];
-        return $count;
-    }
-    return 0;
+   $sql = "SELECT Count(*) FROM users";
+   $result = $this->executeQuery($sql);
+   return $result->fetch_assoc()["Count(*)"];
   }
 
  function getUserCountSearch($search){
    $sql = "SELECT Count(*) FROM users WHERE userDisplayName LIKE ?";
-   $stmt = mysqli_stmt_init($this->getConnection());
-   mysqli_stmt_prepare($stmt, $sql);
    $search = '%' . $search . '%';
-   mysqli_stmt_bind_param($stmt, "s", $search);
-   mysqli_stmt_execute($stmt);
-   $result = mysqli_stmt_get_result($stmt);
-   $count = $result->fetch_assoc()["Count(*)"];
-   return $count;
+   $result = $this->executeQuery($sql, 's', array($search));
+   return $result->fetch_assoc()["Count(*)"];
  }
 
  function fetchPeopleSearch($from, $to, $option, $filterOrder, $search = null){
@@ -48,18 +36,12 @@ class Users extends Database{
       $sql = $queryBuilder["select"] . $queryBuilder["condition"] . $queryBuilder["ordering"] . $queryBuilder["LIMIT"];
     }
 
-    $stmt = mysqli_stmt_init($this->getConnection());
-    mysqli_stmt_prepare($stmt, $sql);
-
     if(is_null($search)){
-      mysqli_stmt_bind_param($stmt, "ss", $from, $to);
+      $result = $this->executeQuery($sql, 'ss', array($from, $to));
     }else{
       $search = '%' . $search . '%';
-      mysqli_stmt_bind_param($stmt, "sss", $search, $from, $to);
+      $result = $this->executeQuery($sql, 'sss', array($search, $from, $to));
     }
-
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
 
     $users = array();
     while( $row = $result->fetch_array() )
@@ -80,23 +62,13 @@ class Users extends Database{
         $user->visitors = $visitors;
         $users[] = $user;
     }
-
-    mysqli_stmt_close($stmt);
-
     return $users;
   }
 
  function userExists($attribute, $value){
     $sql = "SELECT * FROM users WHERE $attribute = ?;";
-    $stmt = mysqli_stmt_init($this->getConnection());
-
-    mysqli_stmt_prepare($stmt, $sql);
-    mysqli_stmt_bind_param($stmt, "s", $value);
-    mysqli_stmt_execute($stmt);
-    $resultData = mysqli_stmt_get_result($stmt);
-    $row = mysqli_fetch_assoc($resultData);
-    mysqli_stmt_close($stmt);
-
+    $result = $this->executeQuery($sql, 's', array($value));
+    $row = $result->fetch_assoc();
     if(is_null($row)){
       return null;
     }else{
@@ -106,29 +78,17 @@ class Users extends Database{
 
   function updateUser($attribute, $value, $ID){
     $sql = "UPDATE users SET $attribute = ? WHERE usersID = ?;";
-    $stmt = mysqli_stmt_init($this->getConnection());
-    mysqli_stmt_prepare($stmt, $sql);
-    mysqli_stmt_bind_param($stmt, "ss", $value, $ID);
-    mysqli_stmt_execute($stmt);
-
-    mysqli_stmt_close($stmt);
+    $this->insertOrUpdate($sql, 'si', array($value, $ID));
   }
 
  function getUser($ID){
     $sql = "SELECT * FROM users WHERE usersID = ?;";
 
-    $stmt = mysqli_stmt_init($this->getConnection());
-    mysqli_stmt_prepare($stmt, $sql);
-    mysqli_stmt_bind_param($stmt, "s",$ID);
-    mysqli_stmt_execute($stmt);
+    $result = $this->executeQuery($sql, 'i', array($ID));
 
-    $resultData = mysqli_stmt_get_result($stmt);
-
-    if($row = mysqli_fetch_assoc($resultData)){
-      mysqli_stmt_close($stmt);
+    if($row = $result->fetch_assoc()){
       return $row;
     }else{
-      mysqli_stmt_close($stmt);
       return false;
     }
   }
@@ -154,20 +114,11 @@ class Users extends Database{
 
  function register(Register $register){
     $sql = "INSERT INTO users (userFirstName, userLastName, userEmail, userDisplayName, usersPassword) values(?,?,?,?,?);";
-    $stmt = mysqli_stmt_init($this->getConnection());
-    mysqli_stmt_prepare($stmt, $sql);
 
-    $first_name = $register->first_name;
-    $last_name = $register->last_name;
-    $email = $register->email;
-    $display_name = $register->display_name;
     $password = $register->password;
-
     $hashPassword = password_hash($password, PASSWORD_DEFAULT);
 
-    mysqli_stmt_bind_param($stmt, "sssss", $first_name, $last_name, $email, $display_name, $hashPassword);
-    mysqli_stmt_execute($stmt);
-    mysqli_stmt_close($stmt);
+    $this->insertOrUpdate($sql, 'sssss', array($register->first_name, $register->last_name, $register->email, $register->display_name, $hashPassword));
   }
 
  function loginFromCOOKIE(){
@@ -191,14 +142,12 @@ class Users extends Database{
            JOIN users
            ON degrees.userID = users.usersID
            WHERE usersID = ?;";
-   $stmt = $this->getConnection()->prepare($sql);
-   $ID = Session::get(SESSION_USERID);
-   $stmt->bind_param("i", $ID);
-   $stmt->execute();
-   $result = $stmt->get_result();
-   var_dump($result);
-   $IDs = array();
 
+   $ID = Session::get(SESSION_USERID);
+
+   $result = $this->executeQuery($sql, 'i', array($ID));
+
+   $IDs = array();
    while( $row = $result->fetch_array()){
       $IDs[] = $row["degreeID"];
    }

@@ -9,26 +9,14 @@ class Profiles extends Database
   function uploadImage($image, $ID)
   {
     $sql = "UPDATE users SET userImage =? WHERE usersID = ?;";
-
-    $stmt = mysqli_stmt_init($this->getConnection());
-    mysqli_stmt_prepare($stmt, $sql);
-    mysqli_stmt_bind_param($stmt, "si", $image, $ID);
-    mysqli_stmt_execute($stmt);
-    mysqli_stmt_close($stmt);
+    $this->insertOrUpdate($sql, 'si', array($image, $ID));
   }
 
   function addVisitor($ID, $user){
     $visits = $user["visits"];
-
     $updatedVisits = $visits + 1;
-
     $sql = "UPDATE users SET visits =? WHERE usersID = ?;";
-
-    $stmt = mysqli_stmt_init($this->getConnection());
-    mysqli_stmt_prepare($stmt, $sql);
-    mysqli_stmt_bind_param($stmt, "ii", $updatedVisits , $ID);
-    mysqli_stmt_execute($stmt);
-    mysqli_stmt_close($stmt);
+    $this->insertOrUpdate($sql, 'ii', array($updatedVisits , $ID));
     return $updatedVisits;
   }
 
@@ -38,11 +26,7 @@ class Profiles extends Database
     date_default_timezone_set("Europe/Stockholm");
     $Date = date("Y-m-d",time());
 
-    $stmt = mysqli_stmt_init($this->getConnection());
-    mysqli_stmt_prepare($stmt, $sql);
-    mysqli_stmt_bind_param($stmt, "si", $Date, $ID);
-    mysqli_stmt_execute($stmt);
-    mysqli_stmt_close($stmt);
+    $this->insertOrUpdate($sql, 'si', array($Date, $ID));
     return $Date;
   }
 }

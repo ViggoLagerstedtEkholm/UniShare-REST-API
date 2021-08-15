@@ -21,6 +21,36 @@ abstract class Database{
     }
   }
 
+  protected function executeQuery($sql, $types = null, $params = null)
+  {
+      $stmt = $this->getConnection()->prepare($sql);
+      if($params && $types){
+        $stmt->bind_param($types, ...$params);
+      }
+      if(!$stmt->execute()) return false;
+      $result = $stmt->get_result();
+      $stmt->close();
+      return $result;
+  }
+
+  protected function insertOrUpdate($sql, $types = null, $params = null){
+    $stmt = $this->getConnection()->prepare($sql);
+    $stmt->bind_param($types, ...$params);
+    if(!$stmt->execute()){
+      return false;
+    }else{
+      return true;
+    }
+  }
+
+  protected function delete($sql, $types = null, $params = null, $deleteAll = false){
+    $stmt = $this->getConnection()->prepare($sql);
+    if(!$deleteAll && $types && $params){
+      $stmt->bind_param($types, ...$params);
+    }
+    $stmt->execute();
+  }
+
   protected function getConnection(){
     return $this->conn;
   }

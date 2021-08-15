@@ -2,6 +2,7 @@
 namespace App\Controllers;
 use App\Core\Application;
 use App\Models\MVCModels\Degrees;
+use App\Models\MVCModels\Users;
 use App\Middleware\AuthenticationMiddleware;
 use App\Core\Session;
 use App\Models\Templates\Degree;
@@ -14,6 +15,7 @@ class DegreeController extends Controller
   {
     $this->setMiddlewares(new AuthenticationMiddleware(['uploadDegree', 'deleteDegree', 'getDegrees', 'addCourse']));
     $this->degrees = new Degrees();
+    $this->users = new Users();
   }
 
   public function uploadDegree(Request $request){
@@ -42,19 +44,6 @@ class DegreeController extends Controller
 
     $this->degrees->uploadDegree($degree, Session::get(SESSION_USERID));
     Application::$app->redirect("../profile?ID=$ID");
-  }
-
-  public function addCourse(Request $request){
-      $body = $request->getBody();
-      var_dump($body);
-      $courseID = $body["courseID"];
-      $degreeID = $body["degreeID"];
-
-      $this->degrees->insertDegreeCourse($degreeID, $courseID);
-  }
-
-  public function getActiveDegree(){
-    
   }
 
   public function deleteDegree(Request $request){

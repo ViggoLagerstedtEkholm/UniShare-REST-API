@@ -63,9 +63,7 @@
 
         <div class="content-card-info-buttons">
           <!--===edit===-->
-          <form>
-            <button type="submit" onclick="return clickButton(---ID---);">Add course to degree</button>
-          </form>
+          <button id="---ID---" type="submit" onclick="return clickButton(---ID---);">---ADD_REMOVE---</button>
           <!--===edit===-->
 
           <form action="./courses" method="get">
@@ -105,6 +103,30 @@
 <script>
   function clickButton(courseID)
   {
-    alert(courseID);
+    //alert(courseID);
+    //var remove = "REMOVE from degree";
+    //var add = "ADD to degree";
+
+    var element = document.getElementById(courseID);
+
+    $.ajax({
+       url: "./toggleCourseToDegree",
+       type: "POST",
+       data:{courseID: courseID},
+       dataType: "json",
+       success:function(res){
+          var status = res["data"]["Status"];
+          if(status == 'Inserted'){
+            document.getElementById(courseID).innerText = "REMOVE from degree";
+          }else{
+            document.getElementById(courseID).innerText = "ADD to degree";
+
+          }
+       },
+       error:function(res){
+         alert('Error!');
+         console.log(data);
+       }
+     });
   }
 </script>

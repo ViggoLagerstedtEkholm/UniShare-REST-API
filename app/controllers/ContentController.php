@@ -5,6 +5,7 @@ use App\Models\MVCModels\Users;
 use App\Models\MVCModels\Profiles;
 use App\Models\MVCModels\Courses;
 use App\Models\MVCModels\Degrees;
+use App\Core\Request;
 use App\Core\Session;
 
 class ContentController extends Controller
@@ -94,8 +95,6 @@ class ContentController extends Controller
       $page = 1;
     }
 
-    $degrees = $this->degrees->getDegrees(Session::get(SESSION_USERID));
-
     if($search == ""){$course_count = $this->courses->getCoursesCount();}
     else{$course_count = $this->courses->getCourseCountSearch($search);}
     $results_per_page = 7;
@@ -111,7 +110,6 @@ class ContentController extends Controller
 
     $params = [
       'courses' => $courses,
-      'degrees' => $degrees,
       'page' => $page,
       'filterOption' => $filterOption,
       'filterOrder' => $filterOrder,
@@ -123,5 +121,24 @@ class ContentController extends Controller
 
     return $this->display('content/courses', 'courses', $params);
   }
+
+  public function toggleCourseToDegree(Request $request){
+    $body = $request->getBody();
+    $user = $this->users->getUser(Session::get(SESSION_USERID));
+
+    $degreeID = $user["activeDegreeID"];
+    $courseID = $body["courseID"];
+
+    $isInActiveDegree = $this->courses->checkIfCourseExistsInActiveDegree($courseID);
+
+    if($isInActiveDegree){
+      $this->courses->deleteDegreeCourse($degreeID, $courseID);
+      $resp = ['success'=>true,'data'=>['Status'=>'Deleted']];
+      return $this->jsonResponse($resp);
+    }else{
+      $this->courses->insertDegreeCourse($degreeID, $courseID);
+      $resp = ['success'=>true,'data'=>['Status'=>'Inserted']];
+      return $this->jsonResponse($resp);
+    }
+  }
 }
-?>

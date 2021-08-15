@@ -1,6 +1,7 @@
 <?php
 $html = file_get_contents('app/views/content/courses/courses.html');
 $fragments = explode("<!--===edit===-->", $html);
+//print_r($fragments);
 /*
   Render filtering bar and total page-count / page-index / range
 */
@@ -20,7 +21,15 @@ foreach($courses as $course){
   $temp = str_replace('---added---', $course->added, $temp);
   $temp = str_replace('---score---', 0.0, $temp);
   echo str_replace('---courses---', 0, $temp);
-  echo str_replace('---ID---', $course->ID, $fragments[2]);
+
+  if($course->existsInActiveDegree){
+    $temp = str_replace('---ADD_REMOVE---', "REMOVE from degree", $fragments[2]);
+    echo str_replace('---ID---', $course->ID, $temp);
+  }else{
+    $temp = str_replace('---ADD_REMOVE---', "ADD to degree", $fragments[2]);
+    echo str_replace('---ID---', $course->ID, $temp);
+  }
+
   echo str_replace('---ID---', $course->ID, $fragments[3]);
 }
 

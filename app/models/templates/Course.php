@@ -9,4 +9,5 @@ class Course extends Model{
   public string $added = "TODO";
   public string $field_of_study = "TODO";
   public string $location;
+  public bool $existsInActiveDegree = false;
 }

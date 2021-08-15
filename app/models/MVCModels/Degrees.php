@@ -1,44 +1,23 @@
 <?php
 namespace App\Models\MVCModels;
 use App\Models\Templates\Degree;
+use App\Models\Templates\Course;
 
 class Degrees extends Database
 {
   function uploadDegree(Degree $degree, $ID){
     $sql = "INSERT INTO degrees (name, fieldOfStudy, userID, start_date, end_date) values(?,?,?,?,?);";
-
-    $stmt = mysqli_stmt_init($this->getConnection());
-    mysqli_stmt_prepare($stmt, $sql);
-
-    $name = $degree->name;
-    $fieldOfStudy = $degree->field_of_study;
-    $start_date = $degree->start_date;
-    $end_date = $degree->end_date;
-
-    mysqli_stmt_bind_param($stmt, "sssss", $name, $fieldOfStudy, $ID, $start_date, $end_date);
-    mysqli_stmt_execute($stmt);
-    mysqli_stmt_close($stmt);
+    $result = $this->insertOrUpdate($sql, 'sssss', array($degree->name, $degree->field_of_study, $ID, $degree->start_date, $degree->end_date));
   }
 
   function deleteDegree($ID){
     $sql = "DELETE * FROM degrees WHERE degreeID = ?;";
-
-    $stmt = mysqli_stmt_init($this->getConnection());
-    mysqli_stmt_prepare($stmt, $sql);
-    mysqli_stmt_bind_param($stmt, "s", $ID);
-    mysqli_stmt_execute($stmt);
-    mysqli_stmt_close($stmt);
+    $this->delete($sql, 'i', array($ID));
   }
 
   function getDegree($ID){
     $sql = "SELECT * FROM degrees WHERE userID = ?;";
-    $stmt = mysqli_stmt_init($this->getConnection());
-    mysqli_stmt_prepare($stmt, $sql);
-    mysqli_stmt_bind_param($stmt, "s", $ID);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    mysqli_stmt_close($stmt);
-
+    $result = $this->executeQuery($sql, 'i', array($ID));
     $data = $result->fetch_array();
 
     $degree = new Degree();
@@ -50,23 +29,38 @@ class Degrees extends Database
     return $degree;
   }
 
-  function insertDegreeCourse($degreeID, $courseID){
-    $sql = "INSERT INTO degrees_courses (degreeID, courseID) values(?, ?);";
-    $stmt = $this->getConnection()->prepare($sql);
-    $stmt->bind_param("ii", $degreeID, $courseID);
-    $stmt->execute();
+  function getCoursesDegree($degreeID){
+    $sql = "SELECT * FROM courses
+            JOIN degrees_courses
+            ON courses.courseID = degrees_courses.courseID
+            WHERE degreeID = ?;";
+
+    $result = $this->executeQuery($sql, 'i', array($degreeID));
+
+    $courses = array();
+
+    while ($row = $result->fetch_assoc())
+    {
+         $course = new Course();
+         $course->ID = $row["courseID"];
+         $course->name = $row["name"];
+         $course->credits = $row["credits"];
+         $course->duration = $row["duration"];
+         $course->added = $row["added"];
+         $course->fieldOfStudy = $row["fieldOfStudy"];
+         $course->location = $row["location"];
+
+         $courses[] = $course;
+     }
+     return $courses;
   }
 
   function getDegrees($ID){
     $courses = array();
     $sql = "SELECT * FROM degrees WHERE userID = ?;";
-    $stmt = $this->getConnection()->prepare($sql);
-    $stmt->bind_param("i", $ID);
-    $stmt->execute();
-    $result = $stmt->get_result(); // get the mysqli result
+    $result = $this->executeQuery($sql, 'i', array($ID));
 
     $degrees = array();
-
     while ($row = $result->fetch_assoc())
     {
          $degree = new Degree();
@@ -75,6 +69,9 @@ class Degrees extends Database
          $degree->field_of_study = $row["fieldOfStudy"];
          $degree->start_date = $row["start_date"];
          $degree->end_date = $row["end_date"];
+
+         $courses = $this->getCoursesDegree($degree->ID);
+         $degree->courses = $courses;
          $degrees[] = $degree;
      }
      return $degrees;
