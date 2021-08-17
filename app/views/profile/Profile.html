@@ -89,16 +89,6 @@
 
             <div>
               <h3>
-                Completed courses
-              </h3>
-            </div>
-
-            <p>
-              ---Completed_courses---
-            </p>
-
-            <div>
-              <h3>
                 Account status
               </h3>
             </div>
@@ -125,6 +115,7 @@
             <div class="profile-tab">
               <button class="tablinks" onclick="openTab(event, 'Projects')">Projects</button>
               <button class="tablinks" onclick="openTab(event, 'Degrees')">Degrees</button>
+              <button class="tablinks" onclick="openTab(event, 'Publications')">Publications</button>
             </div>
 
             <div id="Projects" class="profile-tabcontent">
@@ -132,6 +123,7 @@
                 Projects
               </h3>
 
+              <!--===edit===-->
               <div class="user-input-form-box">
                 <h3> Enter project information</h3>
                 <form method="post" enctype='multipart/form-data' action='./profile/upload/project'>
@@ -155,33 +147,48 @@
                   </p>
                 </form>
               </div>
+              <!--===edit===-->
 
               <hr />
 
-              <div class="wrapper-grid">
+              <div class="user-projects-box">
                 <!--===edit===-->
-                <div class="wrapper-container-item">
-                  <img src='---PROJECT-SRC---' alt='profile image' class="medium-image">
+                <div class="course-container">
+                  <div class="project">
+                    <div class="project-card">
+                      <img src='---PROJECT-SRC---' alt='profile image' class="project-image">
 
-                  <div class="user-profile-project-description-box">
-                    <h1>---name---</h1>
+                      <div class="project-line"></div>
+
+                      <div class="user-profile-project-description-box">
+                        <h2>Name</h2>
+                        <p>---name---</p>
+
+                        <h2>Description</h2>
+                        <p class="project-description">
+                          dawdwadwaadw dawdwadwaadwdawdwadwaadw dawdwadwaadw dawdwadwaadw dawdwadwaadwdawdwadwaadw dawdwadwaadwdawdwadwaadw dawdwadwaadwdawdwadwaadw dawdwadwaadw
+                        </p>
+
+                        <h2>External link</h2>
+                        <p>
+                          <a href="---LINK---">---LINK---</a>
+                        </p>
+                      </div>
+                    </div>
+                    <form action="./project">
+                      <input hidden value="---ID---" name="ID"></input>
+                      <button type="submit" class="user-profile-project-button-visit">Go to project details</button>
+                    </form>
+
+                    <!--===edit===-->
+                    <form action='./profile/delete/project' method="post">
+                      <input hidden value="Delete" name="---ID---"></input>
+                      <button type="submit" class="user-profile-project-button-delete">Delete</button>
+                    </form>
+                    <!--===edit===-->
                   </div>
-
-                  <form action="./project">
-                    <input hidden value="---ID---" name="ID"></input>
-                    <button type="submit" class="user-profile-project-button-visit">Go to project details</button>
-                  </form>
-
-                  <!--===edit===-->
-                  <form action='./profile/delete/project' method="post">
-                    <input hidden value="Delete" name="---ID---"></input>
-                    <button type="submit" class="user-profile-project-button-delete">Delete</button>
-                  </form>
-                  <!--===edit===-->
-
                 </div>
                 <!--===edit===-->
-
               </div>
             </div>
 
@@ -190,6 +197,7 @@
                 Degrees
               </h3>
 
+              <!--===edit===-->
               <div class="user-input-form-box">
                 <form method="post" enctype='multipart/form-data' action="./degree/upload">
                   <h4>
@@ -217,6 +225,7 @@
                   </p>
                 </form>
               </div>
+              <!--===edit===-->
 
               <div class="degree-box">
                 <!--===edit===-->
@@ -249,9 +258,48 @@
                 <!--===edit===-->
               </div>
             </div>
+
+            <div id="Publications" class="profile-tabcontent">
+              <h3 class="user-input-form-box">
+                Publications
+              </h3>
+
+              <!--===edit===-->
+              <div class="user-input-form-box">
+                <form method="post" enctype='multipart/form-data' action="./degree/upload">
+                  <h4>
+                    Publications name
+                  </h4>
+                  <input class="user-input-text" type="text" name="name" placeholder="Degree name">
+                  <h4>
+                    Field of study
+                  </h4>
+                  <input class="user-input-text" type="text" name="field_of_study" placeholder="Field of study">
+                  <h4>
+                    Start date
+                  </h4>
+                  <input class="user-input-text" type="date" name="start_date" placeholder="Start date">
+                  <h4>
+                    End date
+                  </h4>
+                  <input class="user-input-text" type="date" name="end_date" placeholder="End date">
+                  <h4>
+                    Location
+                  </h4>
+                  <input class="user-input-text" type="text" name="location" placeholder="Location">
+                  <p>
+                    <input class="user-profile-project-button-upload" type="submit" name="submit_project" value="Upload">
+                  </p>
+                </form>
+              </div>
+              <!--===edit===-->
+
+            </div>
           </div>
         </div>
       </div>
+
+      <hr />
 
       <div class="profile-comment-container">
         <div class="profile-comment-form">
@@ -274,7 +322,6 @@
           <!--===edit===-->
           <div class="profile-comment">
             # ---number---
-            <hr />
 
             <br />
             <div class="comment-image">

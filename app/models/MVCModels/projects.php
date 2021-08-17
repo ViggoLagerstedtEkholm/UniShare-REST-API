@@ -34,7 +34,7 @@ class Projects extends Database{
   }
 
   function getProject($ID){
-    $SQL = "SELECT * FROM projects WHERE projectID = ?;";
+    $sql = "SELECT * FROM projects WHERE projectID = ?;";
     $result = $this->executeQuery($sql, 'i', array($ID));
     return $result->fetch_assoc();
   }

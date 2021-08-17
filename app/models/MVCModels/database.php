@@ -37,8 +37,10 @@ abstract class Database{
     $stmt = $this->getConnection()->prepare($sql);
     $stmt->bind_param($types, ...$params);
     if(!$stmt->execute()){
+      $stmt->close();
       return false;
     }else{
+      $stmt->close();
       return true;
     }
   }
@@ -49,6 +51,7 @@ abstract class Database{
       $stmt->bind_param($types, ...$params);
     }
     $stmt->execute();
+    $stmt->close();
   }
 
   protected function builtMatchQuery($table, $search, $avoidID){

@@ -16,15 +16,21 @@ class ContentController extends Controller
 
   private function getFilters(){
     if(isset($_GET["search"])){
-      $search = $_GET["search"];
+      empty($_GET["search"]) ? $search = null : $search = $_GET["search"];
+    }else{
+      $search = null;
     }
 
     if(isset($_GET["filter_option"])){
-        $filterOption = $_GET['filter_option'];
+      empty($_GET["filter_option"]) ? $filterOption = null : $filterOption = $_GET["filter_option"];
+    }else{
+      $filterOption = null;
     }
 
     if(isset($_GET['action'])){
-      $filterOrder = $_GET["action"];
+      empty($_GET["action"]) ? $filterOrder = null : $filterOrder = $_GET["action"];
+    }else{
+      $filterOrder = null;
     }
 
     if(isset($_GET['page'])){
@@ -33,7 +39,7 @@ class ContentController extends Controller
       $page = 1;
     }
 
-    return ['search' => $search ?? null, 'filterOption' => $filterOption ?? null, 'filterOrder' => $filterOrder ?? null, 'page' => $page];
+    return ['search' => $search, 'filterOption' => $filterOption, 'filterOrder' => $filterOrder, 'page' => $page];
   }
 
   public function people(){
@@ -101,7 +107,7 @@ class ContentController extends Controller
     $results_per_page = $offsets['results_per_page'];
     $number_of_pages = $offsets['number_of_pages'];
 
-    if(is_null($search)){
+    if(is_null($search) && empty($search)){
        $courses = $this->courses->fetchCoursesSearch($start_page_first_result, $results_per_page, $filterOption, $filterOrder);
      }
     else{

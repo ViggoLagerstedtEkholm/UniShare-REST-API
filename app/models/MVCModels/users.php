@@ -132,9 +132,11 @@ class Users extends Database{
    if($session != '' && $ID != '' && !empty($userSession)){
     $user = $this->getUser($ID);
     $email = $user["userEmail"];
+    $privilege = $user["privilege"];
 
     Session::set(SESSION_USERID, $ID);
     Session::set(SESSION_MAIL, $email);
+    Session::set(SESSION_PRIVILEGE, $privilege);
   }
  }
 

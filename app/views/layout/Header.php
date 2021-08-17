@@ -18,7 +18,7 @@ if($isError == 0){
 
     echo str_replace('---navigation---', $headerLinks, $fragments[0]);
   }
-
+  
   if(Session::exists(SESSION_PRIVILEGE)){
     $privilege = Session::get(SESSION_PRIVILEGE);
     if($privilege == ADMIN){

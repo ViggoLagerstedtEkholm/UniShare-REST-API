@@ -21,6 +21,7 @@ class Courses extends Database
   function fetchCoursesSearch($from, $to, $option, $filterOrder, $search = null){
     $option ?? $option = "name";
     $filterOrder ?? $filterOrder = "DESC";
+    
     if(!is_null($search)){
        $MATCH = $this->builtMatchQuery('courses', $search, 'courseID');
        $searchQuery = "SELECT AVG(rating) AS average_rating, courses.*
@@ -89,6 +90,34 @@ class Courses extends Database
          $courses[] = $course;
      }
      return $courses;
+  }
+  
+  function getPopularityRank($courseID){
+    $sql = "SELECT * 
+            FROM
+            (SELECT courseID, COUNT(rating), ROW_NUMBER() OVER (ORDER BY COUNT(rating) DESC) AS POPULARITY_RANK
+            FROM rating 
+            GROUP BY courseID
+            ORDER BY AVG(rating) DESC) AS POPULARITY
+            WHERE POPULARITY.courseID = ?;";
+            
+  return $this->executeQuery($sql, "i", array($courseID));
+  }
+  
+  function getOverallRankingRating($courseID){
+    $sql = "SELECT * 
+            FROM
+            (SELECT courseID, AVG(rating), ROW_NUMBER() OVER (ORDER BY AVG(rating) DESC) AS RATING_RANK
+            FROM rating 
+            GROUP BY courseID
+            ORDER BY AVG(rating) DESC) AS RANKINGS
+            WHERE RANKINGS.courseID = ?;";
+            
+    return $this->executeQuery($sql, "i", array($courseID));
+  }
+  
+  function getRecommendedCount($courseID){
+    
   }
 
   function insertCourse(Course $course){

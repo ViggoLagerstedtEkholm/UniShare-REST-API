@@ -14,6 +14,8 @@ use App\Controllers\ContentController;
 use App\Controllers\CourseController;
 use App\Controllers\AdminController;
 use App\Controllers\DegreeController;
+use App\Controllers\RequestController;
+use App\Controllers\ForumController;
 
 require_once(__DIR__ . '/config.php');
 
@@ -28,6 +30,8 @@ $contentController = new ContentController();
 $courseController = new CourseController();
 $adminController = new AdminController();
 $degreeController = new DegreeController();
+$requestController = new RequestController();
+$forumController = new ForumController();
 
 if(Cookie::exists(REMEMBER_ME_COOKIE_NAME) && !Session::exists(SESSION_USERID)){
   $authenticationController->loginWithCookie();
@@ -59,7 +63,9 @@ $app->router->post('/settings/update', [$settingsController, 'update']);
 
 $app->router->get('/courses', [$courseController, 'view']);
 $app->router->get('/course/getrate', [$courseController, 'getRate']);
+$app->router->get('/review', [$courseController, 'review']);
 $app->router->post('/course/setrate', [$courseController, 'setRate']);
+$app->router->post('/course/upload/review', [$courseController, 'uploadReview']);
 
 $app->router->post('/degree/upload', [$degreeController, 'uploadDegree']);
 $app->router->post('/degree/remove', [$degreeController, 'removeDegree']);
@@ -77,5 +83,9 @@ $app->router->post('/admin/course/update', [$adminController, 'updateCourse']);
 $app->router->post('/admin/users/add', [$adminController, 'addUser']);
 $app->router->post('/admin/users/remove', [$adminController, 'removeUser']);
 $app->router->post('/admin/users/update', [$adminController, 'updateUser']);
+
+$app->router->get('/request', [$requestController, 'view']);
+
+$app->router->get('/forum', [$forumController, 'view']);
 
 $app->run();

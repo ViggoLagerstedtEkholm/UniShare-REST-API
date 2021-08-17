@@ -19,6 +19,9 @@ class CourseController extends Controller{
       $course = $this->courses->getCourse($ID);
       $result = $this->courses->getArthimetricMeanScore($ID);
 
+      $POPULARITY_RANK = $this->courses->getPopularityRank($ID)->fetch_assoc()["POPULARITY_RANK"];
+      $RATING_RANK = $this->courses->getOverallRankingRating($ID)->fetch_assoc()["RATING_RANK"];
+
       $arthimetricMean = $result["AVG(rating)"];
       $COUNT = $result["COUNT(rating)"];
 
@@ -31,7 +34,9 @@ class CourseController extends Controller{
         "rating" => $userRating,
         "course" => $course,
         "score" => $arthimetricMean,
-        "total_votes" => $COUNT
+        "total_votes" => $COUNT,
+        "POPULARITY_RANK" => $POPULARITY_RANK,
+        "RATING_RANK" => $RATING_RANK
       ];
 
       return $this->display('courses','courses', $params);
@@ -53,5 +58,13 @@ class CourseController extends Controller{
     $rating = $this->courses->getRate(Session::get(SESSION_USERID), $courseID);
     $resp = ['success'=>true,'data'=>['rating'=>$rating]];
     return $this->jsonResponse($resp);
+  }
+
+  public function review(){
+    return $this->display('courses','review', []);
+  }
+
+  public function uploadReview(Request $request){
+    //TODO
   }
 }
