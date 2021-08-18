@@ -19,6 +19,10 @@ p{
   color:white;
 }
 
+a{
+  color: white;
+}
+
 .profile-comment-container{
   padding: 10px;
   margin-top: 10px;
@@ -146,7 +150,7 @@ p{
 }
 
 .project{
-  background: linear-gradient(138deg, rgba(0,23,32,1) 0%, rgba(18,9,42,1) 22%, rgba(8,24,32,1) 48%, rgba(0,26,46,1) 100%);
+  background: linear-gradient(90deg, rgba(37,42,45,1) 0%, rgba(34,26,55,1) 10%, rgba(25,29,31,1) 24%, rgba(30,34,37,1) 100%);
   padding: 10px;
   border-radius: 5px;
 }
@@ -202,7 +206,7 @@ p{
 
 
 /*BUTTON STYLES */
-.user-profile-project-button-upload {
+.button-style-1 {
   background-color: #4008cc;
   border: none;
   color: white;
@@ -211,12 +215,14 @@ p{
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
+  margin-top: 5px;
   width: 100%;
   cursor: pointer;
   border:none;
+  border-radius: 5px;
 }
 
-.user-profile-project-button-delete {
+.button-style-2 {
   background-color: #c72a44;
   color: white;
   padding: 16px 32px;
@@ -227,6 +233,21 @@ p{
   width: 100%;
   cursor: pointer;
   border:none;
+  border-radius: 5px;
+}
+
+.button-style-3 {
+  background-color: #5cf04f;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  width: 80%;
+  cursor: pointer;
+  border:none;
+  border-radius: 5px;
 }
 
 .user-profile-project-button-visit {
@@ -254,7 +275,12 @@ p{
   border:none;
 }
 
-.user-profile-project-button-delete:hover {
+.button-style-3:hover {
+  background-color: #308029;
+  color: white;
+}
+
+.button-style-2:hover {
   background-color: #852636;
   color: white;
 }
@@ -269,7 +295,7 @@ p{
   color: white;
 }
 
-.user-profile-project-button-upload:hover{
+.button-style-1:hover{
   background-color: #1e045e;
   color: white;
 }

@@ -14,8 +14,6 @@ if(!is_null($currentUser)){
   $temp = str_replace('---last_name---', $currentUser['userLastName'], $temp);
   $temp = str_replace('---email---', $currentUser['userEmail'], $temp);
   $temp = str_replace('---visits---', $currentUser['visits'], $temp);
-  $temp = str_replace('---projects---', 0, $temp);
-  $temp = str_replace('---courses---', 0, $temp);
   $temp = str_replace('---last_online---', $currentUser['lastOnline'], $temp);
   $temp = str_replace('---ID---', $currentUser['usersID'], $temp);
   echo $temp;
@@ -28,8 +26,12 @@ foreach($courses as $item){
   $temp = str_replace('---PLACEMENT---', $index, $temp);
   $temp = str_replace('---name---', $item->name, $temp);
   $temp = str_replace('---score---', $item->rating , $temp);
-  $temp = str_replace('---location---', $item->location, $temp);
+  $temp = str_replace('---country---', $item->country, $temp);
+  $temp = str_replace('---city---', $item->city, $temp);
   $temp = str_replace('---added---', $item->added, $temp);
+  $temp = str_replace('---university---', $item->university, $temp);
+  $temp = str_replace('---duration---', $item->duration, $temp);
+  $temp = str_replace('---credits---', $item->credits, $temp);
   echo $temp;
   $index++;
 }

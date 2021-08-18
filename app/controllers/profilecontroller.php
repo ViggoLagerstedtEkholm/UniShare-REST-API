@@ -4,24 +4,29 @@ use App\Core\Application;
 use App\Core\Request;
 use App\Core\Session;
 use App\Core\ImageHandler;
-use App\Models\MVCModels\Profiles;
 use App\Models\MVCModels\Users;
 use App\Models\MVCModels\Projects;
 use App\Models\MVCModels\Degrees;
+use App\Models\MVCModels\Comments;
 use App\Includes\Validate;
 use App\Models\Templates\Project;
 use App\Middleware\AuthenticationMiddleware;
 
-class ProfileController extends Controller
-{
+class ProfileController extends Controller{
+  private $imageHandler;
+  private $users;
+  private $projects;
+  private $degrees;
+  private $comments;
+
   public function __construct(){
     $this->setMiddlewares(new AuthenticationMiddleware(['uploadImage', 'uploadProject', 'deleteProject', 'pubishCourse', 'getDegrees']));
 
     $this->imageHandler = new ImageHandler();
-    $this->profiles = new Profiles();
     $this->users = new Users();
     $this->projects = new Projects();
     $this->degrees = new Degrees();
+    $this->comments = new Comments();
   }
 
   public function view(Request $request)
@@ -38,16 +43,16 @@ class ProfileController extends Controller
         $display_name = $user["userDisplayName"];
         $privilege = $user["privilege"];
 
-        $comments = $this->profiles->getComments($ID);
+        $comments = $this->comments->getComments($ID);
         $degrees = $this->degrees->getDegrees($ID);
-        $updatedVisitCount = $this->profiles->addVisitor($ID, $user);
+        $updatedVisitCount = $this->users->addVisitor($ID, $user);
         $projects = $this->projects->getProjects($ID);
 
         if(Session::isLoggedIn()){
           $sessionID = Session::get(SESSION_USERID);
 
           if($ID == $sessionID){
-            $date = $this->profiles->addVisitDate($sessionID);
+            $date = $this->users->addVisitDate($sessionID);
           }
         }
 
@@ -77,7 +82,7 @@ class ProfileController extends Controller
 
     if($image_object != false){
       $image_resize = $this->imageHandler->handleUploadResizing($image_object);
-      $this->profiles->uploadImage($image_resize, $sessionID);
+      $this->users->uploadImage($image_resize, $sessionID);
       Application::$app->redirect("../../profile?ID=$sessionID");
     }else{
       Application::$app->redirect("../../profile?ID=$sessionID&error=" . INVALID_UPLOAD);
@@ -133,15 +138,30 @@ class ProfileController extends Controller
      Application::$app->redirect("../../profile?ID=$sessionID");
   }
 
+  public function deleteComment(Request $request){
+    $body = $request->getBody();
+    $commentID = $body['commentID'];
+
+    $canRemove = $this->comments->checkIfUserAuthor(Session::get(SESSION_USERID), $commentID);
+
+    if($canRemove){
+      $this->comments->deleteComment($commentID);
+      $resp = ['success'=>true,'data'=>['Status'=>true, 'ID'=>$commentID]];
+      return $this->jsonResponse($resp);
+    }else{
+      $resp = ['success'=>true,'data'=>['Status'=>false, 'ID'=>$commentID]];
+      return $this->jsonResponse($resp);
+    }
+  }
+
   public function addComment(Request $request){
     $body = $request->getBody();
 
     $posterID = Session::get(SESSION_USERID);
-
     $text = $body['text'];
     $profileID = $body['pageID'];
 
-    $succeeded = $this->profiles->addComment($posterID, $profileID, $text);
+    $succeeded = $this->comments->addComment($posterID, $profileID, $text);
     if($succeeded){
       $resp = ['success'=>true,'data'=>['Status'=>'Added comment']];
       return $this->jsonResponse($resp);

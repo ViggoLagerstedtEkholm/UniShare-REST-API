@@ -3,6 +3,7 @@ namespace App\Controllers;
 use App\Models\MVCModels\Projects;
 
 class ProjectController extends Controller{
+  private $projects;
 
   function __construct(){
     $this->projects = new Projects();

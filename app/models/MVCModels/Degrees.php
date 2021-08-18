@@ -41,16 +41,16 @@ class Degrees extends Database
 
     while ($row = $result->fetch_assoc())
     {
-         $course = new Course();
-         $course->ID = $row["courseID"];
-         $course->name = $row["name"];
-         $course->credits = $row["credits"];
-         $course->duration = $row["duration"];
-         $course->added = $row["added"];
-         $course->fieldOfStudy = $row["fieldOfStudy"];
-         $course->location = $row["location"];
-
-         $courses[] = $course;
+        $course = new Course();
+        $course->ID = $row['courseID'];
+        $course->name = $row['name'];
+        $course->credits = $row['credits'];
+        $course->duration = $row['duration'];
+        $course->added = $row['added'];
+        $course->country = $row['country'];
+        $course->city = $row['city'];
+        $course->university = $row['university'];
+        $courses[] = $course;
      }
      return $courses;
   }

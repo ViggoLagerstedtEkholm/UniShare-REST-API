@@ -9,9 +9,9 @@ $temp = str_replace('---name---', $course->name, $fragments[1]);
 $temp = str_replace('---credits---', $course->credits, $temp);
 $temp = str_replace('---duration---', $course->duration, $temp);
 $temp = str_replace('---added---', $course->added, $temp);
-$temp = str_replace('---field---', $course->field_of_study, $temp);
-$temp = str_replace('---location---', "TODO", $temp);
-$temp = str_replace('---university---', "TODO", $temp);
+$temp = str_replace('---country---', $course->country, $temp);
+$temp = str_replace('---city---', $course->city, $temp);
+$temp = str_replace('---university---', $course->university, $temp);
 echo $temp;
 echo $fragments[2];
 
@@ -19,11 +19,13 @@ $temp = str_replace('---score---', $score, $fragments[3]);
 $temp = str_replace('---total_votes---', $total_votes, $temp);
 $temp = str_replace('---popularity-rank---', $POPULARITY_RANK, $temp);
 $temp = str_replace('---ranking-rank---', $RATING_RANK, $temp);
+$temp = str_replace(' ---reviews--- ', $amountOfReviews, $temp);
 echo $temp;
 echo $fragments[4];
 
 if(Session::isLoggedIn()){
-  echo str_replace('---rating---', $rating, $fragments[5]);
+  $temp = str_replace('---rating---', $rating, $fragments[5]);
+  echo str_replace('---ID---', $course->ID, $temp);
 }
 
 echo $fragments[6];
@@ -33,3 +35,18 @@ if(Session::isLoggedIn()){
 }
 
 echo $fragments[8];
+
+foreach($reviews as $review){
+  $temp = str_replace('---userImage---', 'data:image/jpeg;base64,'. $review->userImage, $fragments[9]);
+  $temp = str_replace('---userDisplayName---', $review->userDisplayName, $temp);
+  $temp = str_replace('---text---', $review->text, $temp);
+  $temp = str_replace('---fulfilling---', $review->fulfilling, $temp);
+  $temp = str_replace('---environment---', $review->environment, $temp);
+  $temp = str_replace('---difficulty---', $review->difficulty, $temp);
+  $temp = str_replace('---grading---', $review->grading, $temp);
+  $temp = str_replace('---litterature---', $review->litterature, $temp);
+  $temp = str_replace('---overall---', $review->overall, $temp);
+  echo $temp;
+}
+
+echo $fragments[10];

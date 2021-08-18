@@ -20,13 +20,6 @@ abstract class Controller{
   public string $action = '';
   protected array $middlewares = [];
 
-  protected ?ImageHandler $imageHandler;
-  protected ?Profiles $profiles;
-  protected ?Users $users;
-  protected ?Projects $projects;
-  protected ?Courses $courses;
-  protected ?Degrees $degrees;
-
   public function setMiddlewares(Middleware $middleware)
   {
       $this->middlewares[] = $middleware;

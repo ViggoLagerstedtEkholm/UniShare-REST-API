@@ -18,7 +18,13 @@ class AdminController extends Controller{
   }
 
   public function view(){
-    return $this->display('admin', 'admin', []);
+    $courses = $this->courses->getRequestedCourses();
+    
+    $params = [
+      "courses" => $courses
+    ];
+    
+    return $this->display('admin', 'admin', $params);
   }
 
   public function addCourse(Request $request){
@@ -27,29 +33,8 @@ class AdminController extends Controller{
     $this->courses->insertCourse($course);
     Application::$app->redirect('../../admin');
   }
-
-  public function updateUser()
-  {
-    // code...
-  }
-
-  public function removeUser()
-  {
-    // code...
-  }
-
-  public function addUser()
-  {
-    // code...
-  }
-
-  public function removeCourse()
-  {
-    // code...
-  }
-
-  public function updateCourse()
-  {
-    // code...
+  
+  public function approveRequest(Request $request){
+    //Get all the data from the request ID and inser it into courses.
   }
 }

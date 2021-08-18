@@ -5,6 +5,9 @@ use App\Models\MVCModels\Courses;
 use App\Core\Session;
 
 class HomeController extends Controller{
+  private $users;
+  private $courses;
+
   public function __construct()
   {
     $this->users = new Users();

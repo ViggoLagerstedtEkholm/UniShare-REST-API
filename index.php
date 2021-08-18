@@ -52,7 +52,10 @@ $app->router->post('/profile/upload/image', [$profileController, 'uploadImage'])
 $app->router->post('/profile/upload/image', [$profileController, 'uploadImage']);
 $app->router->post('/profile/upload/project', [$profileController, 'uploadProject']);
 $app->router->post('/profile/delete/project', [$profileController, 'deleteProject']);
-$app->router->post('/profile/comment', [$profileController, 'addComment']);
+$app->router->post('/profile/add/comment', [$profileController, 'addComment']);
+$app->router->post('/profile/delete/comment', [$profileController, 'deleteComment']);
+
+
 
 $app->router->get('/project', [$projectController, 'view']);
 
@@ -63,9 +66,10 @@ $app->router->post('/settings/update', [$settingsController, 'update']);
 
 $app->router->get('/courses', [$courseController, 'view']);
 $app->router->get('/course/getrate', [$courseController, 'getRate']);
-$app->router->get('/review', [$courseController, 'review']);
 $app->router->post('/course/setrate', [$courseController, 'setRate']);
+$app->router->get('/review', [$courseController, 'review']);
 $app->router->post('/course/upload/review', [$courseController, 'uploadReview']);
+$app->router->post('/course/request', [$courseController, 'request']);
 
 $app->router->post('/degree/upload', [$degreeController, 'uploadDegree']);
 $app->router->post('/degree/remove', [$degreeController, 'removeDegree']);

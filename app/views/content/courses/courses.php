@@ -18,7 +18,9 @@ foreach($courses as $course){
   $temp = str_replace('---credits---', $course->credits , $temp);
   $temp = str_replace('---duration---', $course->duration, $temp);
   $temp = str_replace('---score---', $course->rating, $temp);
-  $temp = str_replace('---location---', $course->location, $temp);
+  $temp = str_replace('---university---', $course->university, $temp);
+  $temp = str_replace('---country---', $course->country, $temp);
+  $temp = str_replace('---city---', $course->city, $temp);
   $temp = str_replace('---added---', $course->added, $temp);
   $temp = str_replace('---score---', 0.0, $temp);
   echo str_replace('---courses---', 0, $temp);
@@ -26,9 +28,13 @@ foreach($courses as $course){
   if(Session::isLoggedIn()){
     if($course->existsInActiveDegree){
       $temp = str_replace('---ADD_REMOVE---', "REMOVE from degree", $fragments[2]);
+      $temp = str_replace('---CSS---', "button-style-2", $temp);
+
       echo str_replace('---ID---', $course->ID, $temp);
     }else{
       $temp = str_replace('---ADD_REMOVE---', "ADD to degree", $fragments[2]);
+      $temp = str_replace('---CSS---', "button-style-3", $temp);
+
       echo str_replace('---ID---', $course->ID, $temp);
     }
   }

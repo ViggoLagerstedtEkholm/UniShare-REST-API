@@ -39,25 +39,19 @@ if($sessionID != false){
 
 echo $fragments[4];
 
-foreach ($projects as $item) {
-  $projectID = $item->ID;
-  $name = $item->name;
-  $description = $item->description;
-  $link = $item->link;
-  $image = $item->image;
+foreach ($projects as $project) {
+  $project_panel = str_replace('---name---', $project->name, $fragments[5]);
+  $project_panel = str_replace('---ID---', $project->ID, $project_panel);
+  $project_panel = str_replace('---PROJECT-SRC---', 'data:image/jpeg;base64,'.$project->image, $project_panel);
+  $project_panel = str_replace('---LINK---', $project->link, $project_panel);
+  $project_panel = str_replace('---description---', $project->description, $project_panel);
 
-  $project_image = 'data:image/jpeg;base64,'.$image;
 
-  $length = strlen($name);
-  $project_panel = str_replace('---name---', $length > 10 ? substr($name, 0, 10) . "..." : $name, $fragments[5]);
-  $project_panel = str_replace('---ID---', $projectID , $project_panel);
-  $project_panel = str_replace('---PROJECT-SRC---', $project_image , $project_panel);
-  $project_panel = str_replace('---LINK---', $link, $project_panel);
   echo $project_panel;
 
   if($sessionID != false){
     if($currentPageID == $sessionID){
-      echo str_replace('---ID---', $projectID , $fragments[6]);
+      echo str_replace('---ID---', $project->ID , $fragments[6]);
     }
   }
   echo $fragments[7];
@@ -74,29 +68,33 @@ if($sessionID != false){
 echo $fragments[10];
 
 foreach($degrees as $degree){
-  echo str_replace('---degree_name---', $degree->name, $fragments[11]);
+  echo $fragments[11];
+
+  echo str_replace('---degree_name---', $degree->name, $fragments[12]);
   $courses = $degree->courses;
   foreach($courses as $course){
-    $temp = str_replace('---name---', $course->name, $fragments[12]);
+    $temp = str_replace('---name---', $course->name, $fragments[13]);
     $temp = str_replace('---credits---', $course->credits, $temp);
-    $temp = str_replace('---location---', $course->location, $temp);
+    $temp = str_replace('---university---', $course->university, $temp);
     echo str_replace('---ID---', $course->ID, $temp);
   }
-}
-echo $fragments[13];
+  echo $fragments[14];
 
+}
+echo $fragments[15];
 
 if($sessionID != false){
   if($currentPageID == $sessionID){
-    echo $fragments[14];
+    echo $fragments[16];
   }
 }
 
-echo $fragments[15];
+echo $fragments[17];
 
 $index = 1;
 foreach($comments as $comment){
-  $temp = str_replace('---number---', $index, $fragments[16]);
+  $temp = str_replace('---ID---', $comment->ID, $fragments[18]);
+  $temp = str_replace('---number---', $index, $temp);
   $temp = str_replace('---SRC---', 'data:image/jpeg;base64,' . base64_encode($comment->image), $temp);
   $temp = str_replace('---DISPLAY_NAME---', $comment->display_name, $temp);
   $temp = str_replace('---text---', $comment->text, $temp);
@@ -104,11 +102,11 @@ foreach($comments as $comment){
   echo $temp;
   if(Session::isLoggedIn()){
     if($currentPageID == $sessionID || $comment->author == $sessionID){
-      echo str_replace('---ID---', $comment->ID, $fragments[17]);
+      echo str_replace('---ID---', $comment->ID, $fragments[19]);
     }
   }
-  echo $fragments[18];
+  echo $fragments[20];
 
   $index++;
 }
-echo $fragments[19];
+echo $fragments[21];

@@ -1,13 +1,13 @@
-    <div class="container">
+<div class="container">
       <div class="content-container">
         <div class="fixed">
           <div class="user-profile">
             <div class="user-image">
               <img src="---SRC---" alt="USER IMAGE">
             </div>
-            <hr />
 
             <!--===edit===-->
+            <hr />
 
             <form method='post' enctype='multipart/form-data' action='./profile/upload/image'>
               <p>
@@ -151,8 +151,8 @@
 
               <hr />
 
+              <!--===edit===-->
               <div class="user-projects-box">
-                <!--===edit===-->
                 <div class="course-container">
                   <div class="project">
                     <div class="project-card">
@@ -166,30 +166,30 @@
 
                         <h2>Description</h2>
                         <p class="project-description">
-                          dawdwadwaadw dawdwadwaadwdawdwadwaadw dawdwadwaadw dawdwadwaadw dawdwadwaadwdawdwadwaadw dawdwadwaadwdawdwadwaadw dawdwadwaadwdawdwadwaadw dawdwadwaadw
+                          ---description---
                         </p>
 
                         <h2>External link</h2>
-                        <p>
-                          <a href="---LINK---">---LINK---</a>
-                        </p>
+
+                        <a href="---LINK---">---LINK---</a>
+
                       </div>
                     </div>
+                    <!--===edit===-->
                     <form action="./project">
                       <input hidden value="---ID---" name="ID"></input>
-                      <button type="submit" class="user-profile-project-button-visit">Go to project details</button>
+                      <button type="submit" class="user-profile-project-button-visit">Edit</button>
                     </form>
 
-                    <!--===edit===-->
                     <form action='./profile/delete/project' method="post">
                       <input hidden value="Delete" name="---ID---"></input>
-                      <button type="submit" class="user-profile-project-button-delete">Delete</button>
+                      <button type="submit" class="button-style-2">Delete</button>
                     </form>
                     <!--===edit===-->
                   </div>
                 </div>
-                <!--===edit===-->
               </div>
+              <!--===edit===-->
             </div>
 
             <div id="Degrees" class="profile-tabcontent">
@@ -227,6 +227,9 @@
               </div>
               <!--===edit===-->
 
+              <hr />
+
+              <!--===edit===-->
               <div class="degree-box">
                 <!--===edit===-->
                 <div class="degree-info-panel">
@@ -242,21 +245,22 @@
                     </div>
 
                     <div class="content-card-info">
-                      <p><b>Name:</b> ---name---</p>
-                      <p><b>Credits: </b> ---credits---</p>
-                      <p><b>Location: </b>---location---</p>
+                      <p><b>Name:</b>---name---</p>
+                      <p><b>Credits: </b>---credits---</p>
+                      <p><b>University: </b>---university---</p>
                     </div>
 
                     <div class="content-card-info-buttons">
                       <form action="./courses" method="get">
                         <input type="hidden" name="ID" value="---ID---" />
-                        <button type="submit">Go to course page</button>
+                        <button class="button-style-1" type="submit">Go to course page</button>
                       </form>
                     </div>
                   </div>
                 </div>
                 <!--===edit===-->
               </div>
+              <!--===edit===-->
             </div>
 
             <div id="Publications" class="profile-tabcontent">
@@ -293,7 +297,8 @@
                 </form>
               </div>
               <!--===edit===-->
-
+              <hr />
+              <h1>~ Coming soon!</h1>
             </div>
           </div>
         </div>
@@ -318,8 +323,8 @@
           Comments
         </h3>
 
-        <div id="comment-list">
-          <!--===edit===-->
+        <!--===edit===-->
+        <div id="---ID---">
           <div class="profile-comment">
             # ---number---
 
@@ -337,11 +342,12 @@
             <hr />
             <b>Comment date: ---added---</b>
             <!--===edit===-->
-            <input class="user-profile-project-button-delete" value="Delete comment" onclick="return addComment(---ID---);">
+            <input class="button-style-2" value="Delete comment" id="---ID---" onclick="return deleteComment(---ID---);">
             <!--===edit===-->
           </div>
-          <!--===edit===-->
         </div>
+        <!--===edit===-->
+
       </div>
     </div>
 
@@ -375,14 +381,30 @@
       }
 
       function deleteComment(ID){
-
+        $.ajax({
+           url: "./profile/delete/comment",
+           type: "POST",
+           data:{commentID: ID},
+           dataType: "json",
+           success:function(res){
+             console.log(res);
+             var canRemove = res["data"]["Status"];
+             if(canRemove){
+               var ID = res["data"]["ID"];
+               document.getElementById(ID).remove();
+             }
+           },
+           error:function(res){
+             console.log(res);
+           }
+         });
       }
 
       function addComment(){
         var text = document.getElementById("text").value;
 
         $.ajax({
-           url: "./profile/comment",
+           url: "./profile/add/comment",
            type: "POST",
            data:{pageID: findGetParameter("ID"), text: text},
            dataType: "json",

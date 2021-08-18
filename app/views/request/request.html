@@ -1,9 +1,66 @@
 <div class="container">
   <div class="request-course-container">
     <h2>Request to add course</h2>
-    
+
     <p>
     Do you have a course that is not currently in the database and want it to be added? Submit this form for admins to review, this process will take 1-2 days maximum.
     </p>
+
+    <h2 class="user-input-form-box">
+      Add course
+    </h2>
+
+    <div class="user-input-form-box">
+      <h3> Enter course</h3>
+      <form method="post" action="./course/request">
+        <input class="user-input-text" type="text" name="name" placeholder="Course name">
+        <input class="user-input-text" type="number" name="credits" placeholder="Credits">
+        <input class="user-input-text" type="number" name="duration" placeholder="Duration (months)">
+        <input class="user-input-text" type="text" name="country" placeholder="Country">
+        <input class="user-input-text" type="text" name="city" placeholder="City">
+        <input class="user-input-text" type="text" name="university" placeholder="@University">
+        <textarea class="user-input-text" type="text" name="description" placeholder="Enter description"></textarea>
+        <p>
+          <input class="button-style-1" type="submit" name="submit_project" value="Upload">
+        </p>
+      </form>
+    </div>
+
+    <hr />
+
+    <h2 class="user-input-form-box">
+      Your pending requests
+    </h2>
+    <!--===edit===-->
+    <div class="content-card-body">
+      <div class="content-user">
+        <div class="content-card-image">
+          <img src="images/books.png" alt="USER IMAGE">
+        </div>
+
+        <div class="content-card-info">
+          <h4><b>Course information</b></h4>
+          <p><b>Name:</b> ---name---</p>
+          <p><b>Credits:</b> ---credits---</p>
+          <p><b>Duration: </b>---duration---</p>
+          <p><b>University: </b>---university---</p>
+        </div>
+
+        <div class="content-card-info">
+          <h4><b>More</b></h4>
+          <p><b>Score:</b> ---score---</p>
+          <p><b>Country:</b> ---country---</p>
+          <p><b>City:</b> ---city---</p>
+          <p><b>Added:</b> ---added---</p>
+        </div>
+
+        <div class="content-card-info-buttons">
+          <!--===edit===-->
+          <button class="button-style-3" id="---ID---" type="submit" onclick="return clickButton(---ID---);">---ADD_REMOVE---</button>
+          <!--===edit===-->
+        </div>
+      </div>
+    </div>
+    <!--===edit===-->
   </div>
 </div>

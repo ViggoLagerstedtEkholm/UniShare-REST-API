@@ -8,6 +8,9 @@ use App\Core\Session;
 
 class ContentController extends Controller
 {
+  private $users;
+  private $courses;
+
   public function __construct()
   {
     $this->users = new Users();

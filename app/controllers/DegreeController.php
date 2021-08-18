@@ -11,6 +11,9 @@ use App\Middleware\AuthenticationMiddleware;
 
 class DegreeController extends Controller
 {
+  private $degrees;
+  private $users;
+
   public function __construct()
   {
     $this->setMiddlewares(new AuthenticationMiddleware(['uploadDegree', 'deleteDegree', 'getDegrees', 'addCourse']));
@@ -20,6 +23,8 @@ class DegreeController extends Controller
 
   public function uploadDegree(Request $request){
     $degree = new Degree();
+    var_dump($request->getBody());
+    exit();
     $degree->populateAttributes($request->getBody());
 
     $error = array();
@@ -46,7 +51,7 @@ class DegreeController extends Controller
   }
 
   public function deleteDegree(Request $request){
-    
+
   }
 
   public function getDegrees(){

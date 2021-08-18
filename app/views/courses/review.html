@@ -2,11 +2,11 @@
   <div class="request-course-container">
     <div class="user-input-form-box">
       <form method="post" action="./course/upload/review">
-        
+        <input name="courseID" value="---ID---" hidden />
         <div class="course-rate-box">
           <div class="course-rate-cell">
-            <h4>Difficulty</h4>
-            <select>
+            <h4>Fulfilling</h4>
+            <select id="fulfilling" name="fulfilling">
               <option value="0">0 (Default)</option>
               <option value="1">1</option>
               <option value="2">2</option>
@@ -20,10 +20,27 @@
               <option value="10">10</option>
             </select>
           </div>
-          
+
+          <div class="course-rate-cell">
+            <h4>Environment</h4>
+            <select id="environment" name="environment">
+              <option value="0">0 (Default)</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+            </select>
+          </div>
+
           <div class="course-rate-cell">
             <h4>Difficulty</h4>
-            <select>
+            <select id="difficulty" name="difficulty">
               <option value="0">0 (Default)</option>
               <option value="1">1</option>
               <option value="2">2</option>
@@ -37,27 +54,10 @@
               <option value="10">10</option>
             </select>
           </div>
-          
-          <div class="course-rate-cell">
-            <h4>Difficulty</h4>
-            <select>
-              <option value="0">0 (Default)</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
-              <option value="7">7</option>
-              <option value="8">8</option>
-              <option value="9">9</option>
-              <option value="10">10</option>
-            </select>
-          </div>
-          
+
           <div class="course-rate-cell">
             <h4>Grading</h4>
-            <select>
+            <select id="grading" name="grading">
               <option value="0">0 (Default)</option>
               <option value="1">1</option>
               <option value="2">2</option>
@@ -71,10 +71,10 @@
               <option value="10">10</option>
             </select>
           </div>
-        
+
           <div class="course-rate-cell">
             <h4>Litterature</h4>
-            <select>
+            <select id="litterature" name="litterature">
               <option value="0">0 (Default)</option>
               <option value="1">1</option>
               <option value="2">2</option>
@@ -88,10 +88,10 @@
               <option value="10">10</option>
             </select>
           </div>
-          
+
           <div class="course-rate-cell">
             <h4>Overall</h4>
-            <select>
+            <select id="overall" name="overall">
               <option value="0">0 (Default)</option>
               <option value="1">1</option>
               <option value="2">2</option>
@@ -110,18 +110,14 @@
         <h4>
           Write a review
         </h4>
-        <textarea class="user-input-text" type="text" name="name" placeholder="Text"></textarea>
-        <h4>
-          Recommend?
-          <input type="checkbox" value="Recommend"/>
-        </h4>
+        <textarea class="user-input-text" type="text" name="text" placeholder="Text"></textarea>
         <p>
-          <input class="user-profile-project-button-upload" type="submit" name="submit_project" value="Upload">
+          <input class="button-style-1" type="submit" name="submit_project" value="Upload">
         </p>
       </form>
     </div>
     <div class="review-info">
-      
+
     </div>
   </div>
 </div>

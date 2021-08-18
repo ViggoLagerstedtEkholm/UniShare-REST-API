@@ -9,6 +9,7 @@ use App\Middleware\AuthenticationMiddleware;
 use App\Includes\Validate;
 
 class AuthenticationController extends Controller{
+  private $users;
 
   public function __construct(){
     $this->setMiddlewares(new AuthenticationMiddleware(['logout']));

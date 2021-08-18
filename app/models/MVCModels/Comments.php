@@ -1,45 +1,36 @@
 <?php
 namespace App\Models\MVCModels;
-use App\Models;
 use App\Models\MVCModels\Database;
 use App\Models\Templates\Comment;
-use App\Core\Application;
 
-class Profiles extends Database
-{
-  function uploadImage($image, $ID)
-  {
-    $sql = "UPDATE users SET userImage =? WHERE usersID = ?;";
-    $this->insertOrUpdate($sql, 'si', array($image, $ID));
-  }
-
-  function addVisitor($ID, $user){
-    $visits = $user["visits"];
-    $updatedVisits = $visits + 1;
-    $sql = "UPDATE users SET visits =? WHERE usersID = ?;";
-    $this->insertOrUpdate($sql, 'ii', array($updatedVisits , $ID));
-    return $updatedVisits;
-  }
-
-  function addVisitDate($ID){
-    $sql = "UPDATE users SET lastOnline =? WHERE usersID = ?;";
-
-    date_default_timezone_set("Europe/Stockholm");
-    $date = date("Y-m-d",time());
-
-    $this->insertOrUpdate($sql, 'si', array($date, $ID));
-    return $date;
-  }
-
+class Comments extends Database{
   function addComment($posterID, $profileID, $comment){
     date_default_timezone_set("Europe/Stockholm");
     $date = date("Y-m-d",time());
-
+  
     $sql = "INSERT INTO profileComment (text, date, author, profile) values(?,?,?,?);";
-
+  
     return $this->insertOrUpdate($sql, 'ssii', array($comment, $date, $posterID, $profileID));
   }
-
+  
+  function checkIfUserAuthor($userID, $commentIDtoDelete){
+    $sql = "SELECT commentID FROM profilecomment WHERE author = ?;";
+    $result = $this->executeQuery($sql, 'i', array($userID));
+    
+    while($row = $result->fetch_array())
+    {
+      if($row["commentID"] == $commentIDtoDelete){
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  function deleteComment($commentID){
+    $sql = "DELETE FROM profilecomment WHERE commentID = ?;";
+    $this->executeQuery($sql, 'i', array($commentID));
+  }
+  
   function getComments($profileID){
     $sql = "SELECT profileComment.*, userImage, userDisplayName
             FROM profileComment
@@ -47,7 +38,7 @@ class Profiles extends Database
             ON author = usersID
             WHERE profile = ?;";
     $result = $this->executeQuery($sql, 'i', array($profileID));
-
+  
     $comments = array();
     while( $row = $result->fetch_array())
     {
@@ -60,7 +51,7 @@ class Profiles extends Database
         $comment->added = $row['date'];
         $comment->image = $row["userImage"];
         $comment->display_name = $row["userDisplayName"];
-
+  
         $comments[] = $comment;
     }
     return $comments;

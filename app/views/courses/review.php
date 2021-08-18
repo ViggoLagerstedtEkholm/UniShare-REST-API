@@ -1,4 +1,4 @@
 <?php
 $html = file_get_contents('app/views/courses/review.html');
-//$ID = $_GET["ID"];
+$html = str_replace('---ID---', $_GET["ID"], $html);
 echo $html;

@@ -8,6 +8,8 @@ use App\Core\Application;
 use App\Includes\Validate;
 
 class SettingsController extends Controller{
+  private $users;
+
   function __construct(){
     $this->setMiddlewares(new AuthenticationMiddleware(['view', 'deleteAccount', 'getSettings', 'update']));
     $this->users = new Users();
@@ -98,7 +100,6 @@ class SettingsController extends Controller{
 
     return $this->jsonResponse($resp);
   }
-
 
   public function deleteAccount(){
     //TODO
