@@ -1,19 +1,10 @@
 <?php
 namespace App\Controllers;
-
 use App\Middleware\Middleware;
-
 use App\Core\Application;
 use App\Core\Session;
 use App\Core\Request;
 use App\Core\ImageHandler;
-
-use App\Models\MVCModels\Users;
-use App\Models\MVCModels\Profiles;
-use App\Models\MVCModels\Projects;
-use App\Models\MVCModels\Courses;
-use App\Models\MVCModels\Degrees;
-
 use App\Includes\Validate;
 
 abstract class Controller{
@@ -34,10 +25,10 @@ abstract class Controller{
     return Application::$app->router->renderView($folder, $page, $params);
   }
 
-  public function jsonResponse($resp){
+  public function jsonResponse($resp, $code){
     header("Access-Control-Allow-Origin: *");
     header("Content-Type: applicaton/json; charset=UTF-8");
-    http_response_code(200);
+    http_response_code($code);
     return json_encode($resp);
   }
 }

@@ -14,7 +14,7 @@
                 <input type='file' name='file' value='Upload' />
               </p>
               <p>
-                <input class="user-profile-project-button-upload" type='submit' name='submit_image' value='Upload' />
+                <input class="button-style-1" type='submit' name='submit_image' value='Upload' />
               </p>
             </form>
             <hr />
@@ -105,7 +105,7 @@
               </h3>
             </div>
             <div class="user-description">
-              testadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwatestadwawddwadawwa
+              ---description---
             </div>
           </div>
         </div>
@@ -124,35 +124,15 @@
               </h3>
 
               <!--===edit===-->
-              <div class="user-input-form-box">
-                <h3> Enter project information</h3>
-                <form method="post" enctype='multipart/form-data' action='./profile/upload/project'>
-                  <input class="user-input-text" type="text" name="link" placeholder="Enter link">
-                  <input class="user-input-text" type="text" name="name" placeholder="Project name">
-                  <br />
-                  <textarea class="user-input-text" type="text" name="description" placeholder="Enter description"></textarea>
-                  <p>
-                    Project image
-                    <input type='file' name='project-file' value='Upload' />
-                  </p>
-
-                  <br />
-                  Render image with only text.
-                  <input type="checkbox" name="customCheck">
-                  <p>
-                    <input class="user-input-text" type="text" name="custom" placeholder="TEXT">
-                  </p>
-                  <p>
-                    <input class="user-profile-project-button-upload" type="submit" name="submit_project" value="Upload">
-                  </p>
+                <form method="get" action="./project_add">
+                  <input class="button-style-1" type='submit' name='add project' value='Upload new project'/>
                 </form>
-              </div>
               <!--===edit===-->
 
               <hr />
 
               <!--===edit===-->
-              <div class="user-projects-box">
+              <div id="project----ID---" class="user-projects-box">
                 <div class="course-container">
                   <div class="project">
                     <div class="project-card">
@@ -173,18 +153,17 @@
 
                         <a href="---LINK---">---LINK---</a>
 
+                        <p>
+                          <b>Added: ---date---</b>
+                        </p>
                       </div>
                     </div>
                     <!--===edit===-->
-                    <form action="./project">
+                    <form action="./project_update">
                       <input hidden value="---ID---" name="ID"></input>
                       <button type="submit" class="user-profile-project-button-visit">Edit</button>
                     </form>
-
-                    <form action='./profile/delete/project' method="post">
-                      <input hidden value="Delete" name="---ID---"></input>
-                      <button type="submit" class="button-style-2">Delete</button>
-                    </form>
+                      <button type="submit" class="button-style-2" onclick="return deleteProject(---ID---);">Delete</button>
                     <!--===edit===-->
                   </div>
                 </div>
@@ -198,33 +177,9 @@
               </h3>
 
               <!--===edit===-->
-              <div class="user-input-form-box">
-                <form method="post" enctype='multipart/form-data' action="./degree/upload">
-                  <h4>
-                    Degree name
-                  </h4>
-                  <input class="user-input-text" type="text" name="name" placeholder="Degree name">
-                  <h4>
-                    Field of study
-                  </h4>
-                  <input class="user-input-text" type="text" name="field_of_study" placeholder="Field of study">
-                  <h4>
-                    Start date
-                  </h4>
-                  <input class="user-input-text" type="date" name="start_date" placeholder="Start date">
-                  <h4>
-                    End date
-                  </h4>
-                  <input class="user-input-text" type="date" name="end_date" placeholder="End date">
-                  <h4>
-                    Location
-                  </h4>
-                  <input class="user-input-text" type="text" name="location" placeholder="Location">
-                  <p>
-                    <input class="user-profile-project-button-upload" type="submit" name="submit_project" value="Upload">
-                  </p>
-                </form>
-              </div>
+              <form method="get" action="./degree_new">
+                <input class="button-style-1" type='submit' name='add degree' value='Upload new degree'/>
+              </form>
               <!--===edit===-->
 
               <hr />
@@ -234,11 +189,15 @@
                 <!--===edit===-->
                 <div class="degree-info-panel">
                   <h1>---degree_name---</h1>
+                  <h4>---school---</h4>
+                  <h4>---country---</h4>
+                  <h4>---city---</h4>
+
                   <h3>Included courses</h3>
                 </div>
 
                 <!--===edit===-->
-                <div class="content-card-body">
+                <div id="course----ID---" class="content-card-body">
                   <div class="content-user">
                     <div class="content-card-image">
                       <img src="images/books.png" alt="USER IMAGE">
@@ -255,6 +214,8 @@
                         <input type="hidden" name="ID" value="---ID---" />
                         <button class="button-style-1" type="submit">Go to course page</button>
                       </form>
+                      
+                      <button class="button-style-2" id="---ID---" onclick="return removeCourse(---DEGREE-ID---, ---ID---);">Remove course</button>
                     </div>
                   </div>
                 </div>
@@ -269,33 +230,9 @@
               </h3>
 
               <!--===edit===-->
-              <div class="user-input-form-box">
-                <form method="post" enctype='multipart/form-data' action="./degree/upload">
-                  <h4>
-                    Publications name
-                  </h4>
-                  <input class="user-input-text" type="text" name="name" placeholder="Degree name">
-                  <h4>
-                    Field of study
-                  </h4>
-                  <input class="user-input-text" type="text" name="field_of_study" placeholder="Field of study">
-                  <h4>
-                    Start date
-                  </h4>
-                  <input class="user-input-text" type="date" name="start_date" placeholder="Start date">
-                  <h4>
-                    End date
-                  </h4>
-                  <input class="user-input-text" type="date" name="end_date" placeholder="End date">
-                  <h4>
-                    Location
-                  </h4>
-                  <input class="user-input-text" type="text" name="location" placeholder="Location">
-                  <p>
-                    <input class="user-profile-project-button-upload" type="submit" name="submit_project" value="Upload">
-                  </p>
-                </form>
-              </div>
+              <form method="get" action="./publications">
+                <input class="button-style-1" type='submit' name='add publication' value='Upload new publication'/>
+              </form>
               <!--===edit===-->
               <hr />
               <h1>~ Coming soon!</h1>
@@ -378,6 +315,46 @@
         }
         document.getElementById(tabName).style.display = "block";
         evt.currentTarget.className += " active";
+      }
+
+      function removeCourse(degreeID, courseID){
+        $.ajax({
+           url: "./profile/delete/course",
+           type: "POST",
+           data:{courseID: courseID, degreeID: degreeID},
+           dataType: "json",
+           success:function(res){
+             console.log(res);
+             var canRemove = res["data"]["Status"];
+             if(canRemove){
+               var ID = res["data"]["ID"];
+               document.getElementById("course-" + ID).remove();
+             }
+           },
+           error:function(res){
+             console.log(res);
+           }
+         });
+      }
+
+      function deleteProject(ID){
+        $.ajax({
+           url: "./project/delete",
+           type: "POST",
+           data:{projectID: ID},
+           dataType: "json",
+           success:function(res){
+             console.log(res);
+             var canRemove = res["data"]["Status"];
+             if(canRemove){
+               var ID = res["data"]["ID"];
+               document.getElementById("project-" + ID).remove();
+             }
+           },
+           error:function(res){
+             console.log(res);
+           }
+         });
       }
 
       function deleteComment(ID){

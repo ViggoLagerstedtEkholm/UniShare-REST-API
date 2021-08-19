@@ -1,0 +1,55 @@
+<div class="container">
+   <div class="content-container">
+     <div class="flex-item">
+       <div class="user-input-form-box">
+         <h3> Enter project information</h3>
+         <form method="post" enctype='multipart/form-data' action='./project/upload'>
+           <input class="user-input-text" type="text" name="link" placeholder="Enter link">
+           <input class="user-input-text" type="text" name="name" placeholder="Project name">
+           <br />
+           <textarea class="user-input-text" type="text" name="description" placeholder="Enter description"></textarea>
+           <p>
+             Project image
+             <input class="form-text" type='file' name='project-file' value='Upload' />
+           </p>
+
+           <h3>Create default image with text</h3>
+           <input type='hidden'  name='customCheck' value='Off'>
+           <input type="checkbox" name="customCheck" value="On">
+           <p>
+             <input class="user-input-text" type="text" name="custom" placeholder="TEXT">
+           </p>
+           <p>
+             <input class="button-style-1" type="submit" name="submit_project" value="Upload">
+           </p>
+         </form>
+       </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  var projectID = document.getElementById('projectID').value;
+  console.log(projectID);
+
+  $.ajax ( {
+      url: "./project/get",
+      type: 'GET',
+      data:{projectID: projectID},
+      dataType: "json",
+      success: function ( res ){
+        console.log(res);
+        var name = res['data']['Name'];
+        var link = res['data']['Link'];
+        var description = res['data']['Description'];
+
+        document.getElementById("name").value = name;
+        document.getElementById("link").value = link;
+        document.getElementById("description").value = description;
+      },
+      error: function ( res ){
+        console.log(res);
+      }
+  });
+</script>

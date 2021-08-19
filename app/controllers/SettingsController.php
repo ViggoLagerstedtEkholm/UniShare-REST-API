@@ -2,6 +2,7 @@
 namespace App\Controllers;
 use App\Middleware\AuthenticationMiddleware;
 use App\Models\MVCModels\Users;
+use App\Models\MVCModels\Degrees;
 use App\Core\Session;
 use App\Core\Request;
 use App\Core\Application;
@@ -9,10 +10,12 @@ use App\Includes\Validate;
 
 class SettingsController extends Controller{
   private $users;
+  private $degrees;
 
   function __construct(){
     $this->setMiddlewares(new AuthenticationMiddleware(['view', 'deleteAccount', 'getSettings', 'update']));
     $this->users = new Users();
+    $this->degrees = new Degrees();
   }
 
   public function view(){
@@ -20,7 +23,7 @@ class SettingsController extends Controller{
   }
 
   public function update(Request $request){
-    $fields = ["userFirstName", "userLastName", "userEmail", "userDisplayName", "usersPassword", "activeDegreeID"];
+    $fields = ["userFirstName", "userLastName", "userEmail", "userDisplayName", "usersPassword", "activeDegreeID", "description"];
 
     $updatedInfo = $request->getBody();
 
@@ -31,6 +34,7 @@ class SettingsController extends Controller{
     $updated_current_password = $updatedInfo["current_password"];
     $updated_new_password = $updatedInfo["new_password"];
     $updated_activeDegreeID = $updatedInfo["activeDegreeID"];
+    $updated_description = $updatedInfo["description"];
 
     $user = $this->users->getUser(Session::get(SESSION_USERID));
     $ID = $user["usersID"];
@@ -40,10 +44,11 @@ class SettingsController extends Controller{
     $display_name = $user["userDisplayName"];
     $passwordHash = $user["usersPassword"];
     $activeDegreeID = $user["activeDegreeID"];
+    $description = $user["description"];
 
     $error = array();
 
-    if(!$this->users->userHasDegreeID($updated_activeDegreeID)){
+    if(!$this->degrees->userHasDegreeID($updated_activeDegreeID)){
       $error [] = INVALID_ACTIVEDEGREEID;
     }
 
@@ -80,6 +85,7 @@ class SettingsController extends Controller{
       Application::$app->redirect("../settings?error=" . $URL);
       exit();
     }
+    if($updated_description != $description){$this->users->updateUser($fields[6], $updated_description, $ID);}
     if($updated_activeDegreeID != $activeDegreeID){$this->users->updateUser($fields[5], $updated_activeDegreeID, $ID);}
     if($updated_first_name != $first_name){$this->users->updateUser($fields[0], $updated_first_name, $ID);}
     if($updated_last_name != $last_name){$this->users->updateUser($fields[1], $updated_last_name, $ID);}
@@ -98,7 +104,7 @@ class SettingsController extends Controller{
 
     $resp = ['success'=>true,'data'=>['email'=>$email,'first_name'=>$first_name,'last_name'=>$last_name,'display_name'=>$display_name, 'description' => $description]];
 
-    return $this->jsonResponse($resp);
+    return $this->jsonResponse($resp, 200);
   }
 
   public function deleteAccount(){

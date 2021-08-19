@@ -140,30 +140,6 @@ class Users extends Database{
   }
  }
 
- function userHasDegreeID($newActiveDegreeID){
-   $sql = "SELECT degreeID FROM degrees
-           JOIN users
-           ON degrees.userID = users.usersID
-           WHERE usersID = ?;";
-
-   $ID = Session::get(SESSION_USERID);
-
-   $result = $this->executeQuery($sql, 'i', array($ID));
-
-   $IDs = array();
-   while( $row = $result->fetch_array()){
-      $IDs[] = $row["degreeID"];
-   }
-
-   $exists = in_array($newActiveDegreeID, $IDs);
-
-   if($exists){
-     return true;
-   }else{
-     return false;
-   }
- }
-
  function login(Login $login){
     $userSession = new UserSession();
     $user = $this->userExists("userEmail", $login->email);

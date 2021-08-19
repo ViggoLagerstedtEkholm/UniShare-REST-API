@@ -3,7 +3,6 @@ namespace App\Controllers;
 use App\Core\Application;
 use App\Core\Session;
 use App\Core\Request;
-use App\Includes\Validate;
 use App\Models\MVCModels\Degrees;
 use App\Models\MVCModels\Users;
 use App\Models\Templates\Degree;
@@ -16,48 +15,58 @@ class DegreeController extends Controller
 
   public function __construct()
   {
-    $this->setMiddlewares(new AuthenticationMiddleware(['uploadDegree', 'deleteDegree', 'getDegrees', 'addCourse']));
+    $this->setMiddlewares(new AuthenticationMiddleware(['view', 'uploadDegree', 'deleteDegree', 'updateDegree', 'getdegrees']));
     $this->degrees = new Degrees();
     $this->users = new Users();
   }
 
+  public function add(){
+    return $this->display('degrees/add','degrees', []);
+  }
+
+  public function update(){
+    return $this->display('degrees/update','degrees', []);
+  }
+
   public function uploadDegree(Request $request){
     $degree = new Degree();
-    var_dump($request->getBody());
-    exit();
-    $degree->populateAttributes($request->getBody());
+    $body = $request->getBody();
+    $userID = Session::get(SESSION_USERID);
 
-    $error = array();
-    if(Validate::hasEmptyInputDegree($degree) === true){
-      $error [] = EMPTY_FIELDS;
-    }
-    if(Validate::hasInvalidDates($degree->start_date, $degree->end_date) === true){
-      $error [] = INVALID_DATES;
-    }
+    $params = [
+      "name" => $body["name"],
+      "field_of_study" => $body["field_of_study"],
+      "start_date" => $body["start_date"],
+      "end_date" => $body["end_date"],
+      "country" => $body["country"],
+      "city" => $body["city"],
+      "university" => $body["university"],
+    ];
 
-    $URL;
-    $errorCount = count($error);
-    if($errorCount > 0){
-      for ($x = 0; $x < $errorCount; $x++) {
-        $x == $errorCount - 1 ? $URL .= $error[$x] : $URL .= $error[$x] . "&error=";
-      }
-      $ID = Session::get(SESSION_USERID);
-      Application::$app->redirect("../profile?ID=$ID&error=" . $URL);
+    $errors = $this->degrees->validate($params);
+
+    if(count($errors) > 0){
+      $errorList = http_build_query(array('error' => $errors));
+      Application::$app->redirect("../profile?ID=$userID&$errorList");
       exit();
     }
 
-    $this->degrees->uploadDegree($degree, Session::get(SESSION_USERID));
+    $this->degrees->uploadDegree($params, Session::get(SESSION_USERID));
     Application::$app->redirect("../profile?ID=$ID");
+  }
+  
+  public function getDegrees(){
+    $degrees = $this->degrees->getDegrees(Session::get(SESSION_USERID));
+    $resp = ['success'=>true,'data'=>['degrees'=>$degrees]];
+    return $this->jsonResponse($resp, 200);
+  }
+
+  public function updateDegree(Request $request){
+
   }
 
   public function deleteDegree(Request $request){
 
-  }
-
-  public function getDegrees(){
-    $degrees = $this->degrees->getDegrees(Session::get(SESSION_USERID));
-    $resp = ['success'=>true,'data'=>['degrees'=>$degrees]];
-    return $this->jsonResponse($resp);
   }
 }
 ?>

@@ -159,11 +159,11 @@ class ContentController extends Controller
     if($isInActiveDegree){
       $this->courses->deleteDegreeCourse($degreeID, $courseID);
       $resp = ['success'=>true,'data'=>['Status'=>'Deleted']];
-      return $this->jsonResponse($resp);
+      return $this->jsonResponse($resp, 200);
     }else{
       $this->courses->insertDegreeCourse($degreeID, $courseID);
-      $resp = ['success'=>true,'data'=>['Status'=>'Inserted']];
-      return $this->jsonResponse($resp);
+      $resp = ['success'=>false,'data'=>['Status'=>'Inserted']];
+      return $this->jsonResponse($resp, 200);
     }
   }
 }

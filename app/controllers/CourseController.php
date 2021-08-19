@@ -12,40 +12,42 @@ class CourseController extends Controller{
   private $courses;
 
   function __construct(){
-    $this->setMiddlewares(new AuthenticationMiddleware(['setRate', 'getRate', 'uploadReview', 'request']));
+    $this->setMiddlewares(new AuthenticationMiddleware(['setRate', 'getRate', 'uploadReview', 'deleteReview']));
     $this->courses = new Courses();
   }
 
   public function view(){
     if(isset($_GET["ID"])){
       $ID = $_GET["ID"];
-      $course = $this->courses->getCourse($ID);
-      $result = $this->courses->getArthimetricMeanScore($ID);
-      $reviews = $this->courses->getReviews($ID);
-      $amountOfReviews = count($reviews);
-      $POPULARITY_RANK = $this->courses->getPopularityRank($ID)->fetch_assoc()["POPULARITY_RANK"];
-      $RATING_RANK = $this->courses->getOverallRankingRating($ID)->fetch_assoc()["RATING_RANK"];
+      if(!empty($ID)){
+        $course = $this->courses->getCourse($ID);
+        $result = $this->courses->getArthimetricMeanScore($ID);
+        $reviews = $this->courses->getReviews($ID);
+        $amountOfReviews = count($reviews);
+        $POPULARITY_RANK = $this->courses->getPopularityRank($ID)->fetch_assoc()["POPULARITY_RANK"] ?? "Not set!";
+        $RATING_RANK = $this->courses->getOverallRankingRating($ID)->fetch_assoc()["RATING_RANK"] ?? "Not set!";
 
-      $arthimetricMean = $result["AVG(rating)"];
-      $COUNT = $result["COUNT(rating)"];
+        $arthimetricMean = $result["AVG(rating)"];
+        $COUNT = $result["COUNT(rating)"];
 
-      $userRating = null;
-      if(Session::isLoggedIn()){
-        $userRating = $this->courses->getRate(Session::get(SESSION_USERID), $ID);
+        $userRating = null;
+        if(Session::isLoggedIn()){
+          $userRating = $this->courses->getRate(Session::get(SESSION_USERID), $ID);
+        }
+
+        $params = [
+          "rating" => $userRating,
+          "course" => $course,
+          "reviews" => $reviews,
+          "amountOfReviews" => $amountOfReviews,
+          "score" => $arthimetricMean,
+          "total_votes" => $COUNT,
+          "POPULARITY_RANK" => $POPULARITY_RANK,
+          "RATING_RANK" => $RATING_RANK
+        ];
+
+        return $this->display('courses','courses', $params);
       }
-
-      $params = [
-        "rating" => $userRating,
-        "course" => $course,
-        "reviews" => $reviews,
-        "amountOfReviews" => $amountOfReviews,
-        "score" => $arthimetricMean,
-        "total_votes" => $COUNT,
-        "POPULARITY_RANK" => $POPULARITY_RANK,
-        "RATING_RANK" => $RATING_RANK
-      ];
-
-      return $this->display('courses','courses', $params);
     }
     Application::$app->redirect('./');
   }
@@ -63,28 +65,15 @@ class CourseController extends Controller{
     $courseID = $ratingRequest["courseID"];
     $rating = $this->courses->getRate(Session::get(SESSION_USERID), $courseID);
     $resp = ['success'=>true,'data'=>['rating'=>$rating]];
-    return $this->jsonResponse($resp);
-  }
-
-  public function request(Request $request){
-    $courseRequest = $request->getBody();
-
-    $params = [
-      "userID" => Session::get(SESSION_USERID),
-      "name" => $courseRequest["name"],
-      "credits" => $courseRequest["credits"],
-      "duration" => $courseRequest["duration"],
-      "country" => $courseRequest["country"],
-      "city" => $courseRequest["city"],
-      "university" => $courseRequest["university"],
-      "description" => $courseRequest["description"]
-    ];
-
-    $this->courses->insertRequestedCourse($params);
+    return $this->jsonResponse($resp, 200);
   }
 
   public function review(){
     return $this->display('courses','review', []);
+  }
+
+  public function deleteReview(Request $request){
+    //TODO
   }
 
   public function uploadReview(Request $request){
@@ -94,7 +83,8 @@ class CourseController extends Controller{
     if($success){
       Application::$app->redirect("../../courses?ID=$review->courseID&success=true");
     }else{
-      Application::$app->redirect("../../review?ID=$review->courseID&error=failed");
+      $resp = ['success'=>false,'data'=>['Status'=>'Failed upload review']];
+      return $this->jsonResponse($resp, 500);
     }
   }
 }

@@ -29,6 +29,9 @@ $info_panel = str_replace('---Visits---', $updatedVisitCount , $info_panel);
 $info_panel = str_replace('---Added_projects---', count($projects) , $info_panel);
 $info_panel =  str_replace('---Completed_courses---', 0 , $info_panel);
 $info_panel =  str_replace('---privilege---', $privilege , $info_panel);
+$info_panel =  str_replace('---description---', $description , $info_panel);
+
+
 echo $info_panel;
 
 if($sessionID != false){
@@ -45,6 +48,7 @@ foreach ($projects as $project) {
   $project_panel = str_replace('---PROJECT-SRC---', 'data:image/jpeg;base64,'.$project->image, $project_panel);
   $project_panel = str_replace('---LINK---', $project->link, $project_panel);
   $project_panel = str_replace('---description---', $project->description, $project_panel);
+  $project_panel = str_replace('---date---', $project->added, $project_panel);
 
 
   echo $project_panel;
@@ -70,12 +74,18 @@ echo $fragments[10];
 foreach($degrees as $degree){
   echo $fragments[11];
 
-  echo str_replace('---degree_name---', $degree->name, $fragments[12]);
+  $temp = str_replace('---degree_name---', $degree->name, $fragments[12]);
+  $temp = str_replace('---school---', $degree->university, $temp);
+  $temp = str_replace('---country---', $degree->country, $temp);
+  $temp = str_replace('---city---', $degree->city, $temp);
+  echo $temp;
+  
   $courses = $degree->courses;
   foreach($courses as $course){
     $temp = str_replace('---name---', $course->name, $fragments[13]);
     $temp = str_replace('---credits---', $course->credits, $temp);
     $temp = str_replace('---university---', $course->university, $temp);
+    $temp = str_replace('---DEGREE-ID---', $degree->ID, $temp);
     echo str_replace('---ID---', $course->ID, $temp);
   }
   echo $fragments[14];

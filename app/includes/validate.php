@@ -7,7 +7,7 @@ use App\Models\Templates\Degree;
 use App\Core\Session;
 
 class Validate{
-  public static function validateImage($global){
+  public static function hasValidUpload($global){
     if(Validate::hasInvalidUpload($_FILES[$global]['tmp_name']) !== false){
       return false;
     }
@@ -28,7 +28,7 @@ class Validate{
     if($fileErr === 0){
        //Enable max file size. 500 000 bytes
        if($fileSize < MAX_UPLOAD_SIZE){
-         return $file;
+         return true;
        }else{
          return false;
        }
@@ -120,6 +120,7 @@ class Validate{
   public static function hasInvalidDates($start_date, $end_date){
     $start_date_converted = strtotime($start_date);
     $end_date_converted = strtotime($end_date);
+
     $result;
     if($start_date_converted > $end_date_converted)
     {
@@ -148,6 +149,15 @@ class Validate{
       $result = false;
     }
     return $result;
+  }
+  
+  public static function arrayHasEmptyValue($array){
+    foreach ($array as $i => $v) {
+      if (empty($v) || is_null($v)){
+        return true;
+      }
+    }
+    return false;
   }
 
   public static function emptyValue($input){

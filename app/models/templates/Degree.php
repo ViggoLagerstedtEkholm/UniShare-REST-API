@@ -7,5 +7,8 @@ class Degree extends Model{
   public string $field_of_study;
   public string $start_date;
   public string $end_date;
+  public string $country;
+  public string $city;
+  public string $university;
   public ?Array $courses = null;
 }

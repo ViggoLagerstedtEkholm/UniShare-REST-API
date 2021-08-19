@@ -50,7 +50,7 @@
             <input type="checkbox" name="link">
           </p>
 
-          <button type="submit" class="user-profile-project-button-delete">Delete account</button>
+          <button type="submit" class="button-style-2">Delete account</button>
           <button id="update" type="submit" class="user-profile-project-button-visit">Update</button>
         </form>
       </div>
@@ -82,6 +82,7 @@
             type: 'GET',
             dataType: "json",
             success: function ( res ){
+              console.log(res);
               var degrees = res['data']['degrees'];
               let result = degrees.map(a => a.name);
               let ID = degrees.map(a => a.ID);
@@ -89,6 +90,9 @@
               for (var i = 0 ; i < result.length; i++){
                  $('<option/>').val(ID[i]).html(result[i]).appendTo('#degrees');
               }
+            },
+            error: function ( res ){
+              console.log(res);
             }
         });
   </script>

@@ -185,8 +185,12 @@
       data:{ courseID: courseID},
       dataType: "json",
       success: function ( res ){
+        console.log(res);
         var rating = res['data']['rating'];
         document.getElementById("rating").value = rating;
+      },
+      error: function ( res ){
+        console.log(res);
       }
   });
 

@@ -8,6 +8,7 @@ use App\Models\MVCModels\Users;
 use App\Models\MVCModels\Projects;
 use App\Models\MVCModels\Degrees;
 use App\Models\MVCModels\Comments;
+use App\Models\MVCModels\Courses;
 use App\Includes\Validate;
 use App\Models\Templates\Project;
 use App\Middleware\AuthenticationMiddleware;
@@ -18,22 +19,24 @@ class ProfileController extends Controller{
   private $projects;
   private $degrees;
   private $comments;
+  private $courses;
 
   public function __construct(){
-    $this->setMiddlewares(new AuthenticationMiddleware(['uploadImage', 'uploadProject', 'deleteProject', 'pubishCourse', 'getDegrees']));
+    $this->setMiddlewares(new AuthenticationMiddleware(['uploadImage', 'uploadProject', 'deleteProject', 'pubishCourse', 'getDegrees', 'removeCourseFromDegree']));
 
     $this->imageHandler = new ImageHandler();
     $this->users = new Users();
     $this->projects = new Projects();
     $this->degrees = new Degrees();
     $this->comments = new Comments();
+    $this->courses = new Courses();
+
   }
 
   public function view(Request $request)
   {
     if(isset($_GET["ID"])){
       $ID = $_GET["ID"];
-
       if(!empty($ID)){
         $user = $this->users->getUser($ID);
         $first_name = $user["userFirstName"];
@@ -42,6 +45,10 @@ class ProfileController extends Controller{
         $date = $user["lastOnline"];
         $display_name = $user["userDisplayName"];
         $privilege = $user["privilege"];
+        $description = $user["description"];
+        
+        //$result = $this->degrees->getActiveDegree(Session::get(SESSION_USERID));
+        //var_dump($result["activeDegreeID"]);
 
         $comments = $this->comments->getComments($ID);
         $degrees = $this->degrees->getDegrees($ID);
@@ -67,7 +74,8 @@ class ProfileController extends Controller{
           'first_name' => $first_name,
           'last_name' => $last_name,
           'display_name' => $display_name,
-          'privilege' => $privilege
+          'privilege' => $privilege,
+          'description' => $description
         ];
         return $this->display('profile','profile', $params);
       }
@@ -89,55 +97,6 @@ class ProfileController extends Controller{
     }
   }
 
-  public function uploadProject(Request $request)
-  {
-    $sessionID = Session::get(SESSION_USERID);
-
-    $project = new Project();
-    $project->populateAttributes($request->getBody());
-
-    if(Validate::hasInvalidProjectLink($project->link) === true){
-      Application::$app->redirect("../../profile?ID=$sessionID&error=" . INVALID_PROJECT_LINK);
-      exit();
-    }
-
-    $image_object = Validate::validateImage('project-file');
-    $hasSelectedCustomText = $project->customCheck == "on";
-    if($image_object != false || $hasSelectedCustomText){
-        if($project->customCheck){
-          $project->image = $this->imageHandler->createImageFromText($project->custom);
-        }else{
-          $project->image = $this->imageHandler->handleUploadResizing($image_object);
-        }
-
-        if(Validate::hasEmptyProject($project) === true){
-          Application::$app->redirect("../../profile?ID=$sessionID&error=" . EMPTY_PROJECT);
-          exit();
-        }
-
-        $success = $this->projects->uploadProject($project, $sessionID);
-
-        if($success){
-          Application::$app->redirect("../../profile?ID=$sessionID");
-        }else{
-          Application::$app->redirect("../../profile?ID=$sessionID&error=" . INVALID_UPLOAD);
-        }
-      }
-    else{
-      Application::$app->redirect("../../profile?ID=$sessionID&error=" . INVALID_UPLOAD);
-    }
-  }
-
-  public function deleteProject(Request $request){
-    $sessionID = Session::get(SESSION_USERID);
-
-    foreach($request->getBody() as $key => $value){
-       $this->projects->deleteProject($key, $sessionID);
-     }
-
-     Application::$app->redirect("../../profile?ID=$sessionID");
-  }
-
   public function deleteComment(Request $request){
     $body = $request->getBody();
     $commentID = $body['commentID'];
@@ -147,10 +106,10 @@ class ProfileController extends Controller{
     if($canRemove){
       $this->comments->deleteComment($commentID);
       $resp = ['success'=>true,'data'=>['Status'=>true, 'ID'=>$commentID]];
-      return $this->jsonResponse($resp);
+      return $this->jsonResponse($resp, 200);
     }else{
       $resp = ['success'=>true,'data'=>['Status'=>false, 'ID'=>$commentID]];
-      return $this->jsonResponse($resp);
+      return $this->jsonResponse($resp, 500);
     }
   }
 
@@ -164,10 +123,28 @@ class ProfileController extends Controller{
     $succeeded = $this->comments->addComment($posterID, $profileID, $text);
     if($succeeded){
       $resp = ['success'=>true,'data'=>['Status'=>'Added comment']];
-      return $this->jsonResponse($resp);
+      return $this->jsonResponse($resp, 200);
     }else{
-      $resp = ['success'=>true,'data'=>['Status'=>'Error']];
-      return $this->jsonResponse($resp);
+      $resp = ['success'=>false,'data'=>['Status'=>'Error']];
+      return $this->jsonResponse($resp, 500);
+    }
+  }
+
+  public function removeCourseFromDegree(Request $request){
+    $courseRequest = $request->getBody();
+
+    $courseID = $courseRequest["courseID"];
+    $degreeID = $courseRequest["degreeID"];
+
+    $succeeded = $this->degrees->checkIfUserOwner(Session::get(SESSION_USERID), $degreeID);
+    
+    if($succeeded){
+      $this->degrees->deleteCourseFromDegree($degreeID, $courseID);
+      $resp = ['success'=>true,'data'=>['Status'=>true, 'ID'=>$courseID, 'degreeID' => $degreeID]];
+      return $this->jsonResponse($resp, 200);
+    }else{
+      $resp = ['success'=>false,'data'=>['Status'=>'Error']];
+      return $this->jsonResponse($resp, 403);
     }
   }
 }

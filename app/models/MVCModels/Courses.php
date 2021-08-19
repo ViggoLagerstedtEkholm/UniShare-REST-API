@@ -121,23 +121,12 @@ class Courses extends Database
     return $this->executeQuery($sql, "i", array($courseID));
   }
 
-  function insertRequestedCourse($course){
-    $sql = "INSERT INTO request (name, credits, duration, country, city, isHandled, university, description, userID) values(?,?,?,?,?,?,?,?,?);";
-    $success = $this->insertOrUpdate($sql, 'siisssisi', array($course["name"], $course["credits"], $course["duration"], $course["country"], $course["city"], false, $course["university"], $course["description"], $course["userID"]));
-    return $success;
-  }
-
-  function getRequestedCourses(){
-    $sql = "SELECT * FROM request";
-    $result = $this->executeQuery($sql);
-    return $result->fetch_assoc();
-  }
-
   function insertCourse($course){
     $sql = "INSERT INTO courses (name, credits, duration, added, country, city, university) values(?,?,?,?,?,?,?);";
     date_default_timezone_set("Europe/Stockholm");
     $date = date("Y-m-d",time());
-    $result = $this->insertOrUpdate($sql, 'ssssss', array($course->name, $course->credits, $course->duration, $date, $course->field_of_study, $course->location));
+    $hasSucceeded = $this->insertOrUpdate($sql, 'ssssss', array($course->name, $course->credits, $course->duration, $date, $course->field_of_study, $course->location));
+    return $hasSucceeded;
   }
 
   function deleteCourse(){

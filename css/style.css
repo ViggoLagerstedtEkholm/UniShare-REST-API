@@ -15,12 +15,21 @@ textarea{
   width: 100%;
 }
 
-p{
-  color:white;
-}
 
 a{
   color: white;
+}
+
+p {
+  color: white;
+}
+
+.user-input-form-box p{
+  color: black;
+}
+
+.form-text{
+  color: black;
 }
 
 .profile-comment-container{
@@ -68,7 +77,8 @@ a{
 
 
 .degree-info-panel{
-  padding: 10px;
+  padding-left: 10px;
+  padding-bottom: 5px;
   text-align: left;
   color:white;
   word-wrap: break-word;
@@ -82,11 +92,6 @@ a{
   padding: 10px;
 }
 
-.degree-box > div{
-  background-color: #474646;
-  margin-top: 10px;
-  border-radius: 5px;
-}
 
 .score{
   font-size: 35px;
@@ -215,7 +220,6 @@ a{
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
-  margin-top: 5px;
   width: 100%;
   cursor: pointer;
   border:none;
@@ -664,6 +668,7 @@ form .text_field{
 
 .content-card-body{
   padding-right: 20px;
+  margin-top: 5px;
 }
 
 .content-card-info{
@@ -679,8 +684,9 @@ form .text_field{
   font-size: 15px;
   flex-direction: column;
   text-align: left;
-  justify-content: center;
+  justify-content: space-around;
   width: 100%;
+  padding: 5px;
 }
 
 .content-card-info-buttons button{
