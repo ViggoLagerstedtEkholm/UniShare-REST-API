@@ -134,50 +134,90 @@
           <!--===edit===-->
 
           <div class="course-sections">
-            <h1>Reviews</h1>
-            <br />
-
-            <!--===edit===-->
-            <form method="get" action="./review">
-              <input name="ID" value="---ID---" hidden />
-              <input class="user-profile-project-button-visit" type="submit" value="Type review">
-            </form>
-             <!--===edit===-->
-
-             <!--===edit===-->
-            <div class="review">
-              Username: ---userDisplayName---
-              <div class="comment-image">
-                <img src="---userImage---" alt="USER IMG"></img>
-              </div>
-              <br />
-              <div class="user-description">
-                ---text---
-              </div>
-
-              <hr />
-              Fulfilling: ---fulfilling---
-              <br />
-              Environment: ---environment---
-              <br />
-              Difficulty: ---difficulty---
-              <br />
-              Grading: ---grading---
-              <br />
-              Litterature: ---litterature---
-              <br />
-              Overall: ---overall---
+            <div class="course-info">
+              <p>Description</p>
             </div>
-            <!--===edit===-->
-
+            <div class="review-text">
+              ---text---
+            </div>
           </div>
         </div>
+
       </div>
     </div>
+  </div>
+  <div class="course-sections">
+    <h1>Reviews</h1>
+    <br />
+
+    <!--===edit===-->
+    <form method="get" action="./review">
+      <input name="ID" value="---ID---" hidden />
+      <input class="button-style-4" type="submit" value="Type review">
+    </form>
+     <!--===edit===-->
+
+     <!--===edit===-->
+    <div id="---userID---,---courseID---" class="review">
+      <div class="comment-image">
+        <img src="---userImage---" alt="USER IMG"></img>
+      </div>
+
+      <!--===edit===-->
+      <input class="button-style-4" value="Edit review" onclick="return updateComment(---userID---, ---courseID---);">
+      <hr />
+      <input class="button-style-2" value="Delete review" onclick="return deleteComment(---userID---, ---courseID---);">
+      <!--===edit===-->
+
+      <br />
+      <p>
+        Username: ---userDisplayName---
+      </p>
+      <div class="review-border">
+        <div class="review-text">
+          ---text---
+        </div>
+      </div>
+
+      <hr />
+      Fulfilling: ---fulfilling---
+      <br />
+      Environment: ---environment---
+      <br />
+      Difficulty: ---difficulty---
+      <br />
+      Grading: ---grading---
+      <br />
+      Litterature: ---litterature---
+      <br />
+      Overall: ---overall---
+    </div>
+    <!--===edit===-->
+
   </div>
 </div>
 <script>
   var courseID = document.getElementById('courseID').value;
+
+  function updateComment(reviewID){
+    $.ajax({
+       url: "./profile/delete/course",
+       type: "POST",
+       data:{reviewID: reviewID},
+       dataType: "json",
+       success:function(res){
+         console.log(res);
+         var canRemove = res["data"]["Status"];
+         if(canRemove){
+           var ID = res["data"]["ID"];
+           document.getElementById("course-" + ID).remove();
+         }
+       },
+       error:function(res){
+         console.log(res);
+       }
+     });
+  }
 
   $.ajax ( {
       url: "./course/getrate",

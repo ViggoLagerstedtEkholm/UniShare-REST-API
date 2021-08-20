@@ -40,8 +40,8 @@ class ProjectController extends Controller{
   {
     $fileUploadName = 'project-file';
     $userID = Session::get(SESSION_USERID);
-
     $body = $request->getBody();
+
     if($body["customCheck"] == "Off"){
       $params = [
         "link" => $body["link"],

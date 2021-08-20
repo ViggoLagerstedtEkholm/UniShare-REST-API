@@ -1,7 +1,7 @@
 <?php
 namespace App\Models\Templates;
 
-class Comment extends Model{
+class Comment{
   public int $ID;
   public string $text;
   public string $date;

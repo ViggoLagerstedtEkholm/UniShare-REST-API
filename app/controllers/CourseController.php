@@ -2,6 +2,7 @@
 namespace App\Controllers;
 use App\Middleware\AuthenticationMiddleware;
 use App\Models\MVCModels\Courses;
+use App\Models\MVCModels\Reviews;
 use App\Core\Session;
 use App\Core\Request;
 use App\Core\Application;
@@ -10,10 +11,12 @@ use App\Models\Templates\Review;
 
 class CourseController extends Controller{
   private $courses;
-
+  private $reviews;
+  
   function __construct(){
     $this->setMiddlewares(new AuthenticationMiddleware(['setRate', 'getRate', 'uploadReview', 'deleteReview']));
     $this->courses = new Courses();
+    $this->reviews = new Reviews();
   }
 
   public function view(){
@@ -58,6 +61,8 @@ class CourseController extends Controller{
     $rating = $ratingRequest["rating"];
 
     $this->courses->setRate(Session::get(SESSION_USERID), $courseID, $rating);
+    $resp = ['success'=>true,'data'=>['rating'=>$rating]];
+    return $this->jsonResponse($resp, 200);
   }
 
   public function getRate(Request $request){
@@ -71,15 +76,46 @@ class CourseController extends Controller{
   public function review(){
     return $this->display('courses','review', []);
   }
-
+  
   public function deleteReview(Request $request){
+    $body = $request->getBody();
+    
+    $reviewID = $body['reviewID'];
+    
     //TODO
+  }
+  
+  public function updateReview(Request $request){
+    $body = $request->getBody();
+    //TODO
+
   }
 
   public function uploadReview(Request $request){
-    $review = new Review();
-    $review->populateAttributes($request->getBody());
-    $success = $this->courses->insertReview($review);
+    $body = $request->getBody();
+    
+    $params = [
+      "courseID" => $body["courseID"],
+      "fulfilling" => $body["fulfilling"],
+      "environment" => $body["environment"],
+      "difficulty" => $body["difficulty"],
+      "grading" => $body["grading"],
+      "litterature" => $body["litterature"],
+      "overall" => $body["overall"],
+      "text" => $body["text"],
+    ];
+    
+    $errors = $this->reviews->validate($params);
+
+    $courseID = $params['courseID'];
+    if(count($errors) > 0){
+      $errorList = http_build_query(array('error' => $errors));
+      Application::$app->redirect("../../review?ID=$courseID&$errorList");
+      exit();
+    }
+    
+    $success = $this->courses->insertReview($params);
+    
     if($success){
       Application::$app->redirect("../../courses?ID=$review->courseID&success=true");
     }else{

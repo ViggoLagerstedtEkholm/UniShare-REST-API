@@ -3,10 +3,10 @@ namespace App\Models\MVCModels;
 use App\Models\Templates\Register;
 use App\Models\Templates\Login;
 use App\Models\Templates\User;
-use App\Core\Session;
-use App\Core\Cookie;
 use App\Models\MVCModels\Database;
 use App\Models\MVCModels\UserSession;
+use App\Core\Session;
+use App\Core\Cookie;
 
 class Users extends Database{
  function getUserCount(){
@@ -192,7 +192,7 @@ class Users extends Database{
     $sql = "UPDATE users SET lastOnline =? WHERE usersID = ?;";
 
     date_default_timezone_set("Europe/Stockholm");
-    $date = date("Y-m-d",time());
+    $date = date('Y-m-d H:i:s');
 
     $this->insertOrUpdate($sql, 'si', array($date, $ID));
     return $date;

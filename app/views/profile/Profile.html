@@ -21,7 +21,7 @@
             <br />
 
             <form action="./settings">
-              <button type="submit" class="user-profile-project-button-visit">Settings</button>
+              <button type="submit" class="button-style-4">Settings</button>
             </form>
             <!--===edit===-->
 
@@ -161,7 +161,7 @@
                     <!--===edit===-->
                     <form action="./project_update">
                       <input hidden value="---ID---" name="ID"></input>
-                      <button type="submit" class="user-profile-project-button-visit">Edit</button>
+                      <button type="submit" class="button-style-4">Edit</button>
                     </form>
                       <button type="submit" class="button-style-2" onclick="return deleteProject(---ID---);">Delete</button>
                     <!--===edit===-->
@@ -197,25 +197,32 @@
                 </div>
 
                 <!--===edit===-->
-                <div id="course----ID---" class="content-card-body">
-                  <div class="content-user">
-                    <div class="content-card-image">
-                      <img src="images/books.png" alt="USER IMAGE">
-                    </div>
+                <div class="course-profile">
+                  <div id="course----ID---" class="content-card-body">
+                    <div class="content-user">
+                      <div class="content-card-image">
+                        <img src="images/books.png" alt="USER IMAGE">
+                      </div>
 
-                    <div class="content-card-info">
-                      <p><b>Name:</b>---name---</p>
-                      <p><b>Credits: </b>---credits---</p>
-                      <p><b>University: </b>---university---</p>
-                    </div>
+                      <div class="content-card-info">
+                        <p><b>Name:</b>---name---</p>
+                        <p><b>Credits: </b>---credits---</p>
+                        <p><b>University: </b>---university---</p>
+                      </div>
 
-                    <div class="content-card-info-buttons">
-                      <form action="./courses" method="get">
-                        <input type="hidden" name="ID" value="---ID---" />
-                        <button class="button-style-1" type="submit">Go to course page</button>
-                      </form>
-                      
-                      <button class="button-style-2" id="---ID---" onclick="return removeCourse(---DEGREE-ID---, ---ID---);">Remove course</button>
+                      <div class="content-card-info-buttons">
+                        <div class='row'>
+                          <div class='column'>
+                            <form action="./courses" method="get">
+                              <input type="hidden" name="ID" value="---ID---" />
+                              <button class="button-style-1" type="submit">Go to course page</button>
+                            </form>
+                          </div>
+                          <div class='column'>
+                            <button class="button-style-2" id="---ID---" onclick="return removeCourse(---DEGREE-ID---, ---ID---);">Remove course</button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -250,7 +257,7 @@
           </h2>
           <textarea id="text" name="text"></textarea>
           <p>
-            <input class="user-profile-project-button-upload" value="Post comment" onclick="return addComment();">
+            <input class="button-style-5" value="Post comment" onclick="return addComment();">
           </p>
         </div>
 

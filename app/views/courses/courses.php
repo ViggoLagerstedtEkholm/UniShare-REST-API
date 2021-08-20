@@ -28,7 +28,7 @@ if(Session::isLoggedIn()){
   echo str_replace('---ID---', $course->ID, $temp);
 }
 
-echo $fragments[6];
+echo str_replace('---text---', $course->description, $fragments[6]);
 
 if(Session::isLoggedIn()){
   echo str_replace('---ID---', $course->ID, $fragments[7]);
@@ -38,7 +38,16 @@ echo $fragments[8];
 
 foreach($reviews as $review){
   $temp = str_replace('---userImage---', 'data:image/jpeg;base64,'. $review->userImage, $fragments[9]);
-  $temp = str_replace('---userDisplayName---', $review->userDisplayName, $temp);
+  $temp = str_replace('---courseID---', $review->courseID, $temp);
+  echo str_replace('---userID---', $review->userID, $temp);
+
+  if($review->userID == Session::get(SESSION_USERID)){
+   $temp = str_replace('---overall---', $review->overall, $fragments[10]);
+   $temp = str_replace('---courseID---', $review->courseID, $temp);
+   echo str_replace('---userID---', $review->userID, $temp);
+  }
+  
+  $temp = str_replace('---userDisplayName---', $review->userDisplayName, $fragments[11]);
   $temp = str_replace('---text---', $review->text, $temp);
   $temp = str_replace('---fulfilling---', $review->fulfilling, $temp);
   $temp = str_replace('---environment---', $review->environment, $temp);
@@ -49,4 +58,5 @@ foreach($reviews as $review){
   echo $temp;
 }
 
-echo $fragments[10];
+echo $fragments[12];
+

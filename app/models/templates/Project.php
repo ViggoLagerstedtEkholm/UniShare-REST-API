@@ -1,7 +1,7 @@
 <?php
 namespace App\Models\Templates;
 
-class Project extends Model{
+class Project{
   public int $ID;
   public string $name;
   public string $description;

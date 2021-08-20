@@ -1,7 +1,7 @@
 <?php
 namespace App\Models\Templates;
 
-class Login extends Model{
+class Login{
   public string $email;
   public string $password;
   public string $rememberMe = "off";

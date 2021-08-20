@@ -15,13 +15,36 @@ textarea{
   width: 100%;
 }
 
-
 a{
   color: white;
 }
 
 p {
   color: white;
+}
+
+.course-profile{
+  padding: 10px;
+  background-color: #474646;
+  margin-top: 5px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 100%;
+  padding: 25px;
+  flex: 1;
 }
 
 .user-input-form-box p{
@@ -75,7 +98,6 @@ p {
   border-radius: 50%;
 }
 
-
 .degree-info-panel{
   padding-left: 10px;
   padding-bottom: 5px;
@@ -86,12 +108,11 @@ p {
 
 .degree-box{
   margin-top: 10px;
-  background-color: #313131;
+  background-color: #2470a3;
   margin-top: 20px;
   border-radius: 5px;
   padding: 10px;
 }
-
 
 .score{
   font-size: 35px;
@@ -113,12 +134,14 @@ p {
 }
 
 .course-sections-statistics{
+  color: white;
   padding: 10px;
   background-color: #474646;
   border-radius: 5px;
 }
 
 .course-sections{
+  color: white;
   padding: 10px;
   background-color: #474646;
   border-radius: 5px;
@@ -131,6 +154,24 @@ p {
   border-radius: 5px;
   margin-top: 5px;
   margin-bottom: 5px;
+}
+
+.review-border{
+  border: 1px dashed white;
+  padding: 5px;
+}
+
+.review-text{
+  font-size: calc(0.6vw + 0.6em);
+  direction: ltr;
+  width: 100%;
+  margin:auto;
+  text-align:justify;
+  word-break: break-word;
+  white-space: pre-line;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
 }
 
 .course-info p{
@@ -173,6 +214,33 @@ p {
   margin-left: 10px;
 }
 
+.content-filter-box{
+  display: flex;
+  flex-wrap:wrap;
+  height: auto;
+  background-color: #474646;
+  border-radius: 5px;
+}
+
+.content-filter-box-cell{
+  flex: 1 0 30%; /* explanation below */
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 10px;
+}
+
+.content-filter-bg{
+  padding: 25px;
+  background-color: #313131;
+  border-radius: 5px;
+  height: 90px;
+}
+
+.content-filter-select{
+  width: 100%;
+}
+
 /* Courses page */
 
 .course-rate-box{
@@ -180,6 +248,10 @@ p {
   align-items: center;
   flex-wrap: nowrap;
   height: auto;
+}
+
+.content-filter-box-cell input{
+  width: 100%;
 }
 
 .course-rate-cell{
@@ -203,10 +275,10 @@ p {
   margin-top: 10px;
   background-color: #bfbfbf;
   display: flex;
-  height: 200px;
   padding: 10px;
   border-radius: 5px;
   color: white;
+  word-wrap: break-word;
 }
 
 
@@ -241,7 +313,7 @@ p {
 }
 
 .button-style-3 {
-  background-color: #5cf04f;
+  background-color: #0e8c2f;
   color: white;
   padding: 16px 32px;
   text-align: center;
@@ -254,8 +326,8 @@ p {
   border-radius: 5px;
 }
 
-.user-profile-project-button-visit {
-  background-color: #2121db;
+.button-style-4 {
+  background-color: #5c7df7;
   color: white;
   padding: 16px 32px;
   text-align: center;
@@ -267,7 +339,7 @@ p {
   border:none;
 }
 
-.user-profile-project-button-link {
+.button-style-5 {
   background-color: gray;
   color: white;
   text-align: center;
@@ -279,8 +351,8 @@ p {
   border:none;
 }
 
-.button-style-3:hover {
-  background-color: #308029;
+.button-style-1:hover{
+  background-color: #1e045e;
   color: white;
 }
 
@@ -289,20 +361,22 @@ p {
   color: white;
 }
 
-.user-profile-project-button-visit:hover{
+.button-style-3:hover {
+  background-color: #308029;
+  color: white;
+}
+
+.button-style-4:hover{
   background-color: #263b87;
   color: white;
 }
 
-.user-profile-project-button-link:hover{
+.button-style-5:hover{
   background-color: #165e7d;
   color: white;
 }
 
-.button-style-1:hover{
-  background-color: #1e045e;
-  color: white;
-}
+
 /*END*/
 
 
@@ -384,6 +458,51 @@ form .text_field{
   min-height: 1000px;
 }
 
+.wrapper{
+  display: inline-flex;
+  background: #474646;
+  width: 100%;
+  justify-content: space-evenly;
+  border-radius: 5px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.wrapper .option{
+  background: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 10px;
+  transition: all 0.3s ease;
+}
+
+input[type="radio"]{
+  display: none;
+}
+
+#option-1:checked:checked ~ .option-1,
+#option-2:checked:checked ~ .option-2{
+  border-color: #0069d9;
+  background: #0069d9;
+}
+#option-1:checked:checked ~ .option-1 .dot,
+#option-2:checked:checked ~ .option-2 .dot{
+  background: #fff;
+}
+#option-1:checked:checked ~ .option-1 .dot::before,
+#option-2:checked:checked ~ .option-2 .dot::before{
+  opacity: 1;
+  transform: scale(1);
+}
+.wrapper .option span{
+  font-size: 20px;
+  color: #808080;
+}
+#option-1:checked:checked ~ .option-1 span,
+#option-2:checked:checked ~ .option-2 span{
+  color: #fff;
+}
+
 .request-course-container{
   color: white;
   background-color: #313131;
@@ -394,18 +513,10 @@ form .text_field{
   flex-direction: column;
 }
 
-.filter-bar{
-  background-color: #313131;
-  display:flex;
-  height:auto;
-  padding: 10px;
-  border-radius: 5px;
-  color:white;
-}
-
 .fixed {
     background-color:#313131;
     width: 400px;
+    min-width: 400px;
 }
 
 .flex-item {
@@ -573,6 +684,7 @@ form .text_field{
   background-color: #313131;
   padding: 10px 20px 20px;
   min-height: 725px;
+  border-radius: 3px;
 }
 
 .display-result-box > div {
@@ -669,13 +781,15 @@ form .text_field{
 .content-card-body{
   padding-right: 20px;
   margin-top: 5px;
+  padding: 5px;
 }
 
 .content-card-info{
+  display: flex;
   font-size: 15px;
   flex-direction: column;
   text-align: left;
-  justify-content: flex-start;
+  justify-content: center;
   width: 100%;
 }
 
@@ -723,8 +837,15 @@ form .text_field{
 }
 /*END*/
 
-
 @media screen and (max-width: 1301px) {
+  .row{
+    flex-direction: column;
+  }
+
+  .column{
+    padding: 5px;
+  }
+
   .project{
     background: linear-gradient(0deg, rgba(0,39,54,1) 0%, rgba(0,93,99,1) 100%);
   }
@@ -747,6 +868,19 @@ form .text_field{
 
 @media screen and (max-width: 984px)
 {
+  .content-filter-box{
+    flex-direction: column;
+    padding-right: 20px;
+  }
+
+  .content-filter-box-cell{
+    margin-top: 5px;
+    align-items:flex-start;
+    justify-content:flex-start;
+    width: 100%;
+    flex: 1;
+  }
+
   .course-rate-box{
     flex-direction: column;
   }

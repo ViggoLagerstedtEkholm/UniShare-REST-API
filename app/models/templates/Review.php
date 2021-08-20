@@ -1,7 +1,8 @@
 <?php
 namespace App\Models\Templates;
 
-class Review extends Model{
+class Review{
+  public int $ID;
   public string $userDisplayName;
   public $userImage;
   public int $userID;

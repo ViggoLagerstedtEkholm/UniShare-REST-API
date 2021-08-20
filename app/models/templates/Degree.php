@@ -1,7 +1,7 @@
 <?php
 namespace App\Models\Templates;
 
-class Degree extends Model{
+class Degree{
   public int $ID;
   public string $name;
   public string $field_of_study;

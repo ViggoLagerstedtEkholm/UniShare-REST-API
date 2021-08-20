@@ -4,8 +4,7 @@ use App\Models\Templates\Course;
 use App\Models\Templates\Review;
 use App\Core\Session;
 
-class Courses extends Database
-{
+class Courses extends Database{
   function getCoursesCount(){
      $sql = "SELECT Count(*) FROM courses";
      $result = $this->executeQuery($sql);
@@ -151,14 +150,20 @@ class Courses extends Database
     return $rating;
   }
 
-  function insertReview($review){
+  function insertReview($params){
     $sql = "INSERT INTO review (userID, courseID, text, fulfilling, environment, difficulty, grading, litterature, overall)
     values(?,?,?,?,?,?,?,?,?)
     ON DUPLICATE KEY UPDATE text = ?, fulfilling = ?, environment = ?, difficulty = ?, grading = ?, litterature = ?, overall = ?;";
 
     $userID = Session::get(SESSION_USERID);
-    $success = $this->insertOrUpdate($sql, 'iisiiiiiisiiiiii', array($userID, $review->courseID, $review->text, $review->fulfilling, $review->environment, $review->difficulty, $review->grading, $review->litterature, $review->overall,
-    $review->text, $review->fulfilling, $review->environment, $review->difficulty, $review->grading, $review->litterature, $review->overall));
+
+    $success = $this->insertOrUpdate($sql, 'iisiiiiiisiiiiii', array(
+    $userID, $params["courseID"], $params["text"],
+    $params["fulfilling"], $params["environment"], $params["difficulty"],
+    $params["grading"], $params["litterature"], $params["overall"],
+    $params["text"], $params["fulfilling"], $params["environment"],
+    $params["difficulty"], $params["grading"], $params["litterature"], $params["overall"]));
+
     return $success;
   }
 
@@ -204,6 +209,7 @@ class Courses extends Database
     $course->country = $data['country'];
     $course->city = $data['city'];
     $course->university = $data['university'];
+    $course->description = $data['description'];
     return $course;
   }
 

@@ -93,6 +93,8 @@ $app->router->post('/admin/course/update', [$adminController, 'updateCourse']);
 $app->router->post('/admin/users/add', [$adminController, 'addUser']);
 $app->router->post('/admin/users/remove', [$adminController, 'removeUser']);
 $app->router->post('/admin/users/update', [$adminController, 'updateUser']);
+$app->router->post('/admin/course/approve', [$adminController, 'approveRequest']);
+$app->router->post('/admin/course/deny', [$adminController, 'denyRequest']);
 
 $app->router->get('/request', [$requestController, 'view']);
 $app->router->post('/request/upload', [$requestController, 'uploadRequest']);

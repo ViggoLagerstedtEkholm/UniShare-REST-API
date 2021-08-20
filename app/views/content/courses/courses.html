@@ -1,36 +1,60 @@
 <div class="container">
-  <div class="filter-bar">
-    <form>
-      <h1>Search courses</h1>
-      <p>
-        Sort by
-      </p>
+  <form>
+    <div class="content-filter-box">
+      <div class="content-filter-box-cell">
+        <div class="content-filter-bg">
+          <p>
+            Select filter option
+          </p>
+          <select class="content-filter-select" name="filter_option">
+            <option value="name">Name</option>
+            <option value="credits">Credits</option>
+            <option value="duration">Duration</option>
+            <option value="average_rating">Rating</option>
+            <option value="added">Added</option>
+            <option value="city">City</option>
+            <option value="country">Country</option>
+            <option value="university">University</option>
+          </select>
+        </div>
+      </div>
 
-      <select name="filter_option">
-        <option value="name">Name</option>
-        <option value="credits">Credits</option>
-        <option value="duration">Duration</option>
-        <option value="average_rating">Rating</option>
-        <option value="added">Added</option>
-        <option value="city">City</option>
-        <option value="country">Country</option>
-        <option value="university">University</option>
-      </select>
+      <div class="content-filter-box-cell">
+        <div class="content-filter-bg">
+          <fieldset name="filter_order">
+            <div class="wrapper">
+               <input type="radio" name="action" id="option-1" value="ASC">
+               <input type="radio" name="action" id="option-2" value="DESC" checked>
+               <label for="option-1" class="option option-1">
+                 <div class="dot"></div>
+                  <span>ASC</span>
+                  </label>
+               <label for="option-2" class="option option-2">
+                 <div class="dot"></div>
+                  <span>DESC</span>
+               </label>
+            </div>
+          </fieldset>
+        </div>
+      </div>
 
-      <fieldset name="filter_order">
-          <p>Order by</p>
-          <input type="radio" name="action" id="track" value="ASC" /><label for="track">ASC</label><br />
-          <input type="radio" name="action" id="event" value="DESC" checked/><label for="event">DESC</label><br />
-      </fieldset>
+      <div class="content-filter-box-cell">
+        <div class="content-filter-bg">
+          <p>
+            Search
+            <input class="user-input-text" id="email" type="text" name="search" placeholder="Search">
+          </p>
+        </div>
+      </div>
 
-      <p>
-        Search
-        <input class="user-input-text" id="email" type="text" name="search" placeholder="Search">
-      </p>
+      <div class="content-filter-box-cell">
+        <div class="content-filter-bg">
+          <button class="button-style-4" type="submit" name="filter_button" value="GO">Filter</button>
+        </div>
+      </div>
+    </div>
 
-      <button class="user-profile-project-button-visit" type="submit" width="50px" height="50px" name="filter_button" value="GO">Filter</button>
-    </form>
-  </div>
+  </form>
 
   <div class="display-result-box">
     <p class="txt-small">
@@ -102,7 +126,7 @@
         <input type="text" name="action" value="---action---" hidden>
         <input type="text" name="search" value="---search---" hidden>
         <input class="user-input-text" type="number" name="page"  placeholder="PAGE INDEX" required>
-        <input class="user-profile-project-button-visit" type="submit" width="50px" height="50px" name="submit" value="Go to page"></input>
+        <input class="button-style-4" type="submit" width="50px" height="50px" name="submit" value="Go to page"></input>
     </form>
   </div>
 </div>
