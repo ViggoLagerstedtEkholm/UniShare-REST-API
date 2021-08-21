@@ -2,21 +2,32 @@
 namespace App\Models\MVCModels;
 use App\Models\MVCModels\Database;
 use App\Models\Templates\Comment;
+use App\Includes\Validate;
 
-class Comments extends Database{
+class Comments extends Database implements IValidate{
+  public function validate($params){
+    $errors = array();
+
+    if(Validate::arrayHasEmptyValue($params) === true){
+      $errors[] = EMPTY_FIELDS;
+    }
+
+    return $errors;
+  }
+
   function addComment($posterID, $profileID, $comment){
     date_default_timezone_set("Europe/Stockholm");
     $date = date("Y-m-d",time());
-  
+
     $sql = "INSERT INTO profileComment (text, date, author, profile) values(?,?,?,?);";
-  
+
     return $this->insertOrUpdate($sql, 'ssii', array($comment, $date, $posterID, $profileID));
   }
-  
+
   function checkIfUserAuthor($userID, $commentIDtoDelete){
     $sql = "SELECT commentID FROM profilecomment WHERE author = ?;";
     $result = $this->executeQuery($sql, 'i', array($userID));
-    
+
     while($row = $result->fetch_array())
     {
       if($row["commentID"] == $commentIDtoDelete){
@@ -25,12 +36,12 @@ class Comments extends Database{
     }
     return false;
   }
-  
+
   function deleteComment($commentID){
     $sql = "DELETE FROM profilecomment WHERE commentID = ?;";
     $this->executeQuery($sql, 'i', array($commentID));
   }
-  
+
   function getComments($profileID){
     $sql = "SELECT profileComment.*, userImage, userDisplayName
             FROM profileComment
@@ -38,7 +49,7 @@ class Comments extends Database{
             ON author = usersID
             WHERE profile = ?;";
     $result = $this->executeQuery($sql, 'i', array($profileID));
-  
+
     $comments = array();
     while( $row = $result->fetch_array())
     {
@@ -51,7 +62,7 @@ class Comments extends Database{
         $comment->added = $row['date'];
         $comment->image = $row["userImage"];
         $comment->display_name = $row["userDisplayName"];
-  
+
         $comments[] = $comment;
     }
     return $comments;

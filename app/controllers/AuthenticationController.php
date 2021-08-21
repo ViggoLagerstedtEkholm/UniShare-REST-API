@@ -2,22 +2,27 @@
 namespace App\Controllers;
 use App\Core\Application;
 use App\Core\Request;
-use App\Models\Templates\Register;
-use App\Models\Templates\Login;
 use App\Models\MVCModels\Users;
+use App\Models\MVCModels\Register;
+use App\Models\MVCModels\Login;
 use App\Middleware\AuthenticationMiddleware;
 use App\Includes\Validate;
+use App\Core\Session;
 
 class AuthenticationController extends Controller{
   private $users;
+  private $login;
+  private $register;
 
   public function __construct(){
     $this->setMiddlewares(new AuthenticationMiddleware(['logout']));
     $this->users = new Users();
+    $this->login = new Login();
+    $this->register = new Register();
   }
 
   public function loginWithCookie(){
-    $this->users->loginFromCOOKIE();
+    $this->login->loginFromCOOKIE();
   }
 
   public function view_login(){
@@ -35,65 +40,55 @@ class AuthenticationController extends Controller{
 
   public function login(Request $request)
   {
-    $login = new Login();
-    $login->populateAttributes($request->getBody());
+    $body = $request->getBody();
 
-    if(Validate::hasEmptyInputsLogin($login) === true){
-      Application::$app->redirect("./login?error=" . INVALID_CREDENTIALS);
+    $params = [
+      'email' => $body["email"],
+      'password' => $body["password"],
+      'rememberMe' => $body['rememberMe']
+    ];
+
+    $errors = $this->login->validate($params);
+
+    if(count($errors) > 0){
+      $errorList = http_build_query(array('error' => $errors));
+      Application::$app->redirect("./login?$errorList");
       exit();
     }
 
-    $success = $this->users->login($login);
+    $success = $this->login->login($params);
 
     if($success){
-      Application::$app->redirect("./");
+      $userID = Session::get(SESSION_USERID);
+      Application::$app->redirect("./profile?ID=$userID");
     }else{
       Application::$app->redirect("./login?error=" . INVALID_CREDENTIALS);
     }
-
-    return $this->display('login', $params);
   }
 
   public function register(Request $request)
   {
-    $fields = ["userEmail", "userDisplayName"];
+    $body = $request->getBody();
 
-    $register = new Register();
+    $params = [
+      'first_name' => $body["first_name"],
+      'last_name' => $body["last_name"],
+      'email' => $body['email'],
+      'display_name' => $body['display_name'],
+      'password' => $body['password'],
+      'password_repeat' => $body['password_repeat'],
+    ];
 
-    $register->populateAttributes($request->getBody());
+    $errors = $this->register->validate($params);
 
-    $error = array();
-
-    if(Validate::hasEmptyInputsRegister($register) === true){
-      $error [] = EMPTY_FIELDS;
-    }
-    if(Validate::invalidUsername($register->display_name) === true){
-      $error [] = INVALID_USERNAME;
-    }
-    if(Validate::invalidEmail($register->email) === true){
-      $error [] = INVALID_MAIL;
-    }
-    if(Validate::match($register->password, $register->password_repeat) === true){
-      $error [] = INVALID_PASSWORD_MATCH;
-    }
-    if(!is_null($this->users->userExists($fields[0], $register->email))){
-      $error [] = EMAIL_TAKEN;
-    }
-    if(!is_null($this->users->userExists($fields[1], $register->display_name))){
-      $error [] = INVALID_USERNAME;
-    }
-
-    $URL;
-    $errorCount = count($error);
-    if($errorCount > 0){
-      for ($x = 0; $x < $errorCount; $x++) {
-        $x == $errorCount - 1 ? $URL .= $error[$x] : $URL .= $error[$x] . "&error=";
-      }
-      Application::$app->redirect("./register?error=" . $URL);
+    if(count($errors) > 0){
+      $errorList = http_build_query(array('error' => $errors));
+      Application::$app->redirect("./register?$errorList");
       exit();
     }
 
-    $this->users->register($register);
-    Application::$app->redirect("./");
+    $this->register->register($params);
+
+    Application::$app->redirect("./login");
   }
 }

@@ -7,14 +7,9 @@
             Select filter option
           </p>
           <select class="content-filter-select" name="filter_option">
-            <option value="name">Name</option>
-            <option value="credits">Credits</option>
-            <option value="duration">Duration</option>
-            <option value="average_rating">Rating</option>
-            <option value="added">Added</option>
-            <option value="city">City</option>
-            <option value="country">Country</option>
-            <option value="university">University</option>
+            <option value="userDisplayName">Username</option>
+            <option value="visits">Visits</option>
+            <option value="lastOnline">Last online</option>
           </select>
         </div>
 
@@ -52,10 +47,8 @@
           </fieldset>
         </div>
       </div>
-
       <button class="button-style-4" type="submit" name="filter_button" value="GO">Filter</button>
     </div>
-
   </form>
 
   <div class="display-result-box">
@@ -75,31 +68,24 @@
     <div class="content-card-body">
       <div class="content-user">
         <div class="content-card-image">
-          <img src="/UniShare/images/books.png" alt="USER IMAGE">
+          <img src="---SRC---" alt="USER IMAGE">
         </div>
 
         <div class="content-card-info">
-          <h4><b>Course information</b></h4>
-          <p><b>Name:</b> ---name---</p>
-          <p><b>Credits:</b> ---credits---</p>
-          <p><b>Duration: </b>---duration---</p>
-          <p><b>University: </b>---university---</p>
+          <h4><b>Personal information</b></h4>
+          <p><b>First name:</b> ---first_name---</p>
+          <p><b>Last name:</b> ---last_name---</p>
+          <p><b>Username: </b>---username---</p>
         </div>
 
         <div class="content-card-info">
-          <h4><b>More</b></h4>
-          <p><b>Score:</b> ---score---</p>
-          <p><b>Country:</b> ---country---</p>
-          <p><b>City:</b> ---city---</p>
-          <p><b>Added:</b> ---added---</p>
+          <h4><b>Personal information</b></h4>
+          <p><b>Visits:</b> ---visits---</p>
+          <p><b>Last online:</b> ---last_online---</p>
         </div>
 
         <div class="content-card-info-buttons">
-          <!--===edit===-->
-          <button class="---CSS---" id="---ID---" type="submit" onclick="return clickButton(---ID---);">---ADD_REMOVE---</button>
-          <!--===edit===-->
-
-          <form action="/UniShare/courses" method="get">
+          <form action="/Unishare/profile" method="get">
             <input type="hidden" name="ID" value="---ID---" />
             <button class="button-style-1" type="submit">Visit</button>
           </form>
@@ -115,11 +101,11 @@
       <div class="content-pagination-bar">
         <!--===edit===-->
         <div>
-          <a href="./courses?page=---page---&filter_option=---filter_option---&search=---search---&action=---action---&results_per_page_count=---results_per_page_count---"><button type="submit" class="pagination-button"> 🡸 </button></a>
+          <a href="./forums?page=---page---&filter_option=---filter_option---&search=---search---&action=---action---"><button type="submit" class="pagination-button"> 🡸 </button></a>
         </div>
         <!--===edit===-->
         <div>
-          <a href="./courses?page=---page---&filter_option=---filter_option---&search=---search---&action=---action---&results_per_page_count=---results_per_page_count---"><button type="submit" class="pagination-button"> 🡺 </button></a>
+          <a href="./forums?page=---page---&filter_option=---filter_option---&search=---search---&action=---action---"><button type="submit" class="pagination-button"> 🡺 </button></a>
         </div>
         <!--===edit===-->
     </div>
@@ -132,35 +118,3 @@
     </form>
   </div>
 </div>
-
-<script>
-  function clickButton(courseID)
-  {
-    $.ajax({
-       url: "../toggleCourseToDegree",
-       type: "POST",
-       data:{courseID: courseID},
-       dataType: "json",
-       success:function(res){
-          var status = res["data"]["Status"];
-          if(status == 'Inserted'){
-            document.getElementById(courseID).innerText = "REMOVE from degree";
-            document.getElementById(courseID).classList.remove("button-style-3");
-            document.getElementById(courseID).classList.add("button-style-2");
-          }
-          if(status == 'Deleted'){
-            document.getElementById(courseID).innerText = "ADD to degree";
-            document.getElementById(courseID).classList.remove("button-style-2");
-            document.getElementById(courseID).classList.add("button-style-3");
-
-          }
-       },
-       error:function(xrs, res){
-         console.log(res);
-         if(xrs.status == 500){
-           alert('Add a degree to put this course into! Profile->Degrees');
-         }
-       }
-     });
-  }
-</script>

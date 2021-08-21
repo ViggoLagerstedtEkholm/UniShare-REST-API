@@ -82,6 +82,11 @@ class Users extends Database{
     $this->insertOrUpdate($sql, 'si', array($value, $ID));
   }
 
+  function terminateAccount($userID){
+    $sql = "DELETE FROM users WHERE usersID = ?;";
+    $this->executeQuery($sql, 'i', array($userID));
+  }
+
  function getUser($ID){
     $sql = "SELECT * FROM users WHERE usersID = ?;";
 
@@ -110,67 +115,6 @@ class Users extends Database{
 
     if(Cookie::exists(REMEMBER_ME_COOKIE_NAME)) {
       Cookie::delete(REMEMBER_ME_COOKIE_NAME);
-    }
-  }
-
- function register(Register $register){
-    $sql = "INSERT INTO users (userFirstName, userLastName, userEmail, userDisplayName, usersPassword) values(?,?,?,?,?);";
-
-    $password = $register->password;
-    $hashPassword = password_hash($password, PASSWORD_DEFAULT);
-
-    $this->insertOrUpdate($sql, 'sssss', array($register->first_name, $register->last_name, $register->email, $register->display_name, $hashPassword));
-  }
-
- function loginFromCOOKIE(){
-   $userSession = new UserSession();
-
-   $userSession = $userSession->getSessionFromCookie();
-   $ID = $userSession['userID'];
-   $session = $userSession['session'];
-
-   if($session != '' && $ID != '' && !empty($userSession)){
-    $user = $this->getUser($ID);
-    $email = $user["userEmail"];
-    $privilege = $user["privilege"];
-
-    Session::set(SESSION_USERID, $ID);
-    Session::set(SESSION_MAIL, $email);
-    Session::set(SESSION_PRIVILEGE, $privilege);
-  }
- }
-
- function login(Login $login){
-    $userSession = new UserSession();
-    $user = $this->userExists("userEmail", $login->email);
-
-    if($user === false){
-      return false;
-    }
-
-    $passwordHash = $user["usersPassword"];
-    $comparePassword = password_verify($login->password, $passwordHash);
-
-    if($comparePassword === false){
-      return false;
-    }else if($comparePassword === true){
-      $ID = $user["usersID"];
-      $Email = $user["userEmail"];
-      $privilege = $user["privilege"];
-
-      Session::set(SESSION_USERID, $ID);
-      Session::set(SESSION_MAIL, $Email);
-      Session::set(SESSION_PRIVILEGE, $privilege);
-
-      if($login->rememberMe == "on"){
-          echo "reached";
-          $hash = md5(uniqid(rand(), true));
-          $user_agent = Session::uagent_no_version();
-          Cookie::set(REMEMBER_ME_COOKIE_NAME, $hash, REMEMBER_ME_COOKIE_EXPIRY);
-          $userSession->deleteExistingSession($ID, $user_agent); //If any previous session exists, remove.
-          $userSession->insertSession($ID,$user_agent,$hash); //Insert the new session ID.
-      }
-      return true;
     }
   }
 

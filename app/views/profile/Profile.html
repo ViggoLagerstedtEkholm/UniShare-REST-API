@@ -124,7 +124,7 @@
               </h3>
 
               <!--===edit===-->
-                <form method="get" action="./project_add">
+                <form method="get" action="/UniShare/project/add">
                   <input class="button-style-1" type='submit' name='add project' value='Upload new project'/>
                 </form>
               <!--===edit===-->
@@ -159,7 +159,7 @@
                       </div>
                     </div>
                     <!--===edit===-->
-                    <form action="./project_update">
+                    <form action="/UniShare/project/update">
                       <input hidden value="---ID---" name="ID"></input>
                       <button type="submit" class="button-style-4">Edit</button>
                     </form>
@@ -177,7 +177,7 @@
               </h3>
 
               <!--===edit===-->
-              <form method="get" action="./degree_new">
+              <form method="get" action="/UniShare/degree/new">
                 <input class="button-style-1" type='submit' name='add degree' value='Upload new degree'/>
               </form>
               <!--===edit===-->
@@ -192,16 +192,18 @@
                   <h4>---school---</h4>
                   <h4>---country---</h4>
                   <h4>---city---</h4>
+                  <h4>Sum total credits: SUM(credits) hp</h4>
 
                   <h3>Included courses</h3>
+                  <a href="/UniShare/search/courses">Add courses to degree</a>
                 </div>
 
                 <!--===edit===-->
-                <div class="course-profile">
-                  <div id="course----ID---" class="content-card-body">
+                <div id="course----ID---" class="course-profile">
+                  <div class="content-card-body">
                     <div class="content-user">
                       <div class="content-card-image">
-                        <img src="images/books.png" alt="USER IMAGE">
+                        <img src="/UniShare/images/books.png" alt="USER IMAGE">
                       </div>
 
                       <div class="content-card-info">
@@ -257,7 +259,7 @@
           </h2>
           <textarea id="text" name="text"></textarea>
           <p>
-            <input class="button-style-5" value="Post comment" onclick="return addComment();">
+            <input class="button-style-5" type="button" value="Post comment" onclick="return addComment();">
           </p>
         </div>
 
@@ -286,7 +288,7 @@
             <hr />
             <b>Comment date: ---added---</b>
             <!--===edit===-->
-            <input class="button-style-2" value="Delete comment" id="---ID---" onclick="return deleteComment(---ID---);">
+            <input class="button-style-2" type="button" value="Delete comment" id="---ID---" onclick="return deleteComment(---ID---);">
             <!--===edit===-->
           </div>
         </div>
@@ -395,9 +397,13 @@
            success:function(res){
              location.reload();
            },
-           error:function(res){
-             console.log("Error.");
-             console.log(res);
+           error:function(xhr, res){
+             if(xhr.status == 403){
+               alert('You need to be logged in to comment!');
+             }
+             if(xhr.status == 500){
+               alert('Your comment is empty.');
+             }
            }
          });
       }

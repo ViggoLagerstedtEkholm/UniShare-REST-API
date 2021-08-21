@@ -134,7 +134,7 @@ class ProjectController extends Controller{
 
     if(count($errors) > 0){
       $errorList = http_build_query(array('error' => $errors));
-      Application::$app->redirect("../project?ID=$projectID&$errorList");
+      Application::$app->redirect("/UniShare/project/update?ID= $projectID&$errorList");
       exit();
     }
 

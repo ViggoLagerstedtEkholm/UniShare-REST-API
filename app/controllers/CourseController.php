@@ -12,7 +12,7 @@ use App\Models\Templates\Review;
 class CourseController extends Controller{
   private $courses;
   private $reviews;
-  
+
   function __construct(){
     $this->setMiddlewares(new AuthenticationMiddleware(['setRate', 'getRate', 'uploadReview', 'deleteReview']));
     $this->courses = new Courses();
@@ -76,24 +76,37 @@ class CourseController extends Controller{
   public function review(){
     return $this->display('courses','review', []);
   }
-  
+
   public function deleteReview(Request $request){
     $body = $request->getBody();
-    
+
     $reviewID = $body['reviewID'];
-    
+
     //TODO
   }
-  
-  public function updateReview(Request $request){
-    $body = $request->getBody();
-    //TODO
+
+  public function rewriteReview(Request $request){
+    if(isset($_GET["ID"])){
+      $ID = $_GET["ID"];
+      if(!empty($ID)){
+        $reviewID = $body['reviewID'];
+
+        $params = [
+          'reviewID' => $reviewID
+        ];
+
+        return $this->display('courses','review', $params);
+      }
+    }
+  }
+
+  public function getExistingReview(Request $request){
 
   }
 
   public function uploadReview(Request $request){
     $body = $request->getBody();
-    
+
     $params = [
       "courseID" => $body["courseID"],
       "fulfilling" => $body["fulfilling"],
@@ -104,7 +117,7 @@ class CourseController extends Controller{
       "overall" => $body["overall"],
       "text" => $body["text"],
     ];
-    
+
     $errors = $this->reviews->validate($params);
 
     $courseID = $params['courseID'];
@@ -113,9 +126,9 @@ class CourseController extends Controller{
       Application::$app->redirect("../../review?ID=$courseID&$errorList");
       exit();
     }
-    
+
     $success = $this->courses->insertReview($params);
-    
+
     if($success){
       Application::$app->redirect("../../courses?ID=$review->courseID&success=true");
     }else{

@@ -3,14 +3,14 @@
      <div class="flex-item">
        <div class="user-input-form-box">
          <h3> Enter project information</h3>
-         <form method="post" enctype='multipart/form-data' action='./project/upload'>
+         <form method="post" enctype='multipart/form-data' action='/UniShare/project/upload'>
            <input class="user-input-text" type="text" name="link" placeholder="Enter link">
-           <input class="user-input-text" type="text" name="name" placeholder="Project name">
+           <input class="user-input-text" type="text" name="name" placeholder="Project name" required>
            <br />
-           <textarea class="user-input-text" type="text" name="description" placeholder="Enter description"></textarea>
+           <textarea class="user-input-text" type="text" name="description" placeholder="Enter description" required></textarea>
            <p>
              Project image
-             <input class="form-text" type='file' name='project-file' value='Upload' />
+             <input class="form-text" type='file' name='project-file' value='Upload' required/>
            </p>
 
            <h3>Create default image with text</h3>

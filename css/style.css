@@ -8,6 +8,10 @@ html,body {
 
 fieldset{
   border: 0;
+  font-size: 15px;
+  transform: scale(1.5);
+  transition: 280ms all ease-in-out;
+
 }
 
 textarea{
@@ -43,11 +47,13 @@ p {
   display: flex;
   flex-direction: column;
   flex-basis: 100%;
-  padding: 25px;
+  padding: 10px;
   flex: 1;
+  align-items: center;
+justify-content: center;
 }
 
-.user-input-form-box p{
+.user-input-form-box p, a{
   color: black;
 }
 
@@ -214,27 +220,23 @@ p {
   margin-left: 10px;
 }
 
+
 .content-filter-box{
   display: flex;
   flex-wrap:wrap;
   height: auto;
   background-color: #474646;
   border-radius: 5px;
+  color: white;
+  padding-right: 200px;
+  padding-left: 200px;
+  padding-bottom: 10px;
 }
 
-.content-filter-box-cell{
-  flex: 1 0 30%; /* explanation below */
-  justify-content: center;
-  align-items: center;
+
+.content-filter-bg button{
   height: 100%;
-  padding: 10px;
-}
-
-.content-filter-bg{
-  padding: 25px;
-  background-color: #313131;
-  border-radius: 5px;
-  height: 90px;
+  border-radius: 50px;
 }
 
 .content-filter-select{
@@ -250,8 +252,16 @@ p {
   height: auto;
 }
 
-.content-filter-box-cell input{
-  width: 100%;
+select {
+  width: 150px;
+  padding: 5px 35px 5px 5px;
+  font-size: 16px;
+  border: 1px solid #CCC;
+  height: 34px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: url(https://img.icons8.com/material-outlined/24/000000/long-arrow-down.png) 96% / 2% no-repeat #EEE;
 }
 
 .course-rate-cell{
@@ -456,51 +466,6 @@ form .text_field{
   height:auto;
   padding: 10px;
   min-height: 1000px;
-}
-
-.wrapper{
-  display: inline-flex;
-  background: #474646;
-  width: 100%;
-  justify-content: space-evenly;
-  border-radius: 5px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-
-.wrapper .option{
-  background: #fff;
-  border-radius: 5px;
-  cursor: pointer;
-  padding: 10px;
-  transition: all 0.3s ease;
-}
-
-input[type="radio"]{
-  display: none;
-}
-
-#option-1:checked:checked ~ .option-1,
-#option-2:checked:checked ~ .option-2{
-  border-color: #0069d9;
-  background: #0069d9;
-}
-#option-1:checked:checked ~ .option-1 .dot,
-#option-2:checked:checked ~ .option-2 .dot{
-  background: #fff;
-}
-#option-1:checked:checked ~ .option-1 .dot::before,
-#option-2:checked:checked ~ .option-2 .dot::before{
-  opacity: 1;
-  transform: scale(1);
-}
-.wrapper .option span{
-  font-size: 20px;
-  color: #808080;
-}
-#option-1:checked:checked ~ .option-1 span,
-#option-2:checked:checked ~ .option-2 span{
-  color: #fff;
 }
 
 .request-course-container{
@@ -868,17 +833,20 @@ input[type="radio"]{
 
 @media screen and (max-width: 984px)
 {
+
   .content-filter-box{
-    flex-direction: column;
-    padding-right: 20px;
+    padding-right: 100px;
+    padding-left: 100px;
   }
 
-  .content-filter-box-cell{
-    margin-top: 5px;
-    align-items:flex-start;
-    justify-content:flex-start;
-    width: 100%;
-    flex: 1;
+  fieldset{
+    border: 0;
+    font-size: 15px;
+    transform: scale(1);
+  }
+
+  .content-filter-box{
+    flex-direction: column;
   }
 
   .course-rate-box{
@@ -936,6 +904,10 @@ input[type="radio"]{
 }
 
 @media screen and (max-width: 769px) {
+  .content-filter-box{
+    padding-right: 50px;
+    padding-left: 50px;
+  }
 
   .content-card-info h4{
     margin-top: 10px;
@@ -987,6 +959,10 @@ input[type="radio"]{
 }
 
 @media screen and (max-width: 480px) {
+  .content-filter-box{
+    padding-right: 0;
+    padding-left: 0;
+  }
   .wrapper-container-item{
     margin: 0;
   }

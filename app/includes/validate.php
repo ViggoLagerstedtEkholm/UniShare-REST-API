@@ -44,24 +44,6 @@ class Validate{
     return false;
   }
 
-  public static function hasEmptyProject(Project $project){
-    $result;
-    if($project->customCheck=="on"){
-      if(empty($project->name) || empty($project->description) || empty($project->link)|| empty($project->custom)){
-        $result = true;
-      }else{
-        $result = false;
-      }
-    }else{
-      if(empty($project->name) || empty($project->description) || empty($project->image) || empty($project->link)){
-        $result = true;
-      }else{
-        $result = false;
-      }
-    }
-    return $result;
-  }
-
   public static function hasInvalidProjectLink($link){
     $result;
     if(filter_var($link, FILTER_VALIDATE_URL) === FALSE){
@@ -76,40 +58,6 @@ class Validate{
     $allowed = array("image/jpeg", "image/gif", "image/png");
     $result;
     if(!in_array($fileType, $allowed)) {
-      $result = true;
-    }else{
-      $result = false;
-    }
-    return $result;
-  }
-
-  public static function hasEmptyInputsRegister(Register $register){
-    $result;
-    if(empty($register->first_name) || empty($register->last_name)
-    || empty($register->email) || empty($register->password
-    || empty($register->password_repeat) || empty($register->display_name))){
-      $result = true;
-    }else{
-      $result = false;
-    }
-    return $result;
-  }
-
-  public static function hasEmptyInputsLogin(Login $login){
-    $result;
-    if(empty($login->email) || empty($login->password))
-    {
-      $result = true;
-    }else{
-      $result = false;
-    }
-    return $result;
-  }
-
-  public static function hasEmptyInputDegree(Degree $degree){
-    $result;
-    if(empty($degree->name) || empty($degree->field_of_study) || empty($degree->start_date) || empty($degree->end_date))
-    {
       $result = true;
     }else{
       $result = false;
@@ -150,7 +98,7 @@ class Validate{
     }
     return $result;
   }
-  
+
   public static function arrayHasEmptyValue($array){
     foreach ($array as $i => $v) {
       if (empty($v) || is_null($v)){
@@ -158,16 +106,6 @@ class Validate{
       }
     }
     return false;
-  }
-
-  public static function emptyValue($input){
-    $result;
-    if($input == ''){
-      $result = true;
-    }else{
-      $result = false;
-    }
-    return $result;
   }
 
   public static function match($password, $password_repeat){

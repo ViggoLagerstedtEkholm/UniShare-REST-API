@@ -22,7 +22,7 @@ class ProfileController extends Controller{
   private $courses;
 
   public function __construct(){
-    $this->setMiddlewares(new AuthenticationMiddleware(['uploadImage', 'uploadProject', 'deleteProject', 'pubishCourse', 'getDegrees', 'removeCourseFromDegree']));
+    $this->setMiddlewares(new AuthenticationMiddleware(['uploadImage', 'uploadProject', 'deleteProject', 'pubishCourse', 'getDegrees', 'removeCourseFromDegree', 'addComment']));
 
     $this->imageHandler = new ImageHandler();
     $this->users = new Users();
@@ -46,9 +46,6 @@ class ProfileController extends Controller{
         $display_name = $user["userDisplayName"];
         $privilege = $user["privilege"];
         $description = $user["description"];
-        
-        //$result = $this->degrees->getActiveDegree(Session::get(SESSION_USERID));
-        //var_dump($result["activeDegreeID"]);
 
         $comments = $this->comments->getComments($ID);
         $degrees = $this->degrees->getDegrees($ID);
@@ -84,12 +81,14 @@ class ProfileController extends Controller{
   }
 
   public function uploadImage(Request $request){
+    $fileUploadName = 'file';
     $sessionID = Session::get(SESSION_USERID);
 
-    $image_object = Validate::validateImage('file');
+    $isValid = Validate::hasValidUpload($fileUploadName);
 
-    if($image_object != false){
-      $image_resize = $this->imageHandler->handleUploadResizing($image_object);
+    if($isValid){
+      $originalImage = $_FILES[$fileUploadName];
+      $image_resize = $this->imageHandler->handleUploadResizing($originalImage);
       $this->users->uploadImage($image_resize, $sessionID);
       Application::$app->redirect("../../profile?ID=$sessionID");
     }else{
@@ -116,6 +115,21 @@ class ProfileController extends Controller{
   public function addComment(Request $request){
     $body = $request->getBody();
 
+    $params = [
+      'pageID' => $body['pageID'],
+      'text' => $body['text'],
+    ];
+
+    $errors = $this->comments->validate($params);
+
+    if(count($errors) > 0){
+      $errorList = http_build_query(array('error' => $errors));
+      $pageID = $params['pageID'];
+
+      $resp = ['success'=>false,'data'=>['Status'=>'Invalid comment']];
+      return $this->jsonResponse($resp, 500);
+    }
+
     $posterID = Session::get(SESSION_USERID);
     $text = $body['text'];
     $profileID = $body['pageID'];
@@ -137,7 +151,7 @@ class ProfileController extends Controller{
     $degreeID = $courseRequest["degreeID"];
 
     $succeeded = $this->degrees->checkIfUserOwner(Session::get(SESSION_USERID), $degreeID);
-    
+
     if($succeeded){
       $this->degrees->deleteCourseFromDegree($degreeID, $courseID);
       $resp = ['success'=>true,'data'=>['Status'=>true, 'ID'=>$courseID, 'degreeID' => $degreeID]];

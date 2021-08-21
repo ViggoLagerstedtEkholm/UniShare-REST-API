@@ -46,52 +46,47 @@ class SettingsController extends Controller{
     $activeDegreeID = $user["activeDegreeID"];
     $description = $user["description"];
 
-    $error = array();
+    $errors = array();
 
     if(!$this->degrees->userHasDegreeID($updated_activeDegreeID)){
-      $error [] = INVALID_ACTIVEDEGREEID;
+      $errors[] = INVALID_ACTIVEDEGREEID;
     }
 
     if(!empty($updated_current_password) && !empty($updated_new_password)){
       $comparePassword = password_verify($updated_current_password, $passwordHash);
 
       if($comparePassword === false){
-        $error [] = INVALID_PASSWORD_MATCH;
+        $errors[] = INVALID_PASSWORD_MATCH;
       }else if($comparePassword === true){
         $hashPassword = password_hash($updated_new_password, PASSWORD_DEFAULT);
         $this->users->updateUser($fields[4], $hashPassword, $ID);
       }
     }
 
-    if(Validate::emptyValue($updated_last_name) === true){
-      $error [] = INVALID_LAST_NAME;
-    }
     if(Validate::invalidUsername($updated_display_name) === true){
-      $error [] = INVALID_USERNAME;
+      $errors[] = INVALID_USERNAME;
     }
     if(!is_null($this->users->userExists($fields[2], $updated_email)) && $updated_email != $email){
-      $error [] = EMAIL_TAKEN;
+      $errors[] = EMAIL_TAKEN;
     }
     if(!is_null($this->users->userExists($fields[3], $updated_email)) && $updated_display_name != $display_name){
-      $error [] = INVALID_USERNAME;
+      $errors[] = INVALID_USERNAME;
     }
 
-    $URL = "";
-    $errorCount = count($error);
-    if($errorCount > 0){
-      for ($x = 0; $x < $errorCount; $x++) {
-        $x == $errorCount - 1 ? $URL .= $error[$x] : $URL .= $error[$x] . "&error=";
-      }
-      Application::$app->redirect("../settings?error=" . $URL);
+    if(count($errors) > 0){
+      $errorList = http_build_query(array('error' => $errors));
+      Application::$app->redirect("/UniShare/settings?errors=$errorList");
       exit();
     }
+
     if($updated_description != $description){$this->users->updateUser($fields[6], $updated_description, $ID);}
     if($updated_activeDegreeID != $activeDegreeID){$this->users->updateUser($fields[5], $updated_activeDegreeID, $ID);}
     if($updated_first_name != $first_name){$this->users->updateUser($fields[0], $updated_first_name, $ID);}
     if($updated_last_name != $last_name){$this->users->updateUser($fields[1], $updated_last_name, $ID);}
     if($updated_email != $email){$this->users->updateUser($fields[2], $updated_email, $ID);}
     if($updated_display_name != $display_name){$this->users->updateUser($fields[3], $updated_display_name, $ID);}
-    Application::$app->redirect("../");
+
+    Application::$app->redirect("../profile?ID=$ID");
   }
 
   public function fetch(){
@@ -108,7 +103,10 @@ class SettingsController extends Controller{
   }
 
   public function deleteAccount(){
-    //TODO
-    return $this->display('./');
+    $userID = Session::get(SESSION_USERID);
+
+    $this->users->terminateAccount($userID);
+    $this->users->logout();
+    Application::$app->redirect("/UniShare/");
   }
 }

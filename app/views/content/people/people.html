@@ -1,8 +1,8 @@
     <div class="container">
       <form>
         <div class="content-filter-box">
-          <div class="content-filter-box-cell">
-            <div class="content-filter-bg">
+          <div class="row">
+            <div class="column">
               <p>
                 Select filter option
               </p>
@@ -12,43 +12,43 @@
                 <option value="lastOnline">Last online</option>
               </select>
             </div>
+
+            <div class="column">
+              <p>
+                Results per page
+              </p>
+              <select class="content-filter-select" name="results_per_page_count">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7" selected="selected">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+              </select>
+            </div>
           </div>
-      
-          <div class="content-filter-box-cell">
-            <div class="content-filter-bg">
+          <div class="row">
+            <div class="column">
+              Search
+              <input class="user-input-text" id="email" type="text" name="search" placeholder="Search">
+            </div>
+          </div>
+          <div class="row">
+            <div class="column">
               <fieldset name="filter_order">
-                <div class="wrapper">
+                   <label>ASC</label>
                    <input type="radio" name="action" id="option-1" value="ASC">
+                   <label>DESC</label>
                    <input type="radio" name="action" id="option-2" value="DESC" checked>
-                   <label for="option-1" class="option option-1">
-                     <div class="dot"></div>
-                      <span>ASC</span>
-                      </label>
-                   <label for="option-2" class="option option-2">
-                     <div class="dot"></div>
-                      <span>DESC</span>
-                   </label>
-                </div>
               </fieldset>
             </div>
           </div>
-      
-          <div class="content-filter-box-cell">
-            <div class="content-filter-bg">
-              <p>
-                Search
-                <input class="user-input-text" id="email" type="text" name="search" placeholder="Search">
-              </p>
-            </div>
-          </div>
-      
-          <div class="content-filter-box-cell">
-            <div class="content-filter-bg">
-              <button class="button-style-4" type="submit" name="filter_button" value="GO">Filter</button>
-            </div>
-          </div>
+          <button class="button-style-4" type="submit" name="filter_button" value="GO">Filter</button>
         </div>
-      
       </form>
 
       <div class="display-result-box">
@@ -85,7 +85,7 @@
             </div>
 
             <div class="content-card-info-buttons">
-              <form action="./profile" method="get">
+              <form action="/UniShare/profile" method="get">
                 <input type="hidden" name="ID" value="---ID---" />
                 <button class="button-style-1" type="submit">Visit</button>
               </form>
@@ -101,11 +101,11 @@
           <div class="content-pagination-bar">
             <!--===edit===-->
             <div>
-              <a href="./searchPeople?page=---page---&filter_option=---filter_option---&search=---search---&action=---action---"><button type="submit" class="pagination-button"> 🡸 </button></a>
+              <a href="./people?page=---page---&filter_option=---filter_option---&search=---search---&action=---action---&results_per_page_count=---results_per_page_count---"><button type="submit" class="pagination-button"> 🡸 </button></a>
             </div>
             <!--===edit===-->
             <div>
-              <a href="./searchPeople?page=---page---&filter_option=---filter_option---&search=---search---&action=---action---"><button type="submit" class="pagination-button"> 🡺 </button></a>
+              <a href="./people?page=---page---&filter_option=---filter_option---&search=---search---&action=---action---&results_per_page_count=---results_per_page_count---"><button type="submit" class="pagination-button"> 🡺 </button></a>
             </div>
             <!--===edit===-->
         </div>

@@ -2,7 +2,7 @@
    <div class="content-container">
      <div class="flex-item">
        <div class="user-input-form-box">
-         <form method="post" enctype='multipart/form-data' action="./project/update">
+         <form method="post" enctype='multipart/form-data' action="/UniShare/project/update">
            <h1>Update project</h1>
            <input id="projectID" name="projectID" value="---ID---" hidden />
            <input class="user-input-text" id="name" type="text" name="name" placeholder="Name">
@@ -28,7 +28,7 @@
   console.log(projectID);
 
   $.ajax ( {
-      url: "./project/get",
+      url: "/UniShare/project/get",
       type: 'GET',
       data:{projectID: projectID},
       dataType: "json",

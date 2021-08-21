@@ -41,12 +41,12 @@ foreach($reviews as $review){
   $temp = str_replace('---courseID---', $review->courseID, $temp);
   echo str_replace('---userID---', $review->userID, $temp);
 
-  if($review->userID == Session::get(SESSION_USERID)){
+  if(Session::isLoggedIn() && $review->userID == Session::get(SESSION_USERID)){
    $temp = str_replace('---overall---', $review->overall, $fragments[10]);
    $temp = str_replace('---courseID---', $review->courseID, $temp);
    echo str_replace('---userID---', $review->userID, $temp);
   }
-  
+
   $temp = str_replace('---userDisplayName---', $review->userDisplayName, $fragments[11]);
   $temp = str_replace('---text---', $review->text, $temp);
   $temp = str_replace('---fulfilling---', $review->fulfilling, $temp);
@@ -59,4 +59,3 @@ foreach($reviews as $review){
 }
 
 echo $fragments[12];
-

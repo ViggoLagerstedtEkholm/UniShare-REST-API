@@ -33,25 +33,19 @@
             <textarea class="user-input-text" id="description" type="text" name="description" placeholder="Enter description"></textarea>
           </p>
 
+          <p>
+            Select degree, if you don't have one go to Profile->Degrees->Upload new degree
+          </p>
           <select id="degrees" name="activeDegreeID">
 
           </select>
 
           <hr />
-          <br />
-          <p>
-            Privacy settings
-          </p>
 
-          <br />
-
-          <p>
-            Hide account
-            <input type="checkbox" name="link">
-          </p>
-
-          <button type="submit" class="button-style-2">Delete account</button>
           <button id="update" type="submit" class="button-style-4">Update</button>
+        </form>
+        <form method="post" action="./settings/deleteAccount">
+          <button type="submit" class="button-style-2">Delete account</button>
         </form>
       </div>
     </div>

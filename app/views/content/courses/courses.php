@@ -44,19 +44,21 @@ foreach($courses as $course){
 
 echo $fragments[4];
 
-if($page != 1){
+if($page != 1 && $number_of_pages != 0){
   $temp = str_replace('---page---', $page - 1, $fragments[5]);
   $temp = str_replace('---filter_option---', $filterOption, $temp);
   $temp = str_replace('---action---', $filterOrder, $temp);
   $temp = str_replace('---search---', $search, $temp);
+  $temp = str_replace('---results_per_page_count---', $results_per_page_count, $temp);
   echo $temp;
 }
 
-if($page != $number_of_pages){
+if($page != $number_of_pages && $number_of_pages != 0){
   $temp = str_replace('---page---', $page + 1, $fragments[6]);
   $temp = str_replace('---filter_option---', $filterOption, $temp);
   $temp = str_replace('---action---', $filterOrder, $temp);
   $temp = str_replace('---search---', $search, $temp);
+  $temp = str_replace('---results_per_page_count---', $results_per_page_count, $temp);
   echo $temp;
 }
 
@@ -64,4 +66,5 @@ $temp = str_replace('---page---', $page, $fragments[7]);
 $temp = str_replace('---filter_option---', $filterOption, $temp);
 $temp = str_replace('---action---', $filterOrder, $temp);
 $temp = str_replace('---search---', $search, $temp);
+$temp = str_replace('---results_per_page_count---', $results_per_page_count, $temp);
 echo $temp;
