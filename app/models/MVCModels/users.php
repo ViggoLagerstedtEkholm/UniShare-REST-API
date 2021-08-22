@@ -133,7 +133,7 @@ class Users extends Database{
   }
 
   function addVisitDate($ID){
-    $sql = "UPDATE users SET lastOnline =? WHERE usersID = ?;";
+    $sql = "UPDATE users SET lastOnline = ? WHERE usersID = ?;";
 
     date_default_timezone_set("Europe/Stockholm");
     $date = date('Y-m-d H:i:s');

@@ -15,7 +15,7 @@ class AdminController extends Controller{
   private $users;
   private $courses;
   private $requests;
-  
+
   public function __construct(){
     $this->setMiddlewares(new AuthenticationMiddleware(['view', 'updateUser','removeUser', 'addUser', 'addCourse'. 'removeCourse', 'updateCourse'], true));
     $this->users = new Users();
@@ -25,7 +25,7 @@ class AdminController extends Controller{
 
   public function view(){
     $requests = $this->requests->getRequestedCourses();
-    
+
     $params = [
       "requests" => $requests
     ];
@@ -34,8 +34,16 @@ class AdminController extends Controller{
   }
 
   public function addCourse(Request $request){
-    $course = new Course();
-    $course->populateAttributes($request->getBody());
+    $body = $request->getBody();
+
+    $errors = $this->courses->validate($body);
+
+    if(count($errors) > 0){
+      $errorList = http_build_query(array('error' => $errors));
+      Application::$app->redirect("/UniShare/admin?$errorList");
+      exit();
+    }
+
     $hasSucceded = $this->courses->insertCourse($course);
 
     if($hasSucceded){
@@ -50,9 +58,9 @@ class AdminController extends Controller{
   public function approveRequest(Request $request){
     $body = $request->getBody();
     $requestID = $body["requestID"];
-    
+
     $success = $this->requests->approveRequest($requestID);
-    
+
     if($success){
       $resp = ['success'=>true,'data'=>['Status'=>true, 'ID'=>$requestID]];
       return $this->jsonResponse($resp, 200);
@@ -61,13 +69,13 @@ class AdminController extends Controller{
       return $this->jsonResponse($resp, 500);
     }
   }
-  
+
   public function denyRequest(Request $request){
     $body = $request->getBody();
     $requestID = $body["requestID"];
-    
+
     $success = $this->requests->denyRequest($requestID);
-    
+
     if($success){
       $resp = ['success'=>true,'data'=>['Status'=>true, 'ID'=>$requestID]];
       return $this->jsonResponse($resp, 200);

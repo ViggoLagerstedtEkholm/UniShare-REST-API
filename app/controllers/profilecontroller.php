@@ -39,14 +39,7 @@ class ProfileController extends Controller{
       $ID = $_GET["ID"];
       if(!empty($ID)){
         $user = $this->users->getUser($ID);
-        $first_name = $user["userFirstName"];
-        $last_name = $user["userLastName"];
         $image = base64_encode($user["userImage"]);
-        $date = $user["lastOnline"];
-        $display_name = $user["userDisplayName"];
-        $privilege = $user["privilege"];
-        $description = $user["description"];
-
         $comments = $this->comments->getComments($ID);
         $degrees = $this->degrees->getDegrees($ID);
         $updatedVisitCount = $this->users->addVisitor($ID, $user);
@@ -67,13 +60,15 @@ class ProfileController extends Controller{
           'updatedVisitCount' => $updatedVisitCount,
           'projects' => $projects,
           'currentPageID' => $ID,
-          'visitDate' => $date,
-          'first_name' => $first_name,
-          'last_name' => $last_name,
-          'display_name' => $display_name,
-          'privilege' => $privilege,
-          'description' => $description
+          'visitDate' => $user["lastOnline"],
+          'first_name' => $user["userFirstName"],
+          'last_name' => $user["userLastName"],
+          'display_name' => $user["userDisplayName"],
+          'privilege' => $user["privilege"],
+          'description' => $user["description"],
+          'joined' => $user["joined"]
         ];
+
         return $this->display('profile','profile', $params);
       }
     }

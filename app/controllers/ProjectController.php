@@ -65,7 +65,7 @@ class ProjectController extends Controller{
 
     if(count($errors) > 0){
       $errorList = http_build_query(array('error' => $errors));
-      Application::$app->redirect("../profile?ID=$userID&$errorList");
+      Application::$app->redirect("/UniShare/profile?ID=$userID&$errorList");
       exit();
     }
 
@@ -77,7 +77,7 @@ class ProjectController extends Controller{
     }
 
     $this->projects->uploadProject($params, $userID, $image);
-    Application::$app->redirect("../profile?ID=$sessionID");
+    Application::$app->redirect("/UniShare/profile?ID=$userID");
   }
 
   public function deleteProject(Request $request){
@@ -99,6 +99,12 @@ class ProjectController extends Controller{
   public function getProjectForEdit(Request $request){
     $body = $request->getBody();
     $projectID = $body["projectID"];
+
+    if(empty($projectID)){
+      $resp = ['success'=>false, 'status' => 'No matching ID!'];
+      return $this->jsonResponse($resp, 404);
+    }
+
     $project = $this->projects->getProject($projectID);
 
     //Check if the currently logged in user is the one that owns the project.
@@ -122,6 +128,7 @@ class ProjectController extends Controller{
     $projectID = $body["projectID"];
 
     $params = [
+      "projectID" => $projectID,
       "link" => $body["link"],
       "name" => $body["name"],
       "description" => $body["description"],

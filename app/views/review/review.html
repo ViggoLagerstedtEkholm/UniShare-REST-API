@@ -1,8 +1,8 @@
 <div class="container">
   <div class="request-course-container">
     <div class="user-input-form-box">
-      <form method="post" action="./course/upload/review">
-        <input name="courseID" value="---ID---" hidden />
+      <form method="post" action="/UniShare/review/upload">
+        <input id="courseID" name="courseID" value="---ID---" hidden />
         <div class="course-rate-box">
           <div class="course-rate-cell">
             <h4>Fulfilling</h4>
@@ -104,7 +104,7 @@
         <h4>
           Write a review
         </h4>
-        <textarea class="user-input-text" type="text" name="text" placeholder="Text"></textarea>
+        <textarea class="user-input-text" type="text" id="text" name="text" placeholder="Text"></textarea>
         <p>
           <input class="button-style-1" type="submit" name="submit_project" value="Upload">
         </p>
@@ -115,3 +115,37 @@
     </div>
   </div>
 </div>
+
+<script>
+  $.ajax ( {
+      url: "/UniShare/review/get",
+      type: 'GET',
+      data:{courseID:  document.getElementById('courseID').value },
+      dataType: "json",
+      success: function ( res ){
+        console.log(res);
+
+        var text = res['data']['result']['text'];
+        var difficulty = res['data']['result']['difficulty'];
+        var environment = res['data']['result']['environment'];
+        var fulfilling = res['data']['result']['fulfilling'];
+        var grading = res['data']['result']['grading'];
+        var litterature = res['data']['result']['litterature'];
+        var overall = res['data']['result']['overall'];
+
+        document.getElementById("text").value = text;
+        document.getElementById("difficulty").value = difficulty;
+        document.getElementById("environment").value = environment;
+        document.getElementById("fulfilling").value = fulfilling;
+        document.getElementById("grading").value = grading;
+        document.getElementById("litterature").value = litterature;
+        document.getElementById("overall").value = overall;
+      },
+      error: function (xhr, res ){
+        console.log(res);
+        if(xhr.status == 404){
+          alert('No matching project ID!');
+        }
+      }
+  });
+</script>

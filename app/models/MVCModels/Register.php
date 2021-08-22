@@ -32,15 +32,15 @@ class Register extends Database implements IValidate{
 
     return $errors;
   }
-  
+
   function register($params){
      $sql = "INSERT INTO users (userFirstName, userLastName, userEmail, userDisplayName, usersPassword, joined) values(?,?,?,?,?,?);";
- 
+
      $password = $params["password"];
      $hashPassword = password_hash($password, PASSWORD_DEFAULT);
      date_default_timezone_set("Europe/Stockholm");
      $date = date('Y-m-d H:i:s');
- 
+
      $this->insertOrUpdate($sql, 'ssssss', array($params["first_name"], $params["last_name"], $params["email"], $params["display_name"], $hashPassword, $date));
    }
 }

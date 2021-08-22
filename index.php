@@ -17,6 +17,7 @@ use App\Controllers\DegreeController;
 use App\Controllers\RequestController;
 use App\Controllers\ForumController;
 use App\Controllers\PublicationController;
+use App\Controllers\ReviewController;
 
 require_once(__DIR__ . '/config.php');
 
@@ -34,6 +35,7 @@ $degreeController = new DegreeController();
 $requestController = new RequestController();
 $forumController = new ForumController();
 $publicationController = new PublicationController();
+$reviewController = new ReviewController();
 
 if(Cookie::exists(REMEMBER_ME_COOKIE_NAME) && !Session::exists(SESSION_USERID)){
   $authenticationController->loginWithCookie();
@@ -69,17 +71,22 @@ $app->router->post('/settings/deleteAccount', [$settingsController, 'deleteAccou
 $app->router->post('/settings/update', [$settingsController, 'update']);
 
 $app->router->get('/courses', [$courseController, 'view']);
-$app->router->get('/review', [$courseController, 'review']);
 $app->router->get('/course/getrate', [$courseController, 'getRate']);
 $app->router->post('/course/setrate', [$courseController, 'setRate']);
-$app->router->post('/course/upload/review', [$courseController, 'uploadReview']);
 $app->router->post('/course/request', [$courseController, 'request']);
+
+$app->router->get('/review', [$reviewController, 'review']);
+$app->router->get('/review/get', [$reviewController, 'getReview']);
+$app->router->post('/review/upload', [$reviewController, 'uploadReview']);
+$app->router->post('/review/delete', [$reviewController, 'deleteReview']);
 
 $app->router->get('/degree/new', [$degreeController, 'add']);
 $app->router->get('/degree/update', [$degreeController, 'update']);
-$app->router->get('/degrees/get', [$degreeController, 'getDegrees']);
+$app->router->get('/degree/get', [$degreeController, 'getDegree']);
+$app->router->get('/degree/get/names', [$degreeController, 'getDegrees']);
 $app->router->post('/degree/upload', [$degreeController, 'uploadDegree']);
-$app->router->post('/degree/remove', [$degreeController, 'removeDegree']);
+$app->router->post('/degree/remove', [$degreeController, 'deleteDegree']);
+$app->router->post('/degree/update', [$degreeController, 'updateDegree']);
 
 $app->router->get('/search/people', [$contentController, 'people']);
 $app->router->get('/search/courses', [$contentController, 'courses']);

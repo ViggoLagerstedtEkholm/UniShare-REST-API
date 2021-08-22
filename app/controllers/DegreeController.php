@@ -47,26 +47,78 @@ class DegreeController extends Controller
 
     if(count($errors) > 0){
       $errorList = http_build_query(array('error' => $errors));
-      Application::$app->redirect("../profile?ID=$userID&$errorList");
+      Application::$app->redirect("/UniShare/profile?ID=$userID&$errorList");
       exit();
     }
 
     $this->degrees->uploadDegree($params, Session::get(SESSION_USERID));
-    Application::$app->redirect("../profile?ID=$ID");
+    Application::$app->redirect("/UniShare/profile?ID=$userID");
   }
-  
+
   public function getDegrees(){
     $degrees = $this->degrees->getDegrees(Session::get(SESSION_USERID));
     $resp = ['success'=>true,'data'=>['degrees'=>$degrees]];
     return $this->jsonResponse($resp, 200);
   }
 
-  public function updateDegree(Request $request){
+  public function getDegree(Request $request){
+    $body = $request->getBody();
+    $degreeID = $body["degreeID"];
 
+    if(!empty($degreeID)){
+      $degree = $this->degrees->getDegree($degreeID);
+    }else{
+      $resp = ['success'=>false, 'status' => 'No matching ID!'];
+      return $this->jsonResponse($resp, 404);
+    }
+
+    if(!is_null($degree)){
+      $resp = ['success'=>true,'data'=>['degree' => $degree]];
+      return $this->jsonResponse($resp, 200);
+    }else{
+      $resp = ['success'=>false];
+      return $this->jsonResponse($resp, 500);
+    }
+  }
+
+  public function updateDegree(Request $request){
+    $body = $request->getBody();
+    $degreeID = $body["degreeID"];
+
+    $userID = Session::get(SESSION_USERID);
+
+    $errors = $this->degrees->validate($body);
+
+    if(count($errors) > 0){
+      $errorList = http_build_query(array('error' => $errors));
+      Application::$app->redirect("/UniShare/degree/update?ID=$degreeID&$errorList");
+      exit();
+    }
+
+    $canUpdate = $this->degrees->checkIfUserOwner($userID, $degreeID);
+
+    if($canUpdate){
+      $this->degrees->updateDegree($body, $userID);
+      Application::$app->redirect("/UniShare/profile?ID=$userID");
+    }else{
+      Application::$app->redirect("/UniShare/");
+    }
   }
 
   public function deleteDegree(Request $request){
+    $body = $request->getBody();
+    $degreeID = $body['degreeID'];
+    $userID = Session::get(SESSION_USERID);
 
+    $canDelete = $this->degrees->checkIfUserOwner($userID, $degreeID);
+
+    if($canDelete){
+      $this->degrees->deleteDegree($degreeID);
+      $resp = ['success'=>true,'data'=>['degreeID' => $degreeID]];
+      return $this->jsonResponse($resp, 200);
+    }else{
+      $resp = ['success'=>false];
+      return $this->jsonResponse($resp, 500);
+    }
   }
 }
-?>

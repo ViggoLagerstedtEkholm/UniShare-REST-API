@@ -50,7 +50,7 @@ class Degrees extends Database implements IValidate{
 
     $this->executeQuery($sql, 'ii', array($degreeID, $courseID));
   }
-  
+
   function checkIfUserOwner($userID, $degreeID){
     $sql = "SELECT degreeID FROM degrees
             JOIN users
@@ -72,13 +72,19 @@ class Degrees extends Database implements IValidate{
     $params["start_date"], $params["end_date"], $params["country"], $params["city"], $params["university"]));
   }
 
+  function updateDegree($params, $userID){
+    $sql = "UPDATE degrees SET name = ?, fieldOfStudy = ?, start_date = ?, end_date = ?, country = ?, city = ?, university = ? WHERE userID = ?;";
+    $this->insertOrUpdate($sql, 'sssssssi', array($params["name"], $params["field_of_study"],
+    $params["start_date"], $params["end_date"], $params["country"], $params["city"], $params["university"], $userID));
+  }
+
   function deleteDegree($ID){
-    $sql = "DELETE * FROM degrees WHERE degreeID = ?;";
-    $this->delete($sql, 'i', array($ID));
+    $sql = "DELETE FROM degrees WHERE degreeID = ?;";
+    $this->executeQuery($sql, 'i', array($ID));
   }
 
   function getDegree($ID){
-    $sql = "SELECT * FROM degrees WHERE userID = ?;";
+    $sql = "SELECT * FROM degrees WHERE degreeID = ?;";
     $result = $this->executeQuery($sql, 'i', array($ID));
     $data = $result->fetch_array();
 
@@ -86,7 +92,11 @@ class Degrees extends Database implements IValidate{
     $degree->ID = $data["degreeID"];
     $degree->name = $data["name"];
     $degree->field_of_study = $data["fieldOfStudy"];
-    $degree->duration = $data["duration"];
+    $degree->start_date = $data["start_date"];
+    $degree->end_date = $data["end_date"];
+    $degree->country = $data["country"];
+    $degree->city = $data["city"];
+    $degree->university = $data["university"];
 
     return $degree;
   }

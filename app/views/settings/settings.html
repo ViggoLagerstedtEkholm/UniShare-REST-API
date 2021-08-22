@@ -53,7 +53,7 @@
 
   <script>
     $.ajax ( {
-          url: "./settings/getsettings",
+          url: "/UniShare/settings/getsettings",
           type: 'GET',
           dataType: "json",
           success: function ( res ){
@@ -72,7 +72,7 @@
       });
 
       $.ajax ( {
-            url: "./degrees/get",
+            url: "/UniShare/degree/get/names",
             type: 'GET',
             dataType: "json",
             success: function ( res ){

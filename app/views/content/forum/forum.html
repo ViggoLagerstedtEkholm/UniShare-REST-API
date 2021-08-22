@@ -7,9 +7,9 @@
             Select filter option
           </p>
           <select class="content-filter-select" name="filter_option">
-            <option value="userDisplayName">Username</option>
-            <option value="visits">Visits</option>
-            <option value="lastOnline">Last online</option>
+            <option value="title">Title</option>
+            <option value="topic">Topic</option>
+            <option value="views">Views</option>
           </select>
         </div>
 
@@ -72,16 +72,10 @@
         </div>
 
         <div class="content-card-info">
-          <h4><b>Personal information</b></h4>
-          <p><b>First name:</b> ---first_name---</p>
-          <p><b>Last name:</b> ---last_name---</p>
-          <p><b>Username: </b>---username---</p>
-        </div>
-
-        <div class="content-card-info">
-          <h4><b>Personal information</b></h4>
-          <p><b>Visits:</b> ---visits---</p>
-          <p><b>Last online:</b> ---last_online---</p>
+          <h4><b>Forum</b></h4>
+          <p><b>Title:</b> ---title---</p>
+          <p><b>Topic:</b> ---topic---</p>
+          <p><b>Views: </b>---views---</p>
         </div>
 
         <div class="content-card-info-buttons">
@@ -113,6 +107,7 @@
         <input type="text" name="filter_option" value="---filter_option---" hidden>
         <input type="text" name="action" value="---action---" hidden>
         <input type="text" name="search" value="---search---" hidden>
+        <input type="text" name="results_per_page_count" value="---results_per_page_count---" hidden>
         <input class="user-input-text" type="number" name="page"  placeholder="PAGE INDEX" required>
         <input class="button-style-4" type="submit" width="50px" height="50px" name="submit" value="Go to page"></input>
     </form>

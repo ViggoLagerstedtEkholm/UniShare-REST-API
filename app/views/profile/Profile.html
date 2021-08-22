@@ -69,6 +69,16 @@
 
             <div>
               <h3>
+                Joined
+              </h3>
+            </div>
+
+            <p>
+              ---joined---
+            </p>
+
+            <div>
+              <h3>
                 Visits
               </h3>
             </div>
@@ -185,7 +195,7 @@
               <hr />
 
               <!--===edit===-->
-              <div class="degree-box">
+              <div id="degree----degreeID---" class="degree-box">
                 <!--===edit===-->
                 <div class="degree-info-panel">
                   <h1>---degree_name---</h1>
@@ -193,6 +203,13 @@
                   <h4>---country---</h4>
                   <h4>---city---</h4>
                   <h4>Sum total credits: SUM(credits) hp</h4>
+
+                  <form action="/UniShare/degree/update" method="GET">
+                    <input name="ID" value="---degreeID---" hidden />
+                    <button class="button-style-4">Edit degree</button>
+                  </form>
+
+                  <button class="button-style-2" onclick="return deleteDegree(---degreeID---);">Delete degree</button>
 
                   <h3>Included courses</h3>
                   <a href="/UniShare/search/courses">Add courses to degree</a>
@@ -338,6 +355,26 @@
              if(canRemove){
                var ID = res["data"]["ID"];
                document.getElementById("course-" + ID).remove();
+             }
+           },
+           error:function(res){
+             console.log(res);
+           }
+         });
+      }
+
+      function deleteDegree(ID){
+        $.ajax({
+           url: "/UniShare/degree/remove",
+           type: "POST",
+           data:{degreeID: ID},
+           dataType: "json",
+           success:function(res){
+             console.log(res);
+             var canRemove = res["success"];
+             if(canRemove){
+               var ID = res["data"]["degreeID"];
+               document.getElementById("degree-" + ID).remove();
              }
            },
            error:function(res){

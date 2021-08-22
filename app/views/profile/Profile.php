@@ -25,6 +25,7 @@ $info_panel = str_replace('---First_name---', $first_name, $fragments[2]);
 $info_panel = str_replace('---display_name---', $display_name, $info_panel);
 $info_panel = str_replace('---Last_name---', $last_name, $info_panel);
 $info_panel = str_replace('---Date---', $visitDate, $info_panel);
+$info_panel = str_replace('---joined---', $joined, $info_panel);
 $info_panel = str_replace('---Visits---', $updatedVisitCount , $info_panel);
 $info_panel = str_replace('---Added_projects---', count($projects) , $info_panel);
 $info_panel =  str_replace('---Completed_courses---', 0 , $info_panel);
@@ -72,14 +73,15 @@ if($sessionID != false){
 echo $fragments[10];
 
 foreach($degrees as $degree){
-  echo $fragments[11];
+  echo str_replace('---degreeID---', $degree->ID, $fragments[11]);
 
   $temp = str_replace('---degree_name---', $degree->name, $fragments[12]);
+  $temp = str_replace('---degreeID---', $degree->ID, $temp);
   $temp = str_replace('---school---', $degree->university, $temp);
   $temp = str_replace('---country---', $degree->country, $temp);
   $temp = str_replace('---city---', $degree->city, $temp);
   echo $temp;
-  
+
   $courses = $degree->courses;
   foreach($courses as $course){
     $temp = str_replace('---name---', $course->name, $fragments[13]);

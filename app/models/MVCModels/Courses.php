@@ -3,8 +3,19 @@ namespace App\Models\MVCModels;
 use App\Models\Templates\Course;
 use App\Models\Templates\Review;
 use App\Core\Session;
+use App\Includes\Validate;
 
-class Courses extends Database{
+class Courses extends Database implements IValidate{
+  public function validate($params){
+    $errors = array();
+
+    if(Validate::arrayHasEmptyValue($params) === true){
+      $errors[] = EMPTY_FIELDS;
+    }
+
+    return $errors;
+  }
+
   function getCoursesCount(){
      $sql = "SELECT Count(*) FROM courses";
      $result = $this->executeQuery($sql);
@@ -148,23 +159,6 @@ class Courses extends Database{
     $result = $this->executeQuery($sql, 'ii', array($userID, $courseID));
     $rating = $result->fetch_assoc()["rating"] ?? " - No rating set!";
     return $rating;
-  }
-
-  function insertReview($params){
-    $sql = "INSERT INTO review (userID, courseID, text, fulfilling, environment, difficulty, grading, litterature, overall)
-    values(?,?,?,?,?,?,?,?,?)
-    ON DUPLICATE KEY UPDATE text = ?, fulfilling = ?, environment = ?, difficulty = ?, grading = ?, litterature = ?, overall = ?;";
-
-    $userID = Session::get(SESSION_USERID);
-
-    $success = $this->insertOrUpdate($sql, 'iisiiiiiisiiiiii', array(
-    $userID, $params["courseID"], $params["text"],
-    $params["fulfilling"], $params["environment"], $params["difficulty"],
-    $params["grading"], $params["litterature"], $params["overall"],
-    $params["text"], $params["fulfilling"], $params["environment"],
-    $params["difficulty"], $params["grading"], $params["litterature"], $params["overall"]));
-
-    return $success;
   }
 
   function getReviews($courseID){

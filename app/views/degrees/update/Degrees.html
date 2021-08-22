@@ -2,8 +2,89 @@
    <div class="content-container">
      <div class="flex-item">
        <div class="user-input-form-box">
-        TODO
-      </div>        
+         <form method="post" action="/UniShare/degree/update">
+           <input type="hidden" name="degreeID" id="degreeID" />
+           <h4>
+             Degree name
+           </h4>
+           <input id="name" class="user-input-text" type="text" name="name" placeholder="Degree name">
+           <h4>
+             Field of study
+           </h4>
+           <input id="field_of_study" class="user-input-text" type="text" name="field_of_study" placeholder="Field of study">
+           <h4>
+             Start date
+           </h4>
+           <input id="start_date" class="user-input-text" type="date" name="start_date" placeholder="Start date">
+           <h4>
+             End date
+           </h4>
+           <input id="end_date" class="user-input-text" type="date" name="end_date" placeholder="End date">
+           <h4>
+             Country
+           </h4>
+           <input id="country" class="user-input-text" type="text" name="country" placeholder="Country">
+           <h4>
+             City
+           </h4>
+           <input id="city" class="user-input-text" type="text" name="city" placeholder="City">
+           <h4>
+             University
+           </h4>
+           <input id="university" class="user-input-text" type="text" name="university" placeholder="University">
+           <p>
+             <input class="button-style-1" type="submit" name="submit_project" value="Update">
+           </p>
+         </form>
+      </div>
     </div>
   </div>
 </div>
+
+<script>
+  function findGetParameter(parameterName) {
+      var result = null,
+          tmp = [];
+      var items = location.search.substr(1).split("&");
+      for (var index = 0; index < items.length; index++) {
+          tmp = items[index].split("=");
+          if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+      }
+      return result;
+  }
+
+  $( document ).ready(function() {
+    $.ajax ( {
+          url: "./get",
+          type: 'GET',
+          data:{degreeID: findGetParameter("ID")},
+          dataType: "json",
+          success: function ( res ){
+            console.log(res);
+            var city = res['data']['degree']['city'];
+            var country = res['data']['degree']['country'];
+            var end_date = res['data']['degree']['end_date'];
+            var start_date = res['data']['degree']['start_date'];
+            var field_of_study = res['data']['degree']['field_of_study'];
+            var name = res['data']['degree']['name'];
+            var university = res['data']['degree']['university'];
+            var ID = res['data']['degree']['ID'];
+
+            document.getElementById("city").value = city;
+            document.getElementById("country").value = country;
+            document.getElementById("end_date").value = end_date;
+            document.getElementById("start_date").value = start_date;
+            document.getElementById("field_of_study").value = field_of_study;
+            document.getElementById("name").value = name;
+            document.getElementById("university").value = university;
+            $("#degreeID").val(ID);
+          },
+          error: function( res ){
+            console.log(res);
+            alert('Could not fetch data!');
+          }
+      });
+  });
+
+
+</script>

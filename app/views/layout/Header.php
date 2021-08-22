@@ -8,6 +8,7 @@ if($isError == 0){
     $ID = Session::get('userID');
     $headerLinks = "<li><a href='/UniShare/'>Home</a></li>
                     <li><a href='/UniShare/profile?ID=$ID'>Profile</a></li>
+                    <li><a href='/UniShare/request'>Request course</a></li>
                     <li><a href='/UniShare/logout'>Logout</a></li>";
 
     echo str_replace('---navigation---', $headerLinks, $fragments[0]);

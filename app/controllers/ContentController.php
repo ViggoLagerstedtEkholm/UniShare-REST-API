@@ -11,11 +11,13 @@ class ContentController extends Controller
 {
   private $users;
   private $courses;
+  private $forums;
 
   public function __construct()
   {
     $this->users = new Users();
     $this->courses = new Courses();
+    $this->forums = new Forums();
   }
 
   private function getFilters(){
@@ -146,7 +148,39 @@ class ContentController extends Controller
     $search = $parameters['search'];
     $results_per_page_count = $parameters['results_per_page_count'];
 
-    return $this->display('content/forum', 'forum', []);
+    if(is_null($search)){
+      $forum_count = $this->forums->getForumCount();
+    }
+    else{
+      $forum_count = $this->forums->getForumCountSearch($search);
+    }
+
+    $offsets = $this->calculateOffsets($forum_count, $page, $results_per_page_count);
+
+    $start_page_first_result = $offsets['start_page_first_result'];
+    $results_per_page = $offsets['results_per_page'];
+    $number_of_pages = $offsets['number_of_pages'];
+
+    if(is_null($search) && empty($search)){
+       $forums = $this->forums->fetchForumsSearch($start_page_first_result, $results_per_page, $filterOption, $filterOrder);
+     }
+    else{
+      $forums = $this->forums->fetchForumsSearch($start_page_first_result, $results_per_page, $filterOption, $filterOrder, $search);
+    }
+
+    $params = [
+      'forums' => $forums,
+      'page' => $page,
+      'filterOption' => $filterOption,
+      'filterOrder' => $filterOrder,
+      'number_of_pages' => $number_of_pages,
+      'start_page_first_result' => $start_page_first_result,
+      'results_per_page' => $results_per_page,
+      'search' => $search,
+      'results_per_page_count' => $results_per_page_count
+    ];
+
+    return $this->display('content/forum', 'forum', $params);
   }
 
   private function calculateOffsets($count, $page, $result_page_count_selected){
@@ -175,7 +209,6 @@ class ContentController extends Controller
     $courseID = $body["courseID"];
 
     $isInActiveDegree = $this->courses->checkIfCourseExistsInActiveDegree($courseID);
-
 
     if($isInActiveDegree){
       $this->courses->deleteDegreeCourse($degreeID, $courseID);

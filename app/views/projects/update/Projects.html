@@ -42,8 +42,11 @@
         document.getElementById("link").value = link;
         document.getElementById("description").value = description;
       },
-      error: function ( res ){
+      error: function (xhr, res ){
         console.log(res);
+        if(xhr.status == 404){
+          alert('No matching project ID!');
+        }
       }
   });
 </script>

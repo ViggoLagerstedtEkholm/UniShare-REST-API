@@ -164,9 +164,9 @@
       </div>
 
       <!--===edit===-->
-      <input class="button-style-4" value="Edit review" onclick="return updateComment(---userID---, ---courseID---);">
+      <h4>Click "type review" if you want to update the review.</h4>
       <hr />
-      <input class="button-style-2" value="Delete review" onclick="return deleteComment(---userID---, ---courseID---);">
+      <input class="button-style-2" type="button" value="Delete review" onclick="return deleteReview(---userID---, ---courseID---);">
       <!--===edit===-->
 
       <br />
@@ -197,21 +197,20 @@
   </div>
 </div>
 <script>
-  var courseID = document.getElementById('courseID').value;
 
-  function updateComment(reviewID){
+  function deleteReview(userID, courseID){
     $.ajax({
-       url: "./profile/delete/course",
+       url: "/UniShare/review/delete",
        type: "POST",
-       data:{reviewID: reviewID},
+       data:{userID: userID, courseID: courseID},
        dataType: "json",
        success:function(res){
          console.log(res);
-         var canRemove = res["data"]["Status"];
-         if(canRemove){
-           var ID = res["data"]["ID"];
-           document.getElementById("course-" + ID).remove();
-         }
+         var userID = res["data"]["userID"];
+         var courseID = res["data"]["courseID"];
+         var id = userID + "," + courseID;
+
+         document.getElementById(id).remove();
        },
        error:function(res){
          console.log(res);
@@ -219,8 +218,10 @@
      });
   }
 
+  var courseID = document.getElementById('courseID').value;
+
   $.ajax ( {
-      url: "./course/getrate",
+      url: "/UniShare/course/getrate",
       type: 'GET',
       data:{ courseID: courseID},
       dataType: "json",
@@ -236,7 +237,7 @@
 
   $('select').on('change', function() {
     $.ajax({
-       url: "./course/setrate",
+       url: "/UniShare/course/setrate",
        type: "POST",
        data:{courseID: courseID, rating: this.value},
        dataType: "json",
