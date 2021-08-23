@@ -1,8 +1,5 @@
 <?php
 namespace App\Models\MVCModels;
-use App\Models\Templates\Register;
-use App\Models\Templates\Login;
-use App\Models\Templates\User;
 use App\Models\MVCModels\Database;
 use App\Models\MVCModels\UserSession;
 use App\Core\Session;
@@ -43,27 +40,8 @@ class Users extends Database{
 
      $result = $this->executeQuery($searchQuery, 'ii', array($from, $to));
    }
-
-    $users = array();
-    while( $row = $result->fetch_array())
-    {
-        $ID = $row['usersID'];
-        $first_name = $row['userFirstName'];
-        $last_name = $row['userLastName'];
-        $email =  $row['userEmail'];
-        $display_name = $row['userDisplayName'];
-        $image = base64_encode($row['userImage']);
-        $last_online = $row['lastOnline'];
-        $visitors = $row['visits'];
-
-        $user = new User($first_name, $last_name, $email, $display_name);
-        $user->image = $image;
-        $user->ID = $ID;
-        $user->last_online = $last_online;
-        $user->visitors = $visitors;
-        $users[] = $user;
-    }
-    return $users;
+   
+   return $this->fetchResults($result);
   }
 
  function userExists($attribute, $value){

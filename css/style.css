@@ -23,8 +23,17 @@ a{
   color: white;
 }
 
-p {
+p{
   color: white;
+}
+
+.content-card-forum{
+  display: flex;
+  font-size: 15px;
+  flex-direction: row;
+  text-align: left;
+  justify-content: space-evenly;
+  width: 100%;
 }
 
 .course-profile{
@@ -33,7 +42,6 @@ p {
   margin-top: 5px;
   border-radius: 5px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-
 }
 
 .row {
@@ -233,6 +241,10 @@ justify-content: center;
   padding-bottom: 10px;
 }
 
+.filter-background-box{
+  border-style: dotted;
+  background-color: #175a78;
+}
 
 .content-filter-bg button{
   height: 100%;
@@ -597,7 +609,6 @@ form .text_field{
   background-color: white;
   color:black;
   border-radius: 5px;
-  margin-top: 10px;
 }
 
 .user-input-form-box button{

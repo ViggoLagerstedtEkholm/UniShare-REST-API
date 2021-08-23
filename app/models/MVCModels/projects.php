@@ -1,7 +1,6 @@
 <?php
 namespace App\Models\MVCModels;
 use App\Models\MVCModels\Database;
-use App\Models\Templates\Project;
 use App\Includes\Validate;
 
 class Projects extends Database implements IValidate{
@@ -50,20 +49,7 @@ class Projects extends Database implements IValidate{
  function getProjects($ID){
    $sql = "SELECT * FROM projects WHERE userID=?;";
    $result = $this->executeQuery($sql, 'i', array($ID));
-
-   $projects = array();
-   while ($row = $result->fetch_assoc())
-   {
-        $project = new Project();
-        $project->ID = $row["projectID"];
-        $project->name = $row["name"];
-        $project->description = $row["description"];
-        $project->link = $row["link"];
-        $project->image = base64_encode($row["image"]);
-        $project->added = $row["added"];
-        $projects[] = $project;
-    }
-    return $projects;
+   return $this->fetchResults($result);
   }
 
   function getProject($ID){

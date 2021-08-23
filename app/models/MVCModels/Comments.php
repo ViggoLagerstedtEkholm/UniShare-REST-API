@@ -1,7 +1,6 @@
 <?php
 namespace App\Models\MVCModels;
 use App\Models\MVCModels\Database;
-use App\Models\Templates\Comment;
 use App\Includes\Validate;
 
 class Comments extends Database implements IValidate{
@@ -49,22 +48,6 @@ class Comments extends Database implements IValidate{
             ON author = usersID
             WHERE profile = ?;";
     $result = $this->executeQuery($sql, 'i', array($profileID));
-
-    $comments = array();
-    while( $row = $result->fetch_array())
-    {
-        $comment = new Comment();
-        $comment->ID = $row['commentID'];
-        $comment->text = $row['text'];
-        $comment->date = $row['date'];
-        $comment->author = $row['author'];
-        $comment->profile = $row['profile'];
-        $comment->added = $row['date'];
-        $comment->image = $row["userImage"];
-        $comment->display_name = $row["userDisplayName"];
-
-        $comments[] = $comment;
-    }
-    return $comments;
+    return $this->fetchResults($result);
   }
 }

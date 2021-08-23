@@ -37,24 +37,24 @@ if(Session::isLoggedIn()){
 echo $fragments[8];
 
 foreach($reviews as $review){
-  $temp = str_replace('---userImage---', 'data:image/jpeg;base64,'. $review->userImage, $fragments[9]);
-  $temp = str_replace('---courseID---', $review->courseID, $temp);
-  echo str_replace('---userID---', $review->userID, $temp);
+  $temp = str_replace('---userImage---', 'data:image/jpeg;base64,'. base64_encode($review["userImage"]), $fragments[9]);
+  $temp = str_replace('---courseID---', $review["courseID"], $temp);
+  echo str_replace('---userID---', $review["userID"], $temp);
 
-  if(Session::isLoggedIn() && $review->userID == Session::get(SESSION_USERID)){
-   $temp = str_replace('---overall---', $review->overall, $fragments[10]);
-   $temp = str_replace('---courseID---', $review->courseID, $temp);
-   echo str_replace('---userID---', $review->userID, $temp);
+  if(Session::isLoggedIn() && $review["userID"] == Session::get(SESSION_USERID)){
+   $temp = str_replace('---overall---', $review["overall"], $fragments[10]);
+   $temp = str_replace('---courseID---', $review["courseID"], $temp);
+   echo str_replace('---userID---', $review["userID"], $temp);
   }
 
-  $temp = str_replace('---userDisplayName---', $review->userDisplayName, $fragments[11]);
-  $temp = str_replace('---text---', $review->text, $temp);
-  $temp = str_replace('---fulfilling---', $review->fulfilling, $temp);
-  $temp = str_replace('---environment---', $review->environment, $temp);
-  $temp = str_replace('---difficulty---', $review->difficulty, $temp);
-  $temp = str_replace('---grading---', $review->grading, $temp);
-  $temp = str_replace('---litterature---', $review->litterature, $temp);
-  $temp = str_replace('---overall---', $review->overall, $temp);
+  $temp = str_replace('---userDisplayName---', $review["userDisplayName"], $fragments[11]);
+  $temp = str_replace('---text---', $review["text"], $temp);
+  $temp = str_replace('---fulfilling---', $review["fulfilling"], $temp);
+  $temp = str_replace('---environment---', $review["environment"], $temp);
+  $temp = str_replace('---difficulty---', $review["difficulty"], $temp);
+  $temp = str_replace('---grading---', $review["grading"], $temp);
+  $temp = str_replace('---litterature---', $review["litterature"], $temp);
+  $temp = str_replace('---overall---', $review["overall"], $temp);
   echo $temp;
 }
 

@@ -81,6 +81,7 @@ class ContentController extends Controller
     else{
       $users = $this->users->fetchPeopleSearch($start_page_first_result, $results_per_page, $filterOption, $filterOrder, $search);
     }
+  
 
     $params = [
       'users' => $users,

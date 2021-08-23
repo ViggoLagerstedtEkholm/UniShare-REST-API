@@ -73,6 +73,14 @@ abstract class Database{
 
     return $MATCH;
   }
+  
+  protected function fetchResults($result) : array{
+    $rows = array();
+    while ($row = $result->fetch_assoc()) { 
+     $rows[] = $row; 
+    } 
+    return $rows;
+  }
 
   protected function getConnection(){
     return $this->conn;

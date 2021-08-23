@@ -16,6 +16,7 @@ class RequestController extends Controller{
 
   public function view(){
     $requests = $this->requests->getRequestedCourses();
+    
     $params = [
       "requests" => $requests
     ];

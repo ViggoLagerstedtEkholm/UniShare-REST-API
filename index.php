@@ -18,6 +18,7 @@ use App\Controllers\RequestController;
 use App\Controllers\ForumController;
 use App\Controllers\PublicationController;
 use App\Controllers\ReviewController;
+use App\Controllers\PostController;
 
 require_once(__DIR__ . '/config.php');
 
@@ -36,6 +37,7 @@ $requestController = new RequestController();
 $forumController = new ForumController();
 $publicationController = new PublicationController();
 $reviewController = new ReviewController();
+$postController = new PostController();
 
 if(Cookie::exists(REMEMBER_ME_COOKIE_NAME) && !Session::exists(SESSION_USERID)){
   $authenticationController->loginWithCookie();
@@ -110,6 +112,12 @@ $app->router->post('/request/upload', [$requestController, 'uploadRequest']);
 $app->router->post('/request/delete', [$requestController, 'deletePending']);
 
 $app->router->get('/forum', [$forumController, 'view']);
+$app->router->get('/forum/add', [$forumController, 'addForumView']);
+$app->router->post('/forum/add', [$forumController, 'addForum']);
+
+$app->router->get('/post', [$postController, 'view']);
+$app->router->post('/post/add', [$postController, 'addPost']);
+
 
 $app->router->get('/publications', [$publicationController, 'view']);
 

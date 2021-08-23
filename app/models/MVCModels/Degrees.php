@@ -1,7 +1,7 @@
 <?php
 namespace App\Models\MVCModels;
-use App\Models\Templates\Degree;
-use App\Models\Templates\Course;
+use App\Models\MVCModels\Degree;
+use App\Models\MVCModels\Course;
 use App\Includes\Validate;
 use App\Core\Session;
 
@@ -86,19 +86,7 @@ class Degrees extends Database implements IValidate{
   function getDegree($ID){
     $sql = "SELECT * FROM degrees WHERE degreeID = ?;";
     $result = $this->executeQuery($sql, 'i', array($ID));
-    $data = $result->fetch_array();
-
-    $degree = new Degree();
-    $degree->ID = $data["degreeID"];
-    $degree->name = $data["name"];
-    $degree->field_of_study = $data["fieldOfStudy"];
-    $degree->start_date = $data["start_date"];
-    $degree->end_date = $data["end_date"];
-    $degree->country = $data["country"];
-    $degree->city = $data["city"];
-    $degree->university = $data["university"];
-
-    return $degree;
+    return $this->fetchResults($result);
   }
 
   function getCoursesDegree($degreeID){
@@ -108,23 +96,7 @@ class Degrees extends Database implements IValidate{
             WHERE degreeID = ?;";
 
     $result = $this->executeQuery($sql, 'i', array($degreeID));
-
-    $courses = array();
-
-    while ($row = $result->fetch_assoc())
-    {
-        $course = new Course();
-        $course->ID = $row['courseID'];
-        $course->name = $row['name'];
-        $course->credits = $row['credits'];
-        $course->duration = $row['duration'];
-        $course->added = $row['added'];
-        $course->country = $row['country'];
-        $course->city = $row['city'];
-        $course->university = $row['university'];
-        $courses[] = $course;
-     }
-     return $courses;
+    return $this->fetchResults($result);
   }
 
   function getDegrees($ID){

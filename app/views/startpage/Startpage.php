@@ -1,7 +1,7 @@
 <?php
 $html = file_get_contents('app/views/startpage/startpage.html');
 $fragments = explode("<!--===edit===-->", $html);
-
+//print_r($fragments);
 echo $fragments[0];
 
 if(!is_null($currentUser)){
@@ -37,3 +37,15 @@ foreach($courses as $item){
 }
 
 echo $fragments[4];
+
+$index = 1;
+foreach($forums as $forum){
+  $temp = str_replace('---ID---', $forum["forumID"], $fragments[5]);
+  $temp = str_replace('---PLACEMENT---', $index, $temp);
+  $temp = str_replace('---title---', $forum["title"], $temp);
+  $temp = str_replace('---created---', $forum["created"], $temp);
+  $temp = str_replace('---views---', $forum["views"], $temp);
+  echo $temp;
+  $index++;
+}
+echo $fragments[6];

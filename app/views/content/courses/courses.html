@@ -1,7 +1,7 @@
 <div class="container">
   <form>
-    <div class="content-filter-box">
-      <div class="row">
+    <div class="content-filter-box filter-background-box">
+      <div class="row ">
         <div class="column">
           <p>
             Select filter option
@@ -55,7 +55,6 @@
 
       <button class="button-style-4" type="submit" name="filter_button" value="GO">Filter</button>
     </div>
-
   </form>
 
   <div class="display-result-box">
@@ -70,7 +69,9 @@
     <p class="txt-small">
       Range: ---range---
     </p>
-
+    <form action="/UniShare/request" method="get">
+      <button class="button-style-4" type="submit">Request course</button>
+    </form>
     <!--===edit===-->
     <div class="content-card-body">
       <div class="content-user">

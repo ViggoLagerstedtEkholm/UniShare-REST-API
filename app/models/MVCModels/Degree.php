@@ -1,5 +1,5 @@
 <?php
-namespace App\Models\Templates;
+namespace App\Models\MVCModels;
 
 class Degree{
   public int $ID;

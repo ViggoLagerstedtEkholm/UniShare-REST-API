@@ -1,7 +1,6 @@
 <?php
 namespace App\Models\MVCModels;
-use App\Models\Templates\Course;
-use App\Models\Templates\Review;
+use App\Models\MVCModels\Course;
 use App\Core\Session;
 use App\Includes\Validate;
 
@@ -168,25 +167,7 @@ class Courses extends Database implements IValidate{
             ON review.userID = users.usersID
             WHERE courseID = ?";
     $result = $this->executeQuery($sql, 'i', array($courseID));
-
-    $reviews = array();
-    while ($row = $result->fetch_assoc())
-    {
-         $review = new Review();
-         $review->userDisplayName = $row["userDisplayName"];
-         $review->userImage = base64_encode($row["userImage"]);
-         $review->userID = $row["userID"];
-         $review->courseID = $row["courseID"];
-         $review->text = $row["text"];
-         $review->fulfilling = $row["fulfilling"];
-         $review->environment = $row['environment'];
-         $review->difficulty = $row['difficulty'];
-         $review->grading = $row['grading'];
-         $review->litterature	 = $row['litterature'];
-         $review->overall	 = $row['overall'];
-         $reviews[] = $review;
-     }
-     return $reviews;
+    return $this->fetchResults($result);
   }
 
   function getCourse($ID){

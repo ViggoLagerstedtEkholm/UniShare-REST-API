@@ -1,6 +1,6 @@
 <div class="container">
   <form>
-    <div class="content-filter-box">
+    <div class="content-filter-box filter-background-box">
       <div class="row">
         <div class="column">
           <p>
@@ -63,23 +63,26 @@
     <p class="txt-small">
       Range: ---range---
     </p>
+    
+    <form action="/UniShare/forum/add" method="get">
+      <button class="button-style-4" type="submit">Write forum post</button>
+    </form>
 
     <!--===edit===-->
     <div class="content-card-body">
       <div class="content-user">
         <div class="content-card-image">
-          <img src="---SRC---" alt="USER IMAGE">
+          <img src="/UniShare/images/pencil.jpg" alt="USER IMAGE">
         </div>
 
-        <div class="content-card-info">
-          <h4><b>Forum</b></h4>
+        <div class="content-card-forum">
           <p><b>Title:</b> ---title---</p>
           <p><b>Topic:</b> ---topic---</p>
           <p><b>Views: </b>---views---</p>
         </div>
 
         <div class="content-card-info-buttons">
-          <form action="/Unishare/profile" method="get">
+          <form action="/UniShare/forum" method="get">
             <input type="hidden" name="ID" value="---ID---" />
             <button class="button-style-1" type="submit">Visit</button>
           </form>

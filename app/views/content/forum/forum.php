@@ -13,9 +13,10 @@ echo str_replace('---range---', $start_page_first_result + 1 . " - " . $start_pa
   Render all user divs.
 */
 foreach($forums as $forum){
-  $temp = str_replace('---title---', $forum->title , $fragments[1]);
-  $temp = str_replace('---topic---', $forum->topic , $temp);
-  $temp = str_replace('---views---', $forum->views, $temp);
+  $temp = str_replace('---title---', $forum["title"], $fragments[1]);
+  $temp = str_replace('---topic---', $forum["topic"], $temp);
+  $temp = str_replace('---views---', $forum["views"], $temp);
+  $temp = str_replace('---ID---', $forum["forumID"], $temp);
 
   echo str_replace('---SRC---', '/UniShare/images/user.png', $temp);
 }

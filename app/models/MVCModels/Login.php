@@ -1,7 +1,5 @@
 <?php
 namespace App\Models\MVCModels;
-use App\Models\Templates\Degree;
-use App\Models\Templates\Course;
 use App\Includes\Validate;
 use App\Core\Session;
 use App\Models\MVCModels\UserSession;

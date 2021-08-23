@@ -1,7 +1,6 @@
 <?php
 namespace App\Models\MVCModels;
 use App\Models\MVCModels\Database;
-use App\Models\Templates\Request;
 use App\Includes\Validate;
 
 class Requests extends Database implements IValidate{
@@ -90,21 +89,6 @@ class Requests extends Database implements IValidate{
   function getRequestedCourses(){
     $sql = "SELECT * FROM request WHERE isHandled = 0;";
     $result = $this->executeQuery($sql);
-
-    $requests = array();
-    while($row = $result->fetch_assoc()){
-      $request = new Request();
-      $request->ID = $row['requestID'];
-      $request->name = $row['name'];
-      $request->credits = $row['credits'];
-      $request->duration = $row['duration'];
-      $request->country = $row['country'];
-      $request->city = $row['city'];
-      $request->university = $row['university'];
-      $request->description = $row['description'];
-      $request->userID = $row['userID'];
-      $requests[] = $request;
-    }
-    return $requests;
+    return $this->fetchResults($result);
   }
 }

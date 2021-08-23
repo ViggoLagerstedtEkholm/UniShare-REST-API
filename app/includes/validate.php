@@ -101,7 +101,7 @@ class Validate{
 
   public static function arrayHasEmptyValue($array){
     foreach ($array as $i => $v) {
-      if (empty($v) || is_null($v)){
+      if ($v == "" || is_null($v)){
         return true;
       }
     }

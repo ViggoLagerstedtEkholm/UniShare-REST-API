@@ -13,21 +13,20 @@ echo str_replace('---range---', $start_page_first_result + 1 . " - " . $start_pa
   Render all user divs.
 */
 foreach($users as $user){
-  $temp = str_replace('---first_name---', $user->first_name , $fragments[1]);
-  $temp = str_replace('---last_name---', $user->last_name , $temp);
-  $temp = str_replace('---email---', $user->email, $temp);
-  $temp = str_replace('---username---', $user->display_name , $temp);
-  $temp = str_replace('---last_online---', empty($user->last_online) ? "None" : $user->last_online, $temp);
+  $temp = str_replace('---first_name---', $user["userFirstName"], $fragments[1]);
+  $temp = str_replace('---last_name---', $user["userLastName"], $temp);
+  $temp = str_replace('---email---', $user["userEmail"], $temp);
+  $temp = str_replace('---username---', $user["userDisplayName"], $temp);
+  $temp = str_replace('---last_online---', empty($user["lastOnline"]) ? "None" : $user["lastOnline"], $temp);
 
-  if($user->image == ""){
+  if($user["userImage"] == ""){
     $temp = str_replace('---SRC---', '/UniShare/images/user.png', $temp);
   }else{
-    $temp = str_replace('---SRC---', 'data:image/jpeg;base64,'.$user->image, $temp);
+    $temp = str_replace('---SRC---', 'data:image/jpeg;base64,'. base64_encode($user["userImage"]), $temp);
   }
 
-  $temp = str_replace('---visits---', $user->visitors, $temp);
-  $temp = str_replace('---courses---', 0, $temp);
-  $temp = str_replace('---ID---', $user->ID, $temp);
+  $temp = str_replace('---visits---', $user["visits"], $temp);
+  $temp = str_replace('---ID---', $user["usersID"], $temp);
 
   echo $temp;
 }

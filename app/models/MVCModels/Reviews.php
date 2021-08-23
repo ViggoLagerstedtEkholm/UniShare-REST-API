@@ -1,7 +1,6 @@
 <?php
 namespace App\Models\MVCModels;
 use App\Models\MVCModels\Database;
-use App\Models\Templates\Request;
 use App\Includes\Validate;
 use App\Core\Session;
 
