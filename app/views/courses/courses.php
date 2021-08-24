@@ -5,13 +5,13 @@ $fragments = explode("<!--===edit===-->", $html);
 //print_r($fragments);
 echo $fragments[0];
 
-$temp = str_replace('---name---', $course->name, $fragments[1]);
-$temp = str_replace('---credits---', $course->credits, $temp);
-$temp = str_replace('---duration---', $course->duration, $temp);
-$temp = str_replace('---added---', $course->added, $temp);
-$temp = str_replace('---country---', $course->country, $temp);
-$temp = str_replace('---city---', $course->city, $temp);
-$temp = str_replace('---university---', $course->university, $temp);
+$temp = str_replace('---name---', $course["name"], $fragments[1]);
+$temp = str_replace('---credits---', $course["credits"], $temp);
+$temp = str_replace('---duration---', $course["duration"], $temp);
+$temp = str_replace('---added---', $course["added"], $temp);
+$temp = str_replace('---country---', $course["country"], $temp);
+$temp = str_replace('---city---', $course["city"], $temp);
+$temp = str_replace('---university---', $course["university"], $temp);
 echo $temp;
 echo $fragments[2];
 
@@ -25,19 +25,25 @@ echo $fragments[4];
 
 if(Session::isLoggedIn()){
   $temp = str_replace('---rating---', $rating, $fragments[5]);
-  echo str_replace('---ID---', $course->ID, $temp);
+  echo str_replace('---ID---', $course["courseID"], $temp);
 }
 
-echo str_replace('---text---', $course->description, $fragments[6]);
+echo str_replace('---text---', $course["description"], $fragments[6]);
 
 if(Session::isLoggedIn()){
-  echo str_replace('---ID---', $course->ID, $fragments[7]);
+  echo str_replace('---ID---', $course["courseID"], $fragments[7]);
 }
 
-echo $fragments[8];
+$temp = str_replace('---page-count---', $number_of_pages , $fragments[8]);
+$temp = str_replace('---page---', $page , $temp);
+echo str_replace('---range---', $start_page_first_result + 1 . " - " . $start_page_first_result + $results_per_page , $temp);
 
 foreach($reviews as $review){
-  $temp = str_replace('---userImage---', 'data:image/jpeg;base64,'. base64_encode($review["userImage"]), $fragments[9]);
+  if(is_null($review["userImage"])){
+    $temp = str_replace('---userImage---', 'images/user.png', $fragments[9]);
+  }else{
+    $temp = str_replace('---userImage---', 'data:image/jpeg;base64,'. base64_encode($review["userImage"]), $fragments[9]);
+  }
   $temp = str_replace('---courseID---', $review["courseID"], $temp);
   echo str_replace('---userID---', $review["userID"], $temp);
 
@@ -59,3 +65,19 @@ foreach($reviews as $review){
 }
 
 echo $fragments[12];
+
+if($page != 1 && $number_of_pages != 0){
+  $temp = str_replace('---page---', $page - 1, $fragments[13]);
+  $temp = str_replace('---ID---', $course["courseID"], $temp);
+  echo $temp;
+}
+
+if($page != $number_of_pages && $number_of_pages != 0){
+  $temp = str_replace('---page---', $page + 1, $fragments[14]);
+  $temp = str_replace('---ID---', $course["courseID"], $temp);
+  echo $temp;
+}
+
+$temp = str_replace('---page---', $page, $fragments[15]);
+$temp = str_replace('---ID---', $course["courseID"], $temp);
+echo $temp;

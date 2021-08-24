@@ -81,7 +81,6 @@ class ContentController extends Controller
     else{
       $users = $this->users->fetchPeopleSearch($start_page_first_result, $results_per_page, $filterOption, $filterOrder, $search);
     }
-  
 
     $params = [
       'users' => $users,
@@ -182,18 +181,6 @@ class ContentController extends Controller
     ];
 
     return $this->display('content/forum', 'forum', $params);
-  }
-
-  private function calculateOffsets($count, $page, $result_page_count_selected){
-    $values = array();
-    $results_per_page = $result_page_count_selected;
-    $number_of_pages = ceil($count / $results_per_page);
-    $start_page_first_result = ($page-1) * $results_per_page;
-
-    $values['number_of_pages'] = $number_of_pages;
-    $values['results_per_page'] = $results_per_page;
-    $values['start_page_first_result'] = $start_page_first_result;
-    return $values;
   }
 
   public function toggleCourseToDegree(Request $request){

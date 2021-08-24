@@ -5,7 +5,7 @@ use App\Core\Session;
 use App\Core\Request;
 use App\Models\MVCModels\Degrees;
 use App\Models\MVCModels\Users;
-use App\Models\Templates\Degree;
+use App\Models\MVCModels\Degree;
 use App\Middleware\AuthenticationMiddleware;
 
 class DegreeController extends Controller
@@ -73,7 +73,7 @@ class DegreeController extends Controller
     }
 
     if(!is_null($degree)){
-      $resp = ['success'=>true,'data'=>['degree' => $degree]];
+      $resp = ['success'=>true,'data'=>['degree' => $degree[0]]];
       return $this->jsonResponse($resp, 200);
     }else{
       $resp = ['success'=>false];

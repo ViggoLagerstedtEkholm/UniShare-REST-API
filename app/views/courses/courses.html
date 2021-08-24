@@ -157,6 +157,18 @@
     </form>
      <!--===edit===-->
 
+     <p class="txt-small">
+       Total page count: ---page-count---
+     </p>
+
+     <p class="txt-small">
+       Page index: ---page---
+     </p>
+
+     <p class="txt-small">
+       Range: ---range---
+     </p>
+
      <!--===edit===-->
     <div id="---userID---,---courseID---" class="review">
       <div class="comment-image">
@@ -193,7 +205,24 @@
       Overall: ---overall---
     </div>
     <!--===edit===-->
-
+    <div class="content-pagination">
+        <div class="content-pagination-bar">
+          <!--===edit===-->
+          <div>
+            <a href="./courses?ID=---ID---&page=---page---"><button type="submit" class="pagination-button"> 🡸 </button></a>
+          </div>
+          <!--===edit===-->
+          <div>
+            <a href="./courses?ID=---ID---&page=---page---"><button type="submit" class="pagination-button"> 🡺 </button></a>
+          </div>
+          <!--===edit===-->
+      </div>
+      <form method="get">
+        <input class="user-input-text" type="number" name="page"  placeholder="PAGE INDEX" required>
+        <input class="user-input-text" type="hidden" name="ID"  value="---ID---">
+        <input class="button-style-4" type="submit" width="50px" height="50px" name="submit" value="Go to page"></input>
+      </form>
+    </div>
   </div>
 </div>
 <script>

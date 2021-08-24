@@ -1,5 +1,5 @@
 <div class="container">
-      <div class="content-container">
+    <div class="content-container">
         <div class="fixed">
           <div class="user-profile">
             <div class="user-image">
@@ -204,12 +204,14 @@
                   <h4>---city---</h4>
                   <h4>Sum total credits: SUM(credits) hp</h4>
 
+                  <!--===edit===-->
                   <form action="/UniShare/degree/update" method="GET">
                     <input name="ID" value="---degreeID---" hidden />
                     <button class="button-style-4">Edit degree</button>
                   </form>
 
                   <button class="button-style-2" onclick="return deleteDegree(---degreeID---);">Delete degree</button>
+                  <!--===edit===-->
 
                   <h3>Included courses</h3>
                   <a href="/UniShare/search/courses">Add courses to degree</a>
@@ -237,9 +239,13 @@
                               <button class="button-style-1" type="submit">Go to course page</button>
                             </form>
                           </div>
+
+                          <!--===edit===-->
                           <div class='column'>
                             <button class="button-style-2" id="---ID---" onclick="return removeCourse(---DEGREE-ID---, ---ID---);">Remove course</button>
                           </div>
+                          <!--===edit===-->
+
                         </div>
                       </div>
                     </div>
@@ -286,6 +292,18 @@
           Comments
         </h3>
 
+        <p class="txt-small">
+          Total page count: ---page-count---
+        </p>
+
+        <p class="txt-small">
+          Page index: ---page---
+        </p>
+
+        <p class="txt-small">
+          Range: ---range---
+        </p>
+
         <!--===edit===-->
         <div id="---ID---">
           <div class="profile-comment">
@@ -310,7 +328,25 @@
           </div>
         </div>
         <!--===edit===-->
+      </div>
 
+      <div class="content-pagination">
+          <div class="content-pagination-bar">
+            <!--===edit===-->
+            <div>
+              <a href="./profile?ID=---ID---&page=---page---"><button type="submit" class="pagination-button"> 🡸 </button></a>
+            </div>
+            <!--===edit===-->
+            <div>
+              <a href="./profile?ID=---ID---&page=---page---"><button type="submit" class="pagination-button"> 🡺 </button></a>
+            </div>
+            <!--===edit===-->
+            <form method="get">
+                <input class="user-input-text" type="number" name="page"  placeholder="PAGE INDEX" required>
+                <input class="user-input-text" type="hidden" name="ID"  value="---ID---">
+                <input class="button-style-4" type="submit" width="50px" height="50px" name="submit" value="Go to page"></input>
+            </form>
+        </div>
       </div>
     </div>
 

@@ -14,6 +14,12 @@ class Comments extends Database implements IValidate{
     return $errors;
   }
 
+  function getCommentCount($userID){
+     $sql = "SELECT Count(*) FROM profilecomment WHERE profile = ?;";
+     $result = $this->executeQuery($sql, 'i', array($userID));
+     return $result->fetch_assoc()["Count(*)"];
+  }
+
   function addComment($posterID, $profileID, $comment){
     date_default_timezone_set("Europe/Stockholm");
     $date = date("Y-m-d",time());
@@ -41,13 +47,14 @@ class Comments extends Database implements IValidate{
     $this->executeQuery($sql, 'i', array($commentID));
   }
 
-  function getComments($profileID){
+  function getComments($from, $to, $profileID){
     $sql = "SELECT profileComment.*, userImage, userDisplayName
             FROM profileComment
             JOIN users
             ON author = usersID
-            WHERE profile = ?;";
-    $result = $this->executeQuery($sql, 'i', array($profileID));
+            WHERE profile = ?
+            LIMIT ?, ?;";
+    $result = $this->executeQuery($sql, 'iii', array($profileID, $from, $to));
     return $this->fetchResults($result);
   }
 }

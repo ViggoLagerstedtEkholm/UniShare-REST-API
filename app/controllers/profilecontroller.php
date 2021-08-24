@@ -38,9 +38,24 @@ class ProfileController extends Controller{
     if(isset($_GET["ID"])){
       $ID = $_GET["ID"];
       if(!empty($ID)){
+
+        if(isset($_GET['page'])){
+          $page = $_GET['page'];
+        }else{
+          $page = 1;
+        }
+
+        $comment_count = $this->comments->getCommentCount($ID);
+
+        $offsets = $this->calculateOffsets($comment_count, $page, 10);
+        $start_page_first_result = $offsets['start_page_first_result'];
+        $results_per_page = $offsets['results_per_page'];
+        $number_of_pages = $offsets['number_of_pages'];
+
+        $comments = $this->comments->getComments($start_page_first_result, $results_per_page, $ID);
+
         $user = $this->users->getUser($ID);
         $image = base64_encode($user["userImage"]);
-        $comments = $this->comments->getComments($ID);
         $degrees = $this->degrees->getDegrees($ID);
         $updatedVisitCount = $this->users->addVisitor($ID, $user);
         $projects = $this->projects->getProjects($ID);
@@ -59,6 +74,10 @@ class ProfileController extends Controller{
           'degrees' => $degrees,
           'updatedVisitCount' => $updatedVisitCount,
           'projects' => $projects,
+          'page' => $page,
+          'results_per_page' => $results_per_page,
+          'number_of_pages' => $number_of_pages,
+          'start_page_first_result' => $start_page_first_result,
           'currentPageID' => $ID,
           'visitDate' => $user["lastOnline"],
           'first_name' => $user["userFirstName"],

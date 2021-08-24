@@ -87,23 +87,7 @@ class Courses extends Database implements IValidate{
             LIMIT 10;";
 
     $result = $this->executeQuery($sql);
-
-    $courses = array();
-    while ($row = $result->fetch_assoc())
-    {
-         $course = new Course();
-         $course->ID = $row["courseID"];
-         $course->name = $row["name"];
-         $course->credits = $row["credits"];
-         $course->duration = $row["duration"];
-         $course->added = $row["added"];
-         $course->country = $row["country"];
-         $course->city = $row["city"];
-         $course->university = $row["university"];
-         $course->rating = $row['average_rating'];
-         $courses[] = $course;
-     }
-     return $courses;
+    return $this->fetchResults($result);
   }
 
   function getPopularityRank($courseID){
@@ -160,32 +144,10 @@ class Courses extends Database implements IValidate{
     return $rating;
   }
 
-  function getReviews($courseID){
-    $sql = "SELECT review.*, userDisplayName, userImage
-            FROM review
-            JOIN users
-            ON review.userID = users.usersID
-            WHERE courseID = ?";
-    $result = $this->executeQuery($sql, 'i', array($courseID));
-    return $this->fetchResults($result);
-  }
-
   function getCourse($ID){
     $sql = "SELECT * FROM courses WHERE courseID = ?;";
     $result = $this->executeQuery($sql, 'i', array($ID));
-    $data = $result->fetch_array();
-
-    $course = new Course();
-    $course->ID = $data['courseID'];
-    $course->name = $data['name'];
-    $course->credits = $data['credits'];
-    $course->duration = $data['duration'];
-    $course->added = $data['added'];
-    $course->country = $data['country'];
-    $course->city = $data['city'];
-    $course->university = $data['university'];
-    $course->description = $data['description'];
-    return $course;
+    return $this->fetchResults($result);
   }
 
   function insertDegreeCourse($degreeID, $courseID){

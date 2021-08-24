@@ -19,10 +19,27 @@ class Reviews extends Database implements IValidate{
     return $errors;
   }
 
+  function getReviewCount($courseID){
+    $sql = "SELECT Count(*) FROM review WHERE courseID = ?;";
+    $result = $this->executeQuery($sql, 'i', array($courseID));
+    return $result->fetch_assoc()["Count(*)"];
+  }
+
   function getReview($userID, $courseID){
     $sql = "SELECT * FROM review WHERE userID = ? AND courseID = ?;";
     $result = $this->executeQuery($sql, 'ii', array($userID, $courseID));
     return $result->fetch_assoc();
+  }
+
+  function getReviews($from, $to, $courseID){
+    $sql = "SELECT review.*, userDisplayName, userImage
+            FROM review
+            JOIN users
+            ON review.userID = users.usersID
+            WHERE courseID = ?
+            LIMIT ?,?";
+    $result = $this->executeQuery($sql, 'iii', array($courseID, $from, $to));
+    return $this->fetchResults($result);
   }
 
   function insertReview($params){

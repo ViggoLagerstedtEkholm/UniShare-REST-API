@@ -21,17 +21,17 @@ if(!is_null($currentUser)){
 echo $fragments[2];
 
 $index = 1;
-foreach($courses as $item){
-  $temp = str_replace('---ID---', $item->ID, $fragments[3]);
+foreach($courses as $course){
+  $temp = str_replace('---ID---', $course["courseID"], $fragments[3]);
   $temp = str_replace('---PLACEMENT---', $index, $temp);
-  $temp = str_replace('---name---', $item->name, $temp);
-  $temp = str_replace('---score---', $item->rating , $temp);
-  $temp = str_replace('---country---', $item->country, $temp);
-  $temp = str_replace('---city---', $item->city, $temp);
-  $temp = str_replace('---added---', $item->added, $temp);
-  $temp = str_replace('---university---', $item->university, $temp);
-  $temp = str_replace('---duration---', $item->duration, $temp);
-  $temp = str_replace('---credits---', $item->credits, $temp);
+  $temp = str_replace('---name---', $course["name"], $temp);
+  $temp = str_replace('---score---', $course["average_rating"], $temp);
+  $temp = str_replace('---country---', $course["country"], $temp);
+  $temp = str_replace('---city---', $course["city"], $temp);
+  $temp = str_replace('---added---', $course["added"], $temp);
+  $temp = str_replace('---university---', $course["university"], $temp);
+  $temp = str_replace('---duration---', $course["duration"], $temp);
+  $temp = str_replace('---credits---', $course["credits"], $temp);
   echo $temp;
   $index++;
 }

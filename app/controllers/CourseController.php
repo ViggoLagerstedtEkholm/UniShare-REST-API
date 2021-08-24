@@ -23,12 +23,27 @@ class CourseController extends Controller{
     if(isset($_GET["ID"])){
       $ID = $_GET["ID"];
       if(!empty($ID)){
+
+        if(isset($_GET['page'])){
+          $page = $_GET['page'];
+        }else{
+          $page = 1;
+        }
+
+        $review_count = $this->reviews->getReviewCount($ID);
+
+        $offsets = $this->calculateOffsets($review_count, $page, 3);
+        $start_page_first_result = $offsets['start_page_first_result'];
+        $results_per_page = $offsets['results_per_page'];
+        $number_of_pages = $offsets['number_of_pages'];
+
+        $reviews = $this->reviews->getReviews($start_page_first_result, $results_per_page, $ID);
+
         $course = $this->courses->getCourse($ID);
         $result = $this->courses->getArthimetricMeanScore($ID);
-        $reviews = $this->courses->getReviews($ID);
-        $amountOfReviews = count($reviews);
         $POPULARITY_RANK = $this->courses->getPopularityRank($ID)->fetch_assoc()["POPULARITY_RANK"] ?? "Not set!";
         $RATING_RANK = $this->courses->getOverallRankingRating($ID)->fetch_assoc()["RATING_RANK"] ?? "Not set!";
+        $amountOfReviews = count($reviews);
 
         $arthimetricMean = $result["AVG(rating)"];
         $COUNT = $result["COUNT(rating)"];
@@ -40,8 +55,12 @@ class CourseController extends Controller{
 
         $params = [
           "rating" => $userRating,
-          "course" => $course,
+          "course" => $course[0],
           "reviews" => $reviews,
+          'page' => $page,
+          'results_per_page' => $results_per_page,
+          'number_of_pages' => $number_of_pages,
+          'start_page_first_result' => $start_page_first_result,
           "amountOfReviews" => $amountOfReviews,
           "score" => $arthimetricMean,
           "total_votes" => $COUNT,

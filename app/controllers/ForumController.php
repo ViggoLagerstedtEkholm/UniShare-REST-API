@@ -21,25 +21,25 @@ class ForumController extends Controller{
     $body = $request->getBody();
     $forumID = $body["ID"];
     if(!is_null($forumID)){
-      
+
         $this->forums->addViews($forumID);
-        
+
         if(isset($_GET['page'])){
           $page = $_GET['page'];
         }else{
           $page = 1;
         }
-        
+
         $post_count = $this->posts->getPostCount($forumID);
-      
+
         $offsets = $this->calculateOffsets($post_count, $page);
         $start_page_first_result = $offsets['start_page_first_result'];
         $results_per_page = $offsets['results_per_page'];
         $number_of_pages = $offsets['number_of_pages'];
-        
+
         $posts = $this->posts->getForumPostInterval($start_page_first_result, $results_per_page, $forumID);
         $forum = $this->forums->getForum($forumID);
-        
+
         $params = [
           'posts' => $posts,
           'forum' => $forum,
@@ -48,40 +48,28 @@ class ForumController extends Controller{
           'results_per_page' => $results_per_page,
           'number_of_pages' => $number_of_pages
         ];
-      
+
       return $this->display('forum/display','forum', $params);
     }
   }
-  
-  private function calculateOffsets($count, $page){
-    $values = array();
-    $results_per_page = 10;
-    $number_of_pages = ceil($count / $results_per_page);
-    $start_page_first_result = ($page-1) * $results_per_page;
 
-    $values['number_of_pages'] = $number_of_pages;
-    $values['results_per_page'] = $results_per_page;
-    $values['start_page_first_result'] = $start_page_first_result;
-    return $values;
-  }
-  
   public function addForumView(){
     return $this->display('forum/add','forum', []);
   }
-  
+
   public function addForum(Request $request){
     $body = $request->getBody();
-    
+
     $errors = $this->forums->validate($body);
-    
+
     if(count($errors) > 0){
       $errorList = http_build_query(array('error' => $errors));
       Application::$app->redirect("/UniShare/forum&$errorList");
       exit();
     }
-    
+
     $forumID = $this->forums->insertForum($body);
-    
+
     if(!is_null($forumID)){
       Application::$app->redirect("/UniShare/forum?ID=$forumID");
     }else{
