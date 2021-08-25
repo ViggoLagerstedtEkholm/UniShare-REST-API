@@ -63,7 +63,7 @@
     <p class="txt-small">
       Range: ---range---
     </p>
-    
+
     <form action="/UniShare/forum/add" method="get">
       <button class="button-style-4" type="submit">Write forum post</button>
     </form>
@@ -98,11 +98,25 @@
       <div class="content-pagination-bar">
         <!--===edit===-->
         <div>
-          <a href="./forums?page=---page---&filter_option=---filter_option---&search=---search---&action=---action---"><button type="submit" class="pagination-button"> 🡸 </button></a>
+          <form method="GET">
+            <input type="hidden" name="results_per_page_count" value="---results_per_page_count---" />
+            <input type="hidden" name="action" value="---action---" />
+            <input type="hidden" name="search" value="---search---" />
+            <input type="hidden" name="filter_option" value="---filter_option---" />
+            <input type="hidden" name="page" value="---page---" />
+            <button type="submit" class="pagination-button">🡸</button>
+          </form>
         </div>
         <!--===edit===-->
         <div>
-          <a href="./forums?page=---page---&filter_option=---filter_option---&search=---search---&action=---action---"><button type="submit" class="pagination-button"> 🡺 </button></a>
+          <form method="GET">
+            <input type="hidden" name="results_per_page_count" value="---results_per_page_count---" />
+            <input type="hidden" name="action" value="---action---" />
+            <input type="hidden" name="search" value="---search---" />
+            <input type="hidden" name="filter_option" value="---filter_option---" />
+            <input type="hidden" name="page" value="---page---" />
+            <button type="submit" class="pagination-button">🡺</button>
+          </form>
         </div>
         <!--===edit===-->
     </div>
@@ -112,7 +126,7 @@
         <input type="text" name="search" value="---search---" hidden>
         <input type="text" name="results_per_page_count" value="---results_per_page_count---" hidden>
         <input class="user-input-text" type="number" name="page"  placeholder="PAGE INDEX" required>
-        <input class="button-style-4" type="submit" width="50px" height="50px" name="submit" value="Go to page"></input>
+        <input class="button-style-4" type="submit" name="submit" value="Go to page">
     </form>
   </div>
 </div>

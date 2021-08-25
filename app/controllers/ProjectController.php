@@ -8,20 +8,33 @@ use App\Includes\Validate;
 use App\Core\ImageHandler;
 use App\Middleware\AuthenticationMiddleware;
 
+/**
+ * Project controller for handling projects.
+ * @author Viggo Lagestedt Ekholm
+ */
 class ProjectController extends Controller{
   private $projects;
   private $imageHandler;
 
   function __construct(){
     $this->setMiddlewares(new AuthenticationMiddleware(['view', 'uploadProject', 'deleteProject', 'getProject', 'updateProject']));
+
     $this->projects = new Projects();
     $this->imageHandler = new ImageHandler();
   }
 
+  /**
+   * This method shows the project add page.
+   * @return View
+   */
   public function add(){
       return $this->display('projects/add','projects', []);
   }
 
+  /**
+   * This method shows the project update page.
+   * @return View
+   */
   public function update(){
     if(isset($_GET["ID"])){
       $ID = $_GET["ID"];
@@ -36,6 +49,10 @@ class ProjectController extends Controller{
     }
   }
 
+  /**
+   * This method handles adding new projects.
+   * @param Request sanitized request from the user.
+   */
   public function uploadProject(Request $request)
   {
     $fileUploadName = 'project-file';
@@ -80,6 +97,11 @@ class ProjectController extends Controller{
     Application::$app->redirect("/UniShare/profile?ID=$userID");
   }
 
+  /**
+   * This method handles deleting projects.
+   * @param Request sanitized request from the user.
+   * @return JSON 200(OK) | 500(generic error response)
+   */
   public function deleteProject(Request $request){
     $courseRequest = $request->getBody();
 

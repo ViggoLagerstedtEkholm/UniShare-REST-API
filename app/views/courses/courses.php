@@ -3,6 +3,7 @@ use App\Core\Session;
 $html = file_get_contents('app/views/courses/courses.html');
 $fragments = explode("<!--===edit===-->", $html);
 //print_r($fragments);
+
 echo $fragments[0];
 
 $temp = str_replace('---name---', $course["name"], $fragments[1]);

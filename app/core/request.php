@@ -1,7 +1,15 @@
 <?php
 namespace App\Core;
 
+/**
+ * Requests handling class.
+ * @author Viggo Lagestedt Ekholm
+ */
 class Request{
+  /**
+   * Get the URL path.
+   * @return string of the path.
+   */
   public function getPath(){
     $path = $_SERVER['REQUEST_URI'] ?? '/';
     $path = str_replace("UniShare/", "", $_SERVER['REQUEST_URI']);
@@ -12,11 +20,21 @@ class Request{
 
     return substr($path, 0, $position);
   }
-
+  
+  /**
+   * Get the HTTP request method.
+   * @return string of the method.
+   */
   public function getMethod(){
       return strtolower($_SERVER['REQUEST_METHOD']);
   }
 
+  /**
+   * Make sure we don't get injected code into our database. We loop through
+   * both the POST and GET global variables and sanitize them from potential code 
+   * injections and special characters.
+   * @return body sanitized GET or POST request.
+   */
   public function getBody(){
     $body = [];
 

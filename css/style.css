@@ -1,9 +1,9 @@
 html,body {
-    width: 100%;
-    height: 100%;
-    margin: 0px;
-    padding: 0px;
-    overflow-x: hidden;
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+  overflow-x: hidden;
 }
 
 fieldset{
@@ -11,7 +11,6 @@ fieldset{
   font-size: 15px;
   transform: scale(1.5);
   transition: 280ms all ease-in-out;
-
 }
 
 textarea{
@@ -131,7 +130,6 @@ justify-content: center;
 .score{
   font-size: 35px;
   font-family: monospace;
-  color:
 }
 
 .txt-small{
@@ -142,7 +140,6 @@ justify-content: center;
 /* Courses page */
 
 .course-container{
-  display: relative;
   padding: 10px;
   color: white;
 }
@@ -181,7 +178,6 @@ justify-content: center;
   width: 100%;
   margin:auto;
   text-align:justify;
-  word-break: break-word;
   white-space: pre-line;
   overflow-wrap: break-word;
   word-break: break-word;
@@ -398,11 +394,6 @@ select {
   color: white;
 }
 
-
-/*END*/
-
-
-/* AUTHENTICATION-STYLES */
 .form-authentication-container{
   margin: auto;
   width: 50%;
@@ -438,7 +429,7 @@ form .text_field{
 .text_field input{
   width: 100%;
   padding: 0 5px;
-  height 40px;
+  height: 40px;
   font-size: 16px;
   border: none;
   background: none;
@@ -455,13 +446,10 @@ form .text_field{
   position: absolute;
   left: 5px;
   color: #adadad;
-  transition: translateY(-50%);
   font-size: 16px;
   pointer-events: none;
 }
-/*END*/
 
-/* DESIGN */
 .container{
   background-color: #1F1F1F;
   padding-top: 20px;
@@ -517,9 +505,7 @@ form .text_field{
   max-height: 500px;
   min-height: 500px;
 }
-/*END*/
 
-/*PROFILE STYLES */
 .profile-tab {
   overflow: hidden;
   background-color: #6e6e6e;
@@ -617,10 +603,10 @@ form .text_field{
 }
 
 .wrapper-grid{
-    display: grid;
-    grid-template-columns: repeat(auto-fit, 20rem);
-    justify-content: flex-start;
-    background-color:#474646;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 20rem);
+  justify-content: flex-start;
+  background-color:#474646;
 }
 
 .wrapper-container-item{
@@ -643,7 +629,7 @@ form .text_field{
   text-overflow: clip;
 }
 
-.user-project-button-link-delete : hover{
+.user-project-button-link-delete :hover{
   background-color: red;
 }
 
@@ -654,7 +640,6 @@ form .text_field{
   font-family: monospace;
 }
 
-/*START PAGE*/
 .display-result-box{
   margin-top: 10px;
   background-color: #313131;
@@ -711,16 +696,16 @@ form .text_field{
 }
 
 .pagination-button {
-   border-radius: 5px;
-    background-color: #449be3;
-    color: white;
-    text-align: center;
-    display: inline-block;
-    font-size: 25px;
-    width: 100%;
-    height: 100%;
-    cursor: pointer;
-    border: none;
+  border-radius: 5px;
+  background-color: #449be3;
+  color: white;
+  text-align: center;
+  display: inline-block;
+  font-size: 25px;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  border: none;
 }
 
 .content-pagination-bar div{
@@ -729,10 +714,10 @@ form .text_field{
 }
 
 .content-user{
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: left;
-    background-color: #474646;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: left;
+  background-color: #474646;
 }
 
 .startpage-display-user{
@@ -811,7 +796,6 @@ form .text_field{
   border-radius: 4px;
   box-sizing: border-box;
 }
-/*END*/
 
 @media screen and (max-width: 1301px) {
   .row{

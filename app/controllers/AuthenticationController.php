@@ -9,35 +9,59 @@ use App\Middleware\AuthenticationMiddleware;
 use App\Includes\Validate;
 use App\Core\Session;
 
+/**
+ * Authentication controller for handling login/register/logout.
+ * @author Viggo Lagestedt Ekholm
+ */
 class AuthenticationController extends Controller{
   private $users;
   private $login;
   private $register;
 
   public function __construct(){
+    //Only logged in users should be able to logout.
     $this->setMiddlewares(new AuthenticationMiddleware(['logout']));
+
     $this->users = new Users();
     $this->login = new Login();
     $this->register = new Register();
   }
 
+  /**
+   * Login using cookie with session ID.
+   */
   public function loginWithCookie(){
     $this->login->loginFromCOOKIE();
   }
 
+  /**
+   * Show login page.
+   * @return View
+   */
   public function view_login(){
     return $this->display('login', 'login', []);
   }
 
+  /**
+   * Show register page.
+   * @return View
+   */
   public function view_register(){
     return $this->display('register', 'register', []);
   }
 
+  /**
+   * Logout and redirect to start page.
+   */
   public function logout(){
     $this->users->logout();
     Application::$app->redirect("./");
   }
 
+  /**
+   * This method handles logging in a user.
+   * @param Request sanitized request from the user.
+   */
   public function login(Request $request)
   {
     $body = $request->getBody();
@@ -66,6 +90,10 @@ class AuthenticationController extends Controller{
     }
   }
 
+  /**
+   * This method handles registering in a user.
+   * @param Request sanitized request from the user.
+   */
   public function register(Request $request)
   {
     $body = $request->getBody();

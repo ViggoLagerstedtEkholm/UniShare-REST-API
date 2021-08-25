@@ -9,16 +9,25 @@ use App\Core\Application;
 use App\Includes\Validate;
 use App\Models\Templates\Review;
 
+/**
+ * Course controller for course handling.
+ * @author Viggo Lagestedt Ekholm
+ */
 class CourseController extends Controller{
   private $courses;
   private $reviews;
 
   function __construct(){
     $this->setMiddlewares(new AuthenticationMiddleware(['setRate', 'getRate', 'uploadReview', 'deleteReview']));
+
     $this->courses = new Courses();
     $this->reviews = new Reviews();
   }
 
+  /**
+   * This method gets the course information and passes it the the view.
+   * @return View
+   */
   public function view(){
     if(isset($_GET["ID"])){
       $ID = $_GET["ID"];
@@ -32,7 +41,7 @@ class CourseController extends Controller{
 
         $review_count = $this->reviews->getReviewCount($ID);
 
-        $offsets = $this->calculateOffsets($review_count, $page, 3);
+        $offsets = $this->calculateOffsets($review_count, $page, 1);
         $start_page_first_result = $offsets['start_page_first_result'];
         $results_per_page = $offsets['results_per_page'];
         $number_of_pages = $offsets['number_of_pages'];
@@ -74,16 +83,23 @@ class CourseController extends Controller{
     Application::$app->redirect('./');
   }
 
+  /**
+   * This method sets the rating from the logged in user.
+   * @return JSON encoded string 200(OK)
+   */
   public function setRate(Request $request){
     $ratingRequest = $request->getBody();
     $courseID = $ratingRequest["courseID"];
     $rating = $ratingRequest["rating"];
-
     $this->courses->setRate(Session::get(SESSION_USERID), $courseID, $rating);
     $resp = ['success'=>true,'data'=>['rating'=>$rating]];
     return $this->jsonResponse($resp, 200);
   }
 
+  /**
+   * This method gets the rating from the logged in user.
+   * @return JSON encoded string 200(OK)
+   */
   public function getRate(Request $request){
     $ratingRequest = $request->getBody();
     $courseID = $ratingRequest["courseID"];

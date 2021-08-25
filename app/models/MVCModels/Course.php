@@ -1,6 +1,10 @@
 <?php
 namespace App\Models\MVCModels;
 
+/**
+ * Model for carrying course data.
+ * @author Viggo Lagestedt Ekholm
+ */
 class Course{
   public int $ID;
   public float $credits;

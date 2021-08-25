@@ -8,20 +8,33 @@ use App\Core\Request;
 use App\Core\Application;
 use App\Includes\Validate;
 
+/**
+ * Settings controller for handling user settings.
+ * @author Viggo Lagestedt Ekholm
+ */
 class SettingsController extends Controller{
   private $users;
   private $degrees;
 
   function __construct(){
     $this->setMiddlewares(new AuthenticationMiddleware(['view', 'deleteAccount', 'getSettings', 'update']));
+    
     $this->users = new Users();
     $this->degrees = new Degrees();
   }
-
+  
+  /**
+   * This method shows the user settings page.
+   * @return View
+   */
   public function view(){
     return $this->display('settings', 'settings', []);
   }
-
+  
+  /**
+   * This method handles updating the settings and validating inputs.
+   * @param Request sanitized request from the user.
+   */
   public function update(Request $request){
     $fields = ["userFirstName", "userLastName", "userEmail", "userDisplayName", "usersPassword", "activeDegreeID", "description"];
 
@@ -88,7 +101,11 @@ class SettingsController extends Controller{
 
     Application::$app->redirect("../profile?ID=$ID");
   }
-
+  
+  /**
+   * Get the current settings and return the fields.
+   * @return JSON encoded string 200(OK).
+   */
   public function fetch(){
     $user = $this->users->getUser(Session::get(SESSION_USERID));
     $first_name = $user["userFirstName"];
@@ -101,7 +118,10 @@ class SettingsController extends Controller{
 
     return $this->jsonResponse($resp, 200);
   }
-
+  
+  /**
+   * Delete the user account.
+   */
   public function deleteAccount(){
     $userID = Session::get(SESSION_USERID);
 

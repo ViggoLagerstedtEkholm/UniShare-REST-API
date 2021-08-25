@@ -4,7 +4,15 @@ use App\Models\MVCModels\Course;
 use App\Core\Session;
 use App\Includes\Validate;
 
+/**
+ * Model for handling courses.
+ * @author Viggo Lagestedt Ekholm
+ */
 class Courses extends Database implements IValidate{
+  /**
+   * Check if the user input is sufficient enough.
+   * @param params array
+   */
   public function validate($params){
     $errors = array();
 
@@ -15,12 +23,22 @@ class Courses extends Database implements IValidate{
     return $errors;
   }
 
+  /**
+   * Get the amount of total courses in the courses table.
+   * @param userID int
+   * @return int count.
+   */
   function getCoursesCount(){
      $sql = "SELECT Count(*) FROM courses";
      $result = $this->executeQuery($sql);
      return $result->fetch_assoc()["Count(*)"];
   }
 
+  /**
+   * Get the amount of total courses in the courses table from a given search.
+   * @param search string
+   * @return int count.
+   */
   function getCourseCountSearch($search){
     $MATCH = $this->builtMatchQuery('courses', $search, 'courseID');
     $sql = "SELECT Count(*) FROM courses WHERE $MATCH";
@@ -28,6 +46,15 @@ class Courses extends Database implements IValidate{
     return $result->fetch_assoc()["Count(*)"];
   }
 
+  /**
+   * Apply the filters to get an array of courses that matches the filter.
+   * @param from string
+   * @param to string
+   * @param option string
+   * @param filterOrder string
+   * @param search string
+   * @return array courses.
+   */
   function fetchCoursesSearch($from, $to, $option, $filterOrder, $search = null){
     $option ?? $option = "name";
     $filterOrder ?? $filterOrder = "DESC";
@@ -77,6 +104,10 @@ class Courses extends Database implements IValidate{
      return $courses;
    }
 
+   /**
+    * Get the top 10 highest rated courses.
+    * @return array courses.
+    */
   function getTOP10Courses(){
     $sql = "SELECT AVG(rating) AS average_rating, courses.*
             FROM rating
@@ -90,6 +121,10 @@ class Courses extends Database implements IValidate{
     return $this->fetchResults($result);
   }
 
+  /**
+   * Get the popularity rank of a given course ID.
+   * @return array courses.
+   */
   function getPopularityRank($courseID){
     $sql = "SELECT *
             FROM
@@ -102,6 +137,10 @@ class Courses extends Database implements IValidate{
   return $this->executeQuery($sql, "i", array($courseID));
   }
 
+  /**
+   * Get the rating rank of a given course ID.
+   * @return array courses.
+   */
   function getOverallRankingRating($courseID){
     $sql = "SELECT *
             FROM
@@ -114,6 +153,10 @@ class Courses extends Database implements IValidate{
     return $this->executeQuery($sql, "i", array($courseID));
   }
 
+  /**
+   * Insert a course.
+   * @return bool
+   */
   function insertCourse($course){
     $sql = "INSERT INTO courses (name, credits, duration, added, country, city, university) values(?,?,?,?,?,?,?);";
     date_default_timezone_set("Europe/Stockholm");
@@ -122,21 +165,40 @@ class Courses extends Database implements IValidate{
     return $hasSucceeded;
   }
 
+  //TODO
   function deleteCourse(){
     //TODO
   }
 
+  /**
+   * Get the arthimetric mean score of a given course.
+   * @param courseID int
+   * @return bool
+   */
   function getArthimetricMeanScore($courseID){
     $sql = "SELECT AVG(rating), COUNT(rating) FROM rating WHERE courseID = ?;";
     $result = $this->executeQuery($sql, 'i', array($courseID));
     return $result->fetch_assoc();
   }
 
+  /**
+   * Set the rate of a given course.
+   * @param userID int
+   * @param courseID int
+   * @param rating int
+   * @return bool
+   */
   function setRate($userID, $courseID, $rating){
     $sql = "INSERT INTO rating (userID, courseID, rating) values(?,?,?) ON DUPLICATE KEY UPDATE rating = ?;";
     $result = $this->insertOrUpdate($sql, 'iiii', array($userID, $courseID, $rating, $rating));
   }
 
+  /**
+   * Get the rate of a given course.
+   * @param userID int
+   * @param courseID int
+   * @return int
+   */
   function getRate($userID, $courseID){
     $sql = "SELECT rating FROM rating WHERE userID = ? AND courseID = ?";
     $result = $this->executeQuery($sql, 'ii', array($userID, $courseID));
@@ -144,22 +206,43 @@ class Courses extends Database implements IValidate{
     return $rating;
   }
 
+  /**
+   * Get a course by ID.
+   * @param ID int
+   * @return course
+   */
   function getCourse($ID){
     $sql = "SELECT * FROM courses WHERE courseID = ?;";
     $result = $this->executeQuery($sql, 'i', array($ID));
     return $this->fetchResults($result);
   }
 
+  /**
+   * Insert a course into a degree.
+   * @param degreeID int
+   * @param courseID int
+   */
   function insertDegreeCourse($degreeID, $courseID){
     $sql = "INSERT INTO degrees_courses (degreeID, courseID) values(?, ?);";
     $this->insertOrUpdate($sql, 'ii', array($degreeID, $courseID));
   }
 
+  /**
+   * Delete a course from a degree.
+   * @param degreeID int
+   * @param courseID int
+   */
   function deleteDegreeCourse($degreeID, $courseID){
     $sql = "DELETE FROM degrees_courses WHERE courseID = ? AND degreeID = ?;";
     $this->insertOrUpdate($sql, 'ii', array($courseID, $degreeID));
   }
 
+  /**
+   * Get all courses.
+   * @param degreeID int
+   * @param courseID int
+   * @return courses
+   */
   function getCourses(){
    $courses = array();
    $sql = "SELECT AVG(rating) AS average_rating, courses.*
@@ -185,6 +268,11 @@ class Courses extends Database implements IValidate{
     return $courses;
   }
 
+  /**
+   * Check if a given course exists in the user's active degree.
+   * @param courseID int
+   * @return bool
+   */
   function checkIfCourseExistsInActiveDegree($courseID){
     $sql = "SELECT COUNT(*)
             FROM users

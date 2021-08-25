@@ -6,6 +6,10 @@ use App\Core\Exceptions\PrivilegeException;
 use App\Core\Application;
 use App\Models\MVCModels\Users;
 
+/**
+ * Authentication middleware for handling controller access.
+ * @author Viggo Lagestedt Ekholm
+ */
 class AuthenticationMiddleware extends Middleware{
   public array $actions = [];
   public bool $requiresAdminPrivilege;
@@ -15,6 +19,11 @@ class AuthenticationMiddleware extends Middleware{
     $this->requiresAdminPrivilege = $requiresAdminPrivilege;
   }
 
+  /**
+   * Check the session to see if a user exists and if required that this user has
+   * the required privilege to access the Controller method. If sufficient privelege is not met
+   * we either throw a privelege exception or a forbidden exception depending on the case.
+   */
   public function performCheck(){
     if($this->requiresAdminPrivilege && Session::isLoggedIn()){
       $model = new Users();

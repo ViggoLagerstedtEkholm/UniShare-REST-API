@@ -2,13 +2,25 @@
 namespace App\Core;
 use App\Core\Exceptions\GDResizeException;
 
+/**
+ * Image helper class for handling image resizing and modification.
+ * @author Viggo Lagestedt Ekholm
+ */
 class ImageHandler{
 
+  /**
+   * Resize a given image.
+   * @param image to be risized.
+   */
   function resize($image)
   {
       return imagescale($image, IMAGE_UPLOAD_WIDTH, IMAGE_UPLOAD_HEIGHT);
   }
 
+  /**
+   * Check the file extension and choose the right resize option.
+   * @param image_object to be risized.
+   */
   public function handleUploadResizing($image_object){
     $path = $image_object['name'];
     $ext = pathinfo($path, PATHINFO_EXTENSION);
@@ -24,6 +36,11 @@ class ImageHandler{
     }
   }
 
+  /**
+   * Creates a resized PNG image and returns it.
+   * @param image_object to be risized.
+   * @return bytes of raw image data.
+   */
   private function createResizedPNG($image_object){
     $uploadedImage = imagecreatefrompng($image_object['tmp_name']);
     if (!$uploadedImage) {
@@ -36,6 +53,11 @@ class ImageHandler{
     }
   }
 
+  /**
+   * Creates a resized JPEG image and returns it.
+   * @param image_object to be risized.
+   * @return bytes of raw image data.
+   */
   private function createResizedJPEG($image_object){
     $uploadedImage = imagecreatefromjpeg($image_object['tmp_name']);
     if (!$uploadedImage) {
@@ -48,6 +70,11 @@ class ImageHandler{
     }
   }
 
+  /**
+   * Creates a customized image with text using the GD graphics libarary.
+   * @param text to be drawn.
+   * @return bytes of raw image data.
+   */
   public function createImageFromText($text){
     // Begin capturing the byte stream
     $x1 = 0;

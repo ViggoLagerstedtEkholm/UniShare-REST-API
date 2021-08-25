@@ -97,7 +97,7 @@
 
         <div class="content-card-info-buttons">
           <!--===edit===-->
-          <button class="---CSS---" id="---ID---" type="submit" onclick="return clickButton(---ID---);">---ADD_REMOVE---</button>
+          <button class="---CSS---" id="---ID---" type="submit" onclick="toggleCourseToDegree(---ID---);">---ADD_REMOVE---</button>
           <!--===edit===-->
 
           <form action="/UniShare/courses" method="get">
@@ -116,11 +116,25 @@
       <div class="content-pagination-bar">
         <!--===edit===-->
         <div>
-          <a href="./courses?page=---page---&filter_option=---filter_option---&search=---search---&action=---action---&results_per_page_count=---results_per_page_count---"><button type="submit" class="pagination-button"> 🡸 </button></a>
+          <form method="GET">
+            <input type="hidden" name="results_per_page_count" value="---results_per_page_count---" />
+            <input type="hidden" name="action" value="---action---" />
+            <input type="hidden" name="search" value="---search---" />
+            <input type="hidden" name="filter_option" value="---filter_option---" />
+            <input type="hidden" name="page" value="---page---" />
+            <button type="submit" class="pagination-button">🡸</button>
+          </form>
         </div>
         <!--===edit===-->
         <div>
-          <a href="./courses?page=---page---&filter_option=---filter_option---&search=---search---&action=---action---&results_per_page_count=---results_per_page_count---"><button type="submit" class="pagination-button"> 🡺 </button></a>
+          <form method="GET">
+            <input type="hidden" name="results_per_page_count" value="---results_per_page_count---" />
+            <input type="hidden" name="action" value="---action---" />
+            <input type="hidden" name="search" value="---search---" />
+            <input type="hidden" name="filter_option" value="---filter_option---" />
+            <input type="hidden" name="page" value="---page---" />
+            <button type="submit" class="pagination-button">🡺</button>
+          </form>
         </div>
         <!--===edit===-->
     </div>
@@ -130,39 +144,9 @@
         <input type="text" name="search" value="---search---" hidden>
         <input type="text" name="results_per_page_count" value="---results_per_page_count---" hidden>
         <input class="user-input-text" type="number" name="page"  placeholder="PAGE INDEX" required>
-        <input class="button-style-4" type="submit" width="50px" height="50px" name="submit" value="Go to page"></input>
+        <input class="button-style-4" type="submit" name="submit" value="Go to page">
     </form>
   </div>
 </div>
 
-<script>
-  function clickButton(courseID)
-  {
-    $.ajax({
-       url: "../toggleCourseToDegree",
-       type: "POST",
-       data:{courseID: courseID},
-       dataType: "json",
-       success:function(res){
-          var status = res["data"]["Status"];
-          if(status == 'Inserted'){
-            document.getElementById(courseID).innerText = "REMOVE from degree";
-            document.getElementById(courseID).classList.remove("button-style-3");
-            document.getElementById(courseID).classList.add("button-style-2");
-          }
-          if(status == 'Deleted'){
-            document.getElementById(courseID).innerText = "ADD to degree";
-            document.getElementById(courseID).classList.remove("button-style-2");
-            document.getElementById(courseID).classList.add("button-style-3");
-
-          }
-       },
-       error:function(xrs, res){
-         console.log(res);
-         if(xrs.status == 500){
-           alert('Add a degree to put this course into! Profile->Degrees then go to settings->active degree');
-         }
-       }
-     });
-  }
-</script>
+<script src="/Unishare/js/SearchCoursesPage.js" type="text/javascript"></script>

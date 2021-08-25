@@ -7,10 +7,10 @@
            <input class="user-input-text" type="text" name="link" placeholder="Enter link">
            <input class="user-input-text" type="text" name="name" placeholder="Project name" required>
            <br />
-           <textarea class="user-input-text" type="text" name="description" placeholder="Enter description" required></textarea>
+           <textarea class="user-input-text" name="description" placeholder="Enter description" required></textarea>
            <p>
              Project image
-             <input class="form-text" type='file' name='project-file' value='Upload' required/>
+             <input class="form-text" type='file' name='project-file' required/>
            </p>
 
            <h3>Create default image with text</h3>
@@ -28,28 +28,3 @@
   </div>
 </div>
 
-
-<script>
-  var projectID = document.getElementById('projectID').value;
-  console.log(projectID);
-
-  $.ajax ( {
-      url: "./project/get",
-      type: 'GET',
-      data:{projectID: projectID},
-      dataType: "json",
-      success: function ( res ){
-        console.log(res);
-        var name = res['data']['Name'];
-        var link = res['data']['Link'];
-        var description = res['data']['Description'];
-
-        document.getElementById("name").value = name;
-        document.getElementById("link").value = link;
-        document.getElementById("description").value = description;
-      },
-      error: function ( res ){
-        console.log(res);
-      }
-  });
-</script>

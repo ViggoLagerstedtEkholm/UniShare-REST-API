@@ -9,12 +9,12 @@
            <br />
            <p>
              Project image
-             <input class="form-text" type='file' name='project-file' value='Upload' />
+             <input class="form-text" type='file' name='project-file' />
            </p>
 
            <input class="user-input-text" id="link" type="text" name="link" placeholder="Link">
            <div id="project-text">
-             <textarea class="user-input-text" id="description" type="text" name="description" placeholder="Enter description"></textarea>
+             <textarea class="user-input-text" id="description" name="description" placeholder="Enter description"></textarea>
            </div>
            <button type="submit" class="button-style-1">Update</button>
         </form>
@@ -23,30 +23,5 @@
   </div>
 </div>
 
-<script>
-  var projectID = document.getElementById('projectID').value;
-  console.log(projectID);
+<script src="/Unishare/js/ProjectPage.js" type="text/javascript"></script>
 
-  $.ajax ( {
-      url: "/UniShare/project/get",
-      type: 'GET',
-      data:{projectID: projectID},
-      dataType: "json",
-      success: function ( res ){
-        console.log(res);
-        var name = res['data']['Name'];
-        var link = res['data']['Link'];
-        var description = res['data']['Description'];
-
-        document.getElementById("name").value = name;
-        document.getElementById("link").value = link;
-        document.getElementById("description").value = description;
-      },
-      error: function (xhr, res ){
-        console.log(res);
-        if(xhr.status == 404){
-          alert('No matching project ID!');
-        }
-      }
-  });
-</script>

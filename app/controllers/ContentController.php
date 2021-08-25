@@ -7,6 +7,10 @@ use App\Models\MVCModels\Forums;
 use App\Core\Request;
 use App\Core\Session;
 
+/**
+ * Content controller for handling searching and filtering website content.
+ * @author Viggo Lagestedt Ekholm
+ */
 class ContentController extends Controller
 {
   private $users;
@@ -20,6 +24,10 @@ class ContentController extends Controller
     $this->forums = new Forums();
   }
 
+  /**
+   * Get the GET parameters used for filtering and pagination.
+   * @return array
+   */
   private function getFilters(){
     if(isset($_GET["search"])){
       empty($_GET["search"]) ? $search = null : $search = $_GET["search"];
@@ -54,6 +62,11 @@ class ContentController extends Controller
     return ['search' => $search, 'filterOption' => $filterOption, 'filterOrder' => $filterOrder, 'page' => $page, 'results_per_page_count' => $results_per_page_count];
   }
 
+  /**
+   * Use the parameters to calculate the amount of pages required to showcase
+   * all the items. The method filters people.
+   * @return View
+   */
   public function people(){
     $parameters = $this->getFilters();
     $page = $parameters['page'];
@@ -97,6 +110,11 @@ class ContentController extends Controller
     return $this->display('content/people', 'people', $params);
   }
 
+  /**
+   * Use the parameters to calculate the amount of pages required to showcase
+   * all the items. The method filters courses.
+   * @return View
+   */
   public function courses(){
     $parameters = $this->getFilters();
     $page = $parameters['page'];
@@ -140,6 +158,11 @@ class ContentController extends Controller
     return $this->display('content/courses', 'courses', $params);
   }
 
+  /**
+   * Use the parameters to calculate the amount of pages required to showcase
+   * all the items. The method filters forums.
+   * @return View
+   */
   public function forum(){
     $parameters = $this->getFilters();
     $page = $parameters['page'];
@@ -183,6 +206,12 @@ class ContentController extends Controller
     return $this->display('content/forum', 'forum', $params);
   }
 
+  /**
+   * This method handles the adding and removing of courses from our active degree.
+   * We make sure to check if the user has an active degree and informs the user
+   * if they need to add one. We return HTTP status codes to handle a valid response.
+   * @return JSON encoded string 500(generic error response) | 200(OK) | 200(OK)
+   */
   public function toggleCourseToDegree(Request $request){
     $body = $request->getBody();
     $user = $this->users->getUser(Session::get(SESSION_USERID));

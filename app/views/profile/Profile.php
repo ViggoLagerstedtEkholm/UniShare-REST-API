@@ -112,8 +112,8 @@ if($sessionID != false){
 
 $temp = str_replace('---page-count---', $number_of_pages , $fragments[21]);
 $temp = str_replace('---page---', $page , $temp);
-echo str_replace('---range---', $start_page_first_result + 1 . " - " . $start_page_first_result + $results_per_page , $temp);
-
+$temp = str_replace('---range---', $start_page_first_result + 1 . " - " . $start_page_first_result + $results_per_page , $temp);
+echo str_replace('---ID---', $currentPageID , $temp);
 
 $index = 1;
 foreach($comments as $comment){
@@ -123,6 +123,7 @@ foreach($comments as $comment){
   $temp = str_replace('---DISPLAY_NAME---', $comment["userDisplayName"], $temp);
   $temp = str_replace('---text---', $comment["text"], $temp);
   $temp = str_replace('---added---', $comment["date"], $temp);
+
   echo $temp;
   if(Session::isLoggedIn()){
     if($currentPageID == $sessionID || $comment["author"] == $sessionID){

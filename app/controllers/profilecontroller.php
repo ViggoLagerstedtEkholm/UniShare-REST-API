@@ -13,6 +13,10 @@ use App\Includes\Validate;
 use App\Models\Templates\Project;
 use App\Middleware\AuthenticationMiddleware;
 
+/**
+ * Profile controller for handling profiles.
+ * @author Viggo Lagestedt Ekholm
+ */
 class ProfileController extends Controller{
   private $imageHandler;
   private $users;
@@ -30,9 +34,13 @@ class ProfileController extends Controller{
     $this->degrees = new Degrees();
     $this->comments = new Comments();
     $this->courses = new Courses();
-
   }
 
+  /**
+   * This method shows the profile page.
+   * @param Request sanitized request from the user.
+   * @return View
+   */
   public function view(Request $request)
   {
     if(isset($_GET["ID"])){
@@ -94,6 +102,10 @@ class ProfileController extends Controller{
     Application::$app->redirect("./");
   }
 
+  /**
+   * This method resizes and uploads the image.
+   * @param Request sanitized request from the user.
+   */
   public function uploadImage(Request $request){
     $fileUploadName = 'file';
     $sessionID = Session::get(SESSION_USERID);

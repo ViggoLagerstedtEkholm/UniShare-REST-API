@@ -11,7 +11,7 @@
 
             <form method='post' enctype='multipart/form-data' action='./profile/upload/image'>
               <p>
-                <input type='file' name='file' value='Upload' />
+                <input type='file' name='file'/>
               </p>
               <p>
                 <input class="button-style-1" type='submit' name='submit_image' value='Upload' />
@@ -123,9 +123,9 @@
         <div class="flex-item">
           <div class="user-content">
             <div class="profile-tab">
-              <button class="tablinks" onclick="openTab(event, 'Projects')">Projects</button>
-              <button class="tablinks" onclick="openTab(event, 'Degrees')">Degrees</button>
-              <button class="tablinks" onclick="openTab(event, 'Publications')">Publications</button>
+              <button class="tablinks" id="projectTab" >Projects</button>
+              <button class="tablinks" id="degreeTab">Degrees</button>
+              <button class="tablinks" id="publicationTab">Publications</button>
             </div>
 
             <div id="Projects" class="profile-tabcontent">
@@ -170,7 +170,7 @@
                     </div>
                     <!--===edit===-->
                     <form action="/UniShare/project/update">
-                      <input hidden value="---ID---" name="ID"></input>
+                      <input hidden value="---ID---" name="ID">
                       <button type="submit" class="button-style-4">Edit</button>
                     </form>
                       <button type="submit" class="button-style-2" onclick="return deleteProject(---ID---);">Delete</button>
@@ -210,7 +210,7 @@
                     <button class="button-style-4">Edit degree</button>
                   </form>
 
-                  <button class="button-style-2" onclick="return deleteDegree(---degreeID---);">Delete degree</button>
+                  <button class="button-style-2" onclick="deleteDegree(---degreeID---);">Delete degree</button>
                   <!--===edit===-->
 
                   <h3>Included courses</h3>
@@ -242,7 +242,7 @@
 
                           <!--===edit===-->
                           <div class='column'>
-                            <button class="button-style-2" id="---ID---" onclick="return removeCourse(---DEGREE-ID---, ---ID---);">Remove course</button>
+                              <button class="button-style-2" type="submit" onclick="deleteCourseInDegree(---DEGREE-ID---, ---ID---)">Remove course</button>
                           </div>
                           <!--===edit===-->
 
@@ -277,13 +277,12 @@
 
       <div class="profile-comment-container">
         <div class="profile-comment-form">
-          <h2>
-            Post comment
-          </h2>
-          <textarea id="text" name="text"></textarea>
-          <p>
-            <input class="button-style-5" type="button" value="Post comment" onclick="return addComment();">
-          </p>
+          <form id="addCommentForm">
+            <h2>Post comment</h2>
+            <input type="hidden" name="pageID" value="---ID---">
+            <textarea id="commentText" name="text"></textarea>
+            <button class="button-style-1" type="submit" id="addComment" value="Post comment">Add comment</button>
+          </form>
         </div>
 
         <hr />
@@ -323,7 +322,7 @@
             <hr />
             <b>Comment date: ---added---</b>
             <!--===edit===-->
-            <input class="button-style-2" type="button" value="Delete comment" id="---ID---" onclick="return deleteComment(---ID---);">
+            <input class="button-style-2" type="button" value="Delete comment" onclick="return deleteComment(---ID---);">
             <!--===edit===-->
           </div>
         </div>
@@ -334,150 +333,28 @@
           <div class="content-pagination-bar">
             <!--===edit===-->
             <div>
-              <a href="./profile?ID=---ID---&page=---page---"><button type="submit" class="pagination-button"> 🡸 </button></a>
+              <form method="GET">
+                <input type="hidden" name="ID" value="---ID---" />
+                <input type="hidden" name="page" value="---page---" />
+                <button type="submit" class="pagination-button">🡸</button>
+              </form>
             </div>
             <!--===edit===-->
             <div>
-              <a href="./profile?ID=---ID---&page=---page---"><button type="submit" class="pagination-button"> 🡺 </button></a>
+              <form method="GET">
+                <input type="hidden" name="ID" value="---ID---" />
+                <input type="hidden" name="page" value="---page---" />
+                <button type="submit" class="pagination-button">🡺</button>
+              </form>
             </div>
             <!--===edit===-->
-            <form method="get">
+            <form method="GET">
                 <input class="user-input-text" type="number" name="page"  placeholder="PAGE INDEX" required>
                 <input class="user-input-text" type="hidden" name="ID"  value="---ID---">
-                <input class="button-style-4" type="submit" width="50px" height="50px" name="submit" value="Go to page"></input>
+                <input class="button-style-4" type="submit" name="submit" value="Go to page">
             </form>
         </div>
       </div>
     </div>
 
-    <script>
-
-      function findGetParameter(parameterName) {
-          var result = null,
-              tmp = [];
-          var items = location.search.substr(1).split("&");
-          for (var index = 0; index < items.length; index++) {
-              tmp = items[index].split("=");
-              if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
-          }
-          return result;
-      }
-
-      openTab(event, 'Projects');
-
-      function openTab(evt, tabName) {
-        var i, tabcontent, tablinks;
-        tabcontent = document.getElementsByClassName("profile-tabcontent");
-        for (i = 0; i < tabcontent.length; i++) {
-          tabcontent[i].style.display = "none";
-        }
-        tablinks = document.getElementsByClassName("tablinks");
-        for (i = 0; i < tablinks.length; i++) {
-          tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-        document.getElementById(tabName).style.display = "block";
-        evt.currentTarget.className += " active";
-      }
-
-      function removeCourse(degreeID, courseID){
-        $.ajax({
-           url: "./profile/delete/course",
-           type: "POST",
-           data:{courseID: courseID, degreeID: degreeID},
-           dataType: "json",
-           success:function(res){
-             console.log(res);
-             var canRemove = res["data"]["Status"];
-             if(canRemove){
-               var ID = res["data"]["ID"];
-               document.getElementById("course-" + ID).remove();
-             }
-           },
-           error:function(res){
-             console.log(res);
-           }
-         });
-      }
-
-      function deleteDegree(ID){
-        $.ajax({
-           url: "/UniShare/degree/remove",
-           type: "POST",
-           data:{degreeID: ID},
-           dataType: "json",
-           success:function(res){
-             console.log(res);
-             var canRemove = res["success"];
-             if(canRemove){
-               var ID = res["data"]["degreeID"];
-               document.getElementById("degree-" + ID).remove();
-             }
-           },
-           error:function(res){
-             console.log(res);
-           }
-         });
-      }
-
-      function deleteProject(ID){
-        $.ajax({
-           url: "./project/delete",
-           type: "POST",
-           data:{projectID: ID},
-           dataType: "json",
-           success:function(res){
-             console.log(res);
-             var canRemove = res["data"]["Status"];
-             if(canRemove){
-               var ID = res["data"]["ID"];
-               document.getElementById("project-" + ID).remove();
-             }
-           },
-           error:function(res){
-             console.log(res);
-           }
-         });
-      }
-
-      function deleteComment(ID){
-        $.ajax({
-           url: "./profile/delete/comment",
-           type: "POST",
-           data:{commentID: ID},
-           dataType: "json",
-           success:function(res){
-             console.log(res);
-             var canRemove = res["data"]["Status"];
-             if(canRemove){
-               var ID = res["data"]["ID"];
-               document.getElementById(ID).remove();
-             }
-           },
-           error:function(res){
-             console.log(res);
-           }
-         });
-      }
-
-      function addComment(){
-        var text = document.getElementById("text").value;
-
-        $.ajax({
-           url: "./profile/add/comment",
-           type: "POST",
-           data:{pageID: findGetParameter("ID"), text: text},
-           dataType: "json",
-           success:function(res){
-             location.reload();
-           },
-           error:function(xhr, res){
-             if(xhr.status == 403){
-               alert('You need to be logged in to comment!');
-             }
-             if(xhr.status == 500){
-               alert('Your comment is empty.');
-             }
-           }
-         });
-      }
-    </script>
+    <script src="/Unishare/js/ProfilePage.js" type="text/javascript"></script>

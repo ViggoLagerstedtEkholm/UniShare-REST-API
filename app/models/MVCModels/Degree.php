@@ -1,6 +1,9 @@
 <?php
 namespace App\Models\MVCModels;
-
+/**
+ * Model for carrying degree data.
+ * @author Viggo Lagestedt Ekholm
+ */
 class Degree{
   public int $ID;
   public string $name;

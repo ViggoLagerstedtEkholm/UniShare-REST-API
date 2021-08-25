@@ -7,24 +7,51 @@ use App\Core\Request;
 use App\Core\ImageHandler;
 use App\Includes\Validate;
 
+/**
+ * Abstract class handling displaying/adding middleware/json responses/calculating
+ * filtering offsets for pagination.
+ * @abstract
+ * @author Viggo Lagestedt Ekholm
+ */
 abstract class Controller{
   public string $action = '';
   protected array $middlewares = [];
 
+  /**
+   * Sets the middleware for the controller.
+   * @param middleware
+   */
   public function setMiddlewares(Middleware $middleware)
   {
       $this->middlewares[] = $middleware;
   }
 
+  /**
+   * Gets the middleware for the controller.
+   * @return middleware
+   */
   public function getMiddlewares(): array
   {
       return $this->middlewares;
   }
 
-  public function display($folder, $page, $params){
+  /**
+   * Display the view with the required parameters aquired from the controller.
+   * @param folder view folder
+   * @param page view file
+   * @param params parameters
+   */
+  protected function display($folder, $page, $params){
     return Application::$app->router->renderView($folder, $page, $params);
   }
-  
+
+  /**
+   * Display the view with the required parameters aquired from the controller.
+   * @param count total amount of items that needs pagination.
+   * @param page the current page index.
+   * @param result_page_count_selected the amount of results per page.
+   * @return array all parameters to query the database with the offsets calculated.
+   */
   protected function calculateOffsets($count, $page, $result_page_count_selected){
     $values = array();
     $results_per_page = $result_page_count_selected;
@@ -37,6 +64,12 @@ abstract class Controller{
     return $values;
   }
 
+  /**
+   * Returns a json response that we can use to handle responses from user requests.
+   * @param resp the JSON type data.
+   * @param code status code.
+   * @return JSON encoded string.
+   */
   protected function jsonResponse($resp, $code){
     header("Access-Control-Allow-Origin: *");
     header("Content-Type: applicaton/json; charset=UTF-8");

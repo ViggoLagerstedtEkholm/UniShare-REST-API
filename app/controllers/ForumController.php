@@ -7,16 +7,25 @@ use App\Models\MVCModels\Posts;
 use App\Core\Session;
 use App\Core\Application;
 
+/**
+ * Forum controller for handling forums.
+ * @author Viggo Lagestedt Ekholm
+ */
 class ForumController extends Controller{
   private $forums;
   private $posts;
 
   function __construct(){
     $this->setMiddlewares(new AuthenticationMiddleware(['addForumView', 'addForum']));
+
     $this->forums = new Forums();
     $this->posts = new Posts();
   }
 
+  /**
+   * This method shows the forum page.
+   * @return View
+   */
   public function view(Request $request){
     $body = $request->getBody();
     $forumID = $body["ID"];
@@ -32,7 +41,7 @@ class ForumController extends Controller{
 
         $post_count = $this->posts->getPostCount($forumID);
 
-        $offsets = $this->calculateOffsets($post_count, $page);
+        $offsets = $this->calculateOffsets($post_count, $page, 10);
         $start_page_first_result = $offsets['start_page_first_result'];
         $results_per_page = $offsets['results_per_page'];
         $number_of_pages = $offsets['number_of_pages'];
@@ -53,10 +62,18 @@ class ForumController extends Controller{
     }
   }
 
+  /**
+   * This method shows the add forum page.
+   * @return View
+   */
   public function addForumView(){
     return $this->display('forum/add','forum', []);
   }
 
+  /**
+   * This method handles adding a forum.
+   * @param Request sanitized request from the user.
+   */
   public function addForum(Request $request){
     $body = $request->getBody();
 
@@ -77,10 +94,12 @@ class ForumController extends Controller{
     }
   }
 
+  //TODO
   public function updateForum(Request $request){
     $body = $request->getBody();
   }
 
+  //TODO
   public function deleteForum(Request $request){
     $body = $request->getBody();
   }

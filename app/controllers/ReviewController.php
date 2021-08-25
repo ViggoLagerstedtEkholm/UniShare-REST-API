@@ -7,44 +7,65 @@ use App\Core\Request;
 use App\Core\Application;
 use App\Includes\Validate;
 
+/**
+ * Review controller for handling reviews.
+ * @author Viggo Lagestedt Ekholm
+ */
 class ReviewController extends Controller{
   private $reviews;
 
   function __construct(){
     $this->setMiddlewares(new AuthenticationMiddleware(['setRate', 'getRate', 'uploadReview', 'deleteReview']));
+
     $this->reviews = new Reviews();
   }
-  
+
+  /**
+   * This method shows the review course page.
+   * @return View
+   */
   public function review(){
     return $this->display('review','review', []);
   }
-  
+
+  /**
+   * This method handles getting review by course ID.
+   * @param Request sanitized request from the user.
+   * @return JSON encoded string 200(OK).
+   */
   public function getReview(Request $request){
     $body = $request->getBody();
     $courseID = $body['courseID'];
     $userID = Session::get(SESSION_USERID);
-    
+
     $result = $this->reviews->getReview($userID, $courseID);
     $resp = ['success'=>true,'data'=>['result' => $result]];
     return $this->jsonResponse($resp, 200);
   }
 
+  /**
+   * This method handles deleting reviews by course ID and user ID (many to many table).
+   * @param Request sanitized request from the user.
+   */
   public function deleteReview(Request $request){
     $body = $request->getBody();
 
     $courseID = $body['courseID'];
     $userID = $body['userID'];
-    
+
     if($userID == Session::get(SESSION_USERID)){
       $this->reviews->deleteReview($userID, $courseID);
-      $resp = ['success'=>true,'data'=>['userID' => $userID, 'courseID' => $courseID]];
-      return $this->jsonResponse($resp, 200);
+      Application::$app->redirect("/UniShare/courses?ID=$courseID");
     }else{
-      $resp = ['success'=>false];
-      return $this->jsonResponse($resp, 401);
+      Application::$app->redirect("/UniShare/courses?ID=$courseID&error=failedremove");
     }
   }
 
+  /**
+   * This method handles uploading reviews.
+   * @param Request sanitized request from the user.
+   * @return JSON encoded string 500(generic error response)
+   */
   public function uploadReview(Request $request){
     $body = $request->getBody();
 
@@ -74,6 +95,7 @@ class ReviewController extends Controller{
       Application::$app->redirect("/UniShare/courses?ID=$courseID");
       exit();
     }else{
+      //TODO check if this is nescessary.
       $resp = ['success'=>false,'data'=>['Status'=>'Failed upload review']];
       return $this->jsonResponse($resp, 500);
     }
