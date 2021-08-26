@@ -1,5 +1,5 @@
 <?php
-namespace App\Models\MVCModels;
+namespace App\models\MVCModels;
 /**
  * Model for carrying degree data.
  * @author Viggo Lagestedt Ekholm
@@ -13,5 +13,7 @@ class Degree{
   public string $country;
   public string $city;
   public string $university;
-  public ?Array $courses = null;
+  public mixed $courses;
+  public bool $isActiveDegree = false;
+  public mixed $totalCredits;
 }

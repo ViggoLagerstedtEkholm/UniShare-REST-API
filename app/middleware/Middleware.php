@@ -1,5 +1,5 @@
 <?php
-namespace App\Middleware;
+namespace App\middleware;
 
 /**
  * Authentication middleware for handling controller access.

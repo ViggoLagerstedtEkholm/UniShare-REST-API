@@ -1,6 +1,5 @@
 <?php
-namespace App\Controllers;
-use App\Core\Application;
+namespace App\controllers;
 use App\Models\MVCModels\Users;
 use App\Models\MVCModels\Courses;
 use App\Models\MVCModels\Forums;
@@ -13,9 +12,9 @@ use App\Core\Session;
  */
 class ContentController extends Controller
 {
-  private $users;
-  private $courses;
-  private $forums;
+  private Users $users;
+  private Courses $courses;
+  private Forums $forums;
 
   public function __construct()
   {
@@ -28,7 +27,8 @@ class ContentController extends Controller
    * Get the GET parameters used for filtering and pagination.
    * @return array
    */
-  private function getFilters(){
+  private function getFilters(): array
+  {
     if(isset($_GET["search"])){
       empty($_GET["search"]) ? $search = null : $search = $_GET["search"];
     }else{
@@ -65,9 +65,10 @@ class ContentController extends Controller
   /**
    * Use the parameters to calculate the amount of pages required to showcase
    * all the items. The method filters people.
-   * @return View
+   * @return string
    */
-  public function people(){
+  public function people(): string
+  {
     $parameters = $this->getFilters();
     $page = $parameters['page'];
     $filterOption = $parameters['filterOption'];
@@ -113,9 +114,10 @@ class ContentController extends Controller
   /**
    * Use the parameters to calculate the amount of pages required to showcase
    * all the items. The method filters courses.
-   * @return View
+   * @return string
    */
-  public function courses(){
+  public function courses(): string
+  {
     $parameters = $this->getFilters();
     $page = $parameters['page'];
     $filterOption = $parameters['filterOption'];
@@ -161,9 +163,10 @@ class ContentController extends Controller
   /**
    * Use the parameters to calculate the amount of pages required to showcase
    * all the items. The method filters forums.
-   * @return View
+   * @return string
    */
-  public function forum(){
+  public function forum(): string
+  {
     $parameters = $this->getFilters();
     $page = $parameters['page'];
     $filterOption = $parameters['filterOption'];
@@ -206,12 +209,13 @@ class ContentController extends Controller
     return $this->display('content/forum', 'forum', $params);
   }
 
-  /**
-   * This method handles the adding and removing of courses from our active degree.
-   * We make sure to check if the user has an active degree and informs the user
-   * if they need to add one. We return HTTP status codes to handle a valid response.
-   * @return JSON encoded string 500(generic error response) | 200(OK) | 200(OK)
-   */
+    /**
+     * This method handles the adding and removing of courses from our active degree.
+     * We make sure to check if the user has an active degree and informs the user
+     * if they need to add one. We return HTTP status codes to handle a valid response.
+     * @param Request $request
+     * @return false|string
+     */
   public function toggleCourseToDegree(Request $request){
     $body = $request->getBody();
     $user = $this->users->getUser(Session::get(SESSION_USERID));
@@ -230,11 +234,11 @@ class ContentController extends Controller
     if($isInActiveDegree){
       $this->courses->deleteDegreeCourse($degreeID, $courseID);
       $resp = ['success'=>true,'data'=>['Status'=>'Deleted']];
-      return $this->jsonResponse($resp, 200);
     }else{
       $this->courses->insertDegreeCourse($degreeID, $courseID);
       $resp = ['success'=>false,'data'=>['Status'=>'Inserted']];
-      return $this->jsonResponse($resp, 200);
     }
+
+    return $this->jsonResponse($resp, 200);
   }
 }

@@ -1,49 +1,55 @@
 <?php
-namespace App\Core;
+
+namespace App\core;
 
 /**
  * Cookie helper class for handling setting/getting/checking.
  * @author Viggo Lagestedt Ekholm
  */
-class Cookie{
+class Cookie
+{
 
-  /**
-   * Set a cookie with the given parameters.
-   * @param name cookie name.
-   * @param value cookie value.
-   * @param expiry cookie expiry.
-   * @return bool true(success) | false(fail)
-   */
-  public static function set($name, $value, $expiry) {
-    if(setCookie($name, $value, time()+$expiry, '/')) {
-      return true;
+    /**
+     * Set a cookie with the given parameters.
+     * @param string $name
+     * @param string $value
+     * @param int $expiry
+     * @return bool
+     */
+    public static function set(string $name, string $value, int $expiry): bool
+    {
+        if (setCookie($name, $value, time() + $expiry, '/')) {
+            return true;
+        }
+        return false;
     }
-    return false;
-  }
 
-  /**
-   * Delete a cookie with the given name.
-   * @param name cookie name.
-   */
-  public static function delete($name) {
-    self::set($name, '', time() -1);
-  }
+    /**
+     * Delete a cookie with the given name.
+     * @param string $name
+     */
+    public static function delete(string $name)
+    {
+        self::set($name, '', time() - 1);
+    }
 
-  /**
-   * Get a cookie with the given name.
-   * @param name cookie name.
-   * @return Cookie
-   */
-  public static function get($name) {
-    return $_COOKIE[$name];
-  }
+    /**
+     * Get a cookie with the given name.
+     * @param string $name
+     * @return string
+     */
+    public static function get(string $name): string
+    {
+        return $_COOKIE[$name];
+    }
 
-  /**
-   * Check if a cookie exists with the given name.
-   * @param name cookie name.
-   * @return bool
-   */
-  public static function exists($name) {
-    return isset($_COOKIE[$name]);
-  }
+    /**
+     * Check if a cookie exists with the given name.
+     * @param string $name
+     * @return bool
+     */
+    public static function exists(string $name): bool
+    {
+        return isset($_COOKIE[$name]);
+    }
 }

@@ -1,5 +1,5 @@
 <?php
-namespace App\Models\MVCModels;
+namespace App\models\MVCModels;
 
 /**
  * Model for carrying course data.
@@ -9,7 +9,7 @@ class Course{
   public int $ID;
   public float $credits;
   public float $duration;
-  public $rating;
+  public string $rating;
   public string $name;
   public string $added;
   public string $city;
@@ -17,4 +17,5 @@ class Course{
   public string $university;
   public string $description;
   public bool $existsInActiveDegree = false;
+  public float $totalCredits;
 }

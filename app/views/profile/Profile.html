@@ -199,10 +199,11 @@
                 <!--===edit===-->
                 <div class="degree-info-panel">
                   <h1>---degree_name---</h1>
+                  <h2>Status: ---active---</h2>
                   <h4>---school---</h4>
                   <h4>---country---</h4>
                   <h4>---city---</h4>
-                  <h4>Sum total credits: SUM(credits) hp</h4>
+                  <h4>Sum total credits: ---totalCredits--- hp</h4>
 
                   <!--===edit===-->
                   <form action="/UniShare/degree/update" method="GET">
@@ -348,12 +349,13 @@
               </form>
             </div>
             <!--===edit===-->
-            <form method="GET">
-                <input class="user-input-text" type="number" name="page"  placeholder="PAGE INDEX" required>
-                <input class="user-input-text" type="hidden" name="ID"  value="---ID---">
-                <input class="button-style-4" type="submit" name="submit" value="Go to page">
-            </form>
-        </div>
+          </div>
+
+          <form method="GET">
+              <input class="user-input-text" type="number" name="page"  placeholder="PAGE INDEX" required>
+              <input class="user-input-text" type="hidden" name="ID"  value="---ID---">
+              <input class="button-style-4" type="submit" name="submit" value="Go to page">
+          </form>
       </div>
     </div>
 

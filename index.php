@@ -5,120 +5,106 @@ use App\Core\Application;
 use App\Core\Cookie;
 use App\Core\Session;
 
-use App\Controllers\HomeController;
-use App\Controllers\AuthenticationController;
-use App\Controllers\ProfileController;
-use App\Controllers\ProjectController;
-use App\Controllers\SettingsController;
-use App\Controllers\ContentController;
-use App\Controllers\CourseController;
-use App\Controllers\AdminController;
-use App\Controllers\DegreeController;
-use App\Controllers\RequestController;
-use App\Controllers\ForumController;
-use App\Controllers\PublicationController;
-use App\Controllers\ReviewController;
-use App\Controllers\PostController;
+use App\controllers\HomeController;
+use App\controllers\AuthenticationController;
+use App\controllers\ProfileController;
+use App\controllers\ProjectController;
+use App\controllers\SettingsController;
+use App\controllers\ContentController;
+use App\controllers\CourseController;
+use App\controllers\AdminController;
+use App\controllers\DegreeController;
+use App\controllers\RequestController;
+use App\controllers\ForumController;
+use App\controllers\PublicationController;
+use App\controllers\ReviewController;
+use App\controllers\PostController;
 
 require_once(__DIR__ . '/config.php');
 
 session_start();
 
-$homeController = new HomeController();
-$authenticationController = new AuthenticationController();
-$profileController = new ProfileController();
-$projectController = new ProjectController();
-$settingsController = new SettingsController();
-$contentController = new ContentController();
-$courseController = new CourseController();
-$adminController = new AdminController();
-$degreeController = new DegreeController();
-$requestController = new RequestController();
-$forumController = new ForumController();
-$publicationController = new PublicationController();
-$reviewController = new ReviewController();
-$postController = new PostController();
-
 if(Cookie::exists(REMEMBER_ME_COOKIE_NAME) && !Session::exists(SESSION_USERID)){
+  $authenticationController = new AuthenticationController();
   $authenticationController->loginWithCookie();
 }
 
 $app = new Application(dirname(__DIR__));
 
-$app->router->get('/', [$homeController, 'view']);
+$app->router->get('/', [HomeController::class, 'view']);
 
-$app->router->get('/register', [$authenticationController, 'view_register']);
-$app->router->post('/register', [$authenticationController, 'register']);
-$app->router->get('/login', [$authenticationController, 'view_login']);
-$app->router->post('/login', [$authenticationController, 'login']);
-$app->router->get('/logout', [$authenticationController, 'logout']);
+$app->router->get('/register', [AuthenticationController::class, 'view_register']);
+$app->router->post('/register', [AuthenticationController::class, 'register']);
+$app->router->get('/login', [AuthenticationController::class, 'view_login']);
+$app->router->post('/login', [AuthenticationController::class, 'login']);
+$app->router->get('/logout', [AuthenticationController::class, 'logout']);
 
-$app->router->get('/profile', [$profileController, 'view']);
-$app->router->post('/profile/upload/image', [$profileController, 'uploadImage']);
-$app->router->post('/profile/upload/image', [$profileController, 'uploadImage']);
-$app->router->post('/profile/add/comment', [$profileController, 'addComment']);
-$app->router->post('/profile/delete/comment', [$profileController, 'deleteComment']);
-$app->router->post('/profile/delete/course', [$profileController, 'removeCourseFromDegree']);
+$app->router->get('/profile', [ProfileController::class, 'view']);
+$app->router->post('/profile/upload/image', [ProfileController::class, 'uploadImage']);
+$app->router->post('/profile/upload/image', [ProfileController::class, 'uploadImage']);
+$app->router->post('/profile/add/comment', [ProfileController::class, 'addComment']);
+$app->router->post('/profile/delete/comment', [ProfileController::class, 'deleteComment']);
+$app->router->post('/profile/delete/course', [ProfileController::class, 'removeCourseFromDegree']);
 
-$app->router->get('/project/add', [$projectController, 'add']);
-$app->router->get('/project/update', [$projectController, 'update']);
-$app->router->get('/project/get', [$projectController, 'getProjectForEdit']);
-$app->router->post('/project/upload', [$projectController, 'uploadProject']);
-$app->router->post('/project/delete', [$projectController, 'deleteProject']);
-$app->router->post('/project/update', [$projectController, 'updateProject']);
+$app->router->get('/project/add', [ProjectController::class, 'add']);
+$app->router->get('/project/update', [ProjectController::class, 'update']);
+$app->router->get('/project/get', [ProjectController::class, 'getProjectForEdit']);
+$app->router->post('/project/upload', [ProjectController::class, 'uploadProject']);
+$app->router->post('/project/delete', [ProjectController::class, 'deleteProject']);
+$app->router->post('/project/update', [ProjectController::class, 'updateProject']);
 
-$app->router->get('/settings', [$settingsController, 'view']);
-$app->router->get('/settings/getsettings', [$settingsController, 'fetch']);
-$app->router->post('/settings/deleteAccount', [$settingsController, 'deleteAccount']);
-$app->router->post('/settings/update', [$settingsController, 'update']);
+$app->router->get('/settings', [SettingsController::class, 'view']);
+$app->router->get('/settings/getsettings', [SettingsController::class, 'fetch']);
+$app->router->post('/settings/deleteAccount', [SettingsController::class, 'deleteAccount']);
+$app->router->post('/settings/update', [SettingsController::class, 'update']);
 
-$app->router->get('/courses', [$courseController, 'view']);
-$app->router->get('/course/getrate', [$courseController, 'getRate']);
-$app->router->post('/course/setrate', [$courseController, 'setRate']);
-$app->router->post('/course/request', [$courseController, 'request']);
+$app->router->get('/courses', [CourseController::class, 'view']);
+$app->router->get('/course/getrate', [CourseController::class, 'getRate']);
+$app->router->get('/course/getGraphData', [CourseController::class, 'getRatingGraphData']);
+$app->router->post('/course/setrate', [CourseController::class, 'setRate']);
+$app->router->post('/course/request', [CourseController::class, 'request']);
 
-$app->router->get('/review', [$reviewController, 'review']);
-$app->router->get('/review/get', [$reviewController, 'getReview']);
-$app->router->post('/review/upload', [$reviewController, 'uploadReview']);
-$app->router->post('/review/delete', [$reviewController, 'deleteReview']);
+$app->router->get('/review', [ReviewController::class, 'review']);
+$app->router->get('/review/get', [ReviewController::class, 'getReview']);
+$app->router->post('/review/upload', [ReviewController::class, 'uploadReview']);
+$app->router->post('/review/delete', [ReviewController::class, 'deleteReview']);
 
-$app->router->get('/degree/new', [$degreeController, 'add']);
-$app->router->get('/degree/update', [$degreeController, 'update']);
-$app->router->get('/degree/get', [$degreeController, 'getDegree']);
-$app->router->get('/degree/get/names', [$degreeController, 'getDegrees']);
-$app->router->post('/degree/upload', [$degreeController, 'uploadDegree']);
-$app->router->post('/degree/remove', [$degreeController, 'deleteDegree']);
-$app->router->post('/degree/update', [$degreeController, 'updateDegree']);
+$app->router->get('/degree/new', [DegreeController::class, 'add']);
+$app->router->get('/degree/update', [DegreeController::class, 'update']);
+$app->router->get('/degree/get', [DegreeController::class, 'getDegree']);
+$app->router->get('/degree/get/names', [DegreeController::class, 'getDegrees']);
+$app->router->post('/degree/upload', [DegreeController::class, 'uploadDegree']);
+$app->router->post('/degree/remove', [DegreeController::class, 'deleteDegree']);
+$app->router->post('/degree/update', [DegreeController::class, 'updateDegree']);
 
-$app->router->get('/search/people', [$contentController, 'people']);
-$app->router->get('/search/courses', [$contentController, 'courses']);
-$app->router->get('/search/forums', [$contentController, 'forum']);
+$app->router->get('/search/people', [ContentController::class, 'people']);
+$app->router->get('/search/courses', [ContentController::class, 'courses']);
+$app->router->get('/search/forums', [ContentController::class, 'forum']);
+$app->router->get('/searchCourses', [ContentController::class, 'courses']);
+$app->router->post('/toggleCourseToDegree', [ContentController::class, 'toggleCourseToDegree']);
 
-$app->router->get('/searchCourses', [$contentController, 'courses']);
-$app->router->post('/toggleCourseToDegree', [$contentController, 'toggleCourseToDegree']);
+$app->router->get('/admin', [AdminController::class, 'view']);
+$app->router->post('/admin/course/add', [AdminController::class, 'addCourse']);
+$app->router->post('/admin/course/remove', [AdminController::class, 'removeCourse']);
+$app->router->post('/admin/course/update', [AdminController::class, 'updateCourse']);
+$app->router->post('/admin/users/add', [AdminController::class, 'addUser']);
+$app->router->post('/admin/users/remove', [AdminController::class, 'removeUser']);
+$app->router->post('/admin/users/update', [AdminController::class, 'updateUser']);
+$app->router->post('/admin/course/approve', [AdminController::class, 'approveRequest']);
+$app->router->post('/admin/course/deny', [AdminController::class, 'denyRequest']);
 
-$app->router->get('/admin', [$adminController, 'view']);
-$app->router->post('/admin/course/add', [$adminController, 'addCourse']);
-$app->router->post('/admin/course/remove', [$adminController, 'removeCourse']);
-$app->router->post('/admin/course/update', [$adminController, 'updateCourse']);
-$app->router->post('/admin/users/add', [$adminController, 'addUser']);
-$app->router->post('/admin/users/remove', [$adminController, 'removeUser']);
-$app->router->post('/admin/users/update', [$adminController, 'updateUser']);
-$app->router->post('/admin/course/approve', [$adminController, 'approveRequest']);
-$app->router->post('/admin/course/deny', [$adminController, 'denyRequest']);
+$app->router->get('/request', [RequestController::class, 'view']);
+$app->router->post('/request/upload', [RequestController::class, 'uploadRequest']);
+$app->router->post('/request/delete', [RequestController::class, 'deletePending']);
 
-$app->router->get('/request', [$requestController, 'view']);
-$app->router->post('/request/upload', [$requestController, 'uploadRequest']);
-$app->router->post('/request/delete', [$requestController, 'deletePending']);
+$app->router->get('/forum', [ForumController::class, 'view']);
+$app->router->get('/forum/add', [ForumController::class, 'addForumView']);
+$app->router->post('/forum/add', [ForumController::class, 'addForum']);
 
-$app->router->get('/forum', [$forumController, 'view']);
-$app->router->get('/forum/add', [$forumController, 'addForumView']);
-$app->router->post('/forum/add', [$forumController, 'addForum']);
-
-$app->router->get('/post', [$postController, 'view']);
-$app->router->post('/post/add', [$postController, 'addPost']);
+$app->router->get('/post', [PostController::class, 'view']);
+$app->router->post('/post/add', [PostController::class, 'addPost']);
 
 
-$app->router->get('/publications', [$publicationController, 'view']);
+$app->router->get('/publications', [PublicationController::class, 'view']);
 
 $app->run();

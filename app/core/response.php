@@ -1,5 +1,6 @@
 <?php
-namespace App\Core;
+
+namespace App\core;
 
 /**
  * Simple response class.
@@ -7,11 +8,12 @@ namespace App\Core;
  */
 class Response
 {
-  /**
-   * Sets the response HTTP code.
-   * @param code 
-   */
-  public function setStatusCode(int $code){
-    http_response_code($code);
-  }
+    /**
+     * Sets the response HTTP code.
+     * @param int $code
+     */
+    public function setStatusCode(int $code)
+    {
+        http_response_code($code);
+    }
 }

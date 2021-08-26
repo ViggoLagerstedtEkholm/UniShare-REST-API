@@ -76,9 +76,15 @@ foreach($degrees as $degree){
   echo str_replace('---degreeID---', $degree->ID, $fragments[11]);
 
   $temp = str_replace('---degree_name---', $degree->name, $fragments[12]);
+  if($degree->isActiveDegree){
+    $temp = str_replace('---active---', 'Active', $temp);
+  }else{
+    $temp = str_replace('---active---', 'Inactive', $temp);
+  }
   $temp = str_replace('---degreeID---', $degree->ID, $temp);
   $temp = str_replace('---school---', $degree->university, $temp);
   $temp = str_replace('---country---', $degree->country, $temp);
+  $temp = str_replace('---totalCredits---', $degree->totalCredits, $temp);
   echo str_replace('---city---', $degree->city, $temp);
 
   if($sessionID == $currentPageID){

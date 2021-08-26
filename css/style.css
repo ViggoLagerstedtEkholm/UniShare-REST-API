@@ -26,6 +26,15 @@ p{
   color: white;
 }
 
+ul{
+  margin:0;
+  padding:0;
+}
+
+li{
+  list-style-type: none;
+}
+
 .content-card-forum{
   display: flex;
   font-size: 15px;
@@ -119,13 +128,28 @@ justify-content: center;
   word-wrap: break-word;
 }
 
+.degree-info-panel button{
+  margin-top: 10px;
+}
+
 .degree-box{
   margin-top: 10px;
-  background-color: #2470a3;
+  background: linear-gradient(178deg, rgb(32 37 40) 0%, rgb(12 9 21) 100%);
   margin-top: 20px;
   border-radius: 5px;
   padding: 10px;
+  color: white;
 }
+
+.degree-box a{
+  color: white;
+  text-decoration: none;
+}
+
+.degree-box a:hover {
+  text-decoration: underline;
+}
+
 
 .score{
   font-size: 35px;
@@ -198,11 +222,9 @@ justify-content: center;
 
 .project-image{
   display: flex;
-  justify-content: center;
   outline: 2px solid #CCC;
   height: 300px;
   width: 300px;
-  margin: 10px;
 }
 
 .project{
@@ -239,7 +261,7 @@ justify-content: center;
 
 .filter-background-box{
   border-style: dotted;
-  background-color: #175a78;
+  background-color: #020a30;
 }
 
 .content-filter-bg button{
@@ -295,8 +317,8 @@ select {
   display: flex;
   padding: 10px;
   border-radius: 5px;
-  color: white;
   word-wrap: break-word;
+  color: black;
 }
 
 
