@@ -6,7 +6,7 @@ use App\Core\Session;
 use App\Core\Exceptions\ForbiddenException;
 use App\Core\Exceptions\PrivilegeException;
 use App\Core\Application;
-use App\Models\MVCModels\Users;
+use App\Models\Users;
 
 /**
  * Authentication middleware for handling controller access.
@@ -25,7 +25,7 @@ class AuthenticationMiddleware extends Middleware
 
     /**
      * Check the session to see if a user exists and if required that this user has
-     * the required privilege to access the Controller method. If sufficient privelege is not met
+     * the required privilege to access the Controller method. If sufficient privilege is not met
      * we either throw a privilege exception or a forbidden exception depending on the case.
      * @throws ForbiddenException
      * @throws PrivilegeException

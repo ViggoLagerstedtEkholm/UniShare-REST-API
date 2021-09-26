@@ -3,7 +3,7 @@
 namespace App\controllers;
 
 use App\Core\Request;
-use App\Models\MVCModels\Requests;
+use App\Models\Requests;
 use App\Core\Session;
 use App\Middleware\AuthenticationMiddleware;
 use App\Core\Application;
@@ -23,26 +23,18 @@ class RequestController extends Controller
         $this->requests = new Requests();
     }
 
-    /**
-     * This method shows the request course page.
-     * @return string
-     */
-    public function view(): string
+    public function getRequests(): bool|string|null
     {
-        $requests = $this->requests->getRequestedCourses();
-
-        $params = [
-            "requests" => $requests
-        ];
-
-        return $this->display('request', 'request', $params);
+        $requests = $this->requests->getRequestedCoursesFromUser();
+        return $this->jsonResponse($requests, 200);
     }
 
     /**
      * This method handles uploading new course requests.
      * @param Request $request
+     * @return bool|string|null
      */
-    public function uploadRequest(Request $request)
+    public function uploadRequest(Request $request): bool|string|null
     {
         $courseRequest = $request->getBody();
 
@@ -60,18 +52,11 @@ class RequestController extends Controller
 
         if (count($errors) > 0) {
             $query = http_build_query(array('error' => $errors));
-            Application::$app->redirect("../request?$query");
-
-        } else {
-            $success = $this->requests->insertRequestedCourse($params, Session::get(SESSION_USERID));
-            Application::$app->redirect("../request?error=none");
+            return $this->jsonResponse($query, 500);
         }
-    }
 
-    //TODO
-    public function updateRequest(Request $request)
-    {
-        //TODO
+        $this->requests->insertRequestedCourse($params, Session::get(SESSION_USERID));
+        return $this->jsonResponse(true, 200);
     }
 
     /**

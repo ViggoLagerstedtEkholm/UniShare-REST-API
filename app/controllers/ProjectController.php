@@ -2,7 +2,10 @@
 
 namespace App\controllers;
 
-use App\Models\MVCModels\Projects;
+use App\Core\Exceptions\GDResizeException;
+use App\core\Exceptions\NotFoundException;
+use App\includes\Validate;
+use App\Models\Projects;
 use App\Core\Request;
 use App\Core\Session;
 use App\Core\Application;
@@ -20,56 +23,52 @@ class ProjectController extends Controller
 
     function __construct()
     {
-        $this->setMiddlewares(new AuthenticationMiddleware(['view', 'uploadProject', 'deleteProject', 'getProject', 'updateProject']));
+        $this->setMiddlewares(new AuthenticationMiddleware(['uploadProject', 'deleteProject', 'getProject', 'updateProject']));
 
         $this->projects = new Projects();
         $this->imageHandler = new ImageHandler();
     }
 
     /**
-     * This method shows the project add page.
-     * @return string
+     * Get project from ID.
+     * @param Request $request
+     * @return bool|string
      */
-    public function add(): string
+    public function get(Request $request): bool|string
     {
-        return $this->display('projects/add', 'projects', []);
-    }
-
-    /**
-     * This method shows the project update page.
-     * @return string
-     */
-    public function update(): string
-    {
-        if (isset($_GET["ID"])) {
-            $ID = $_GET["ID"];
-
-            $params = [
-                "projectID" => $ID
-            ];
-
-            return $this->display('projects/update', 'projects', $params);
-        } else {
-            Application::$app->redirect("./");
+        $body = $request->getBody();
+        $ID = $body['profileID'];
+        $projects = $this->projects->getProjects($ID);
+        $newArrData = array();
+        foreach($projects as $key => $value){
+            $newArrData[$key] = $value;
+            $newArrData[$key]['image'] = base64_encode($value['image']);
         }
+
+        $resp = ['projects' => $newArrData];
+        return $this->jsonResponse($resp, 200);
     }
 
     /**
      * This method handles adding new projects.
      * @param Request $request
+     * @return bool|string|null
+     * @throws GDResizeException
      */
-    public function uploadProject(Request $request)
+    public function upload(Request $request): bool|string|null
     {
-        $fileUploadName = 'project-file';
+        $fileUploadName = 'file';
         $userID = Session::get(SESSION_USERID);
         $body = $request->getBody();
 
-        if ($body["customCheck"] == "Off") {
+        $body['customCheck'] = json_decode($body['customCheck']);
+
+        if ($body["customCheck"] == false) {
             $params = [
                 "link" => $body["link"],
                 "name" => $body["name"],
+                "file" => $fileUploadName,
                 "description" => $body["description"],
-                "project-file" => $fileUploadName,
                 "customCheck" => $body["customCheck"]
             ];
         } else {
@@ -77,29 +76,27 @@ class ProjectController extends Controller
                 "link" => $body["link"],
                 "name" => $body["name"],
                 "description" => $body["description"],
-                "custom" => $body["custom"],
+                "text" => $body["text"],
                 "customCheck" => $body["customCheck"]
             ];
         }
 
-        //Check all fields + image validity
+
         $errors = $this->projects->validate($params);
 
         if (count($errors) > 0) {
-            $errorList = http_build_query(array('error' => $errors));
-            Application::$app->redirect("/UniShare/profile?ID=$userID&$errorList");
-            exit();
+            return $this->jsonResponse($errors, 500);
         }
 
-        if ($params["customCheck"] == "On") {
-            $image = $this->imageHandler->createImageFromText($params["custom"]);
+        if ($params["customCheck"]) {
+            $image = $this->imageHandler->createImageFromText($params["text"]);
         } else {
             $originalImage = $_FILES[$fileUploadName];
             $image = $this->imageHandler->handleUploadResizing($originalImage);
         }
 
         $this->projects->uploadProject($params, $userID, $image);
-        Application::$app->redirect("/UniShare/profile?ID=$userID");
+        return $this->jsonResponse($params, 200);
     }
 
     /**
@@ -107,11 +104,11 @@ class ProjectController extends Controller
      * @param Request $request
      * @return false|string
      */
-    public function deleteProject(Request $request): bool|string
+    public function delete(Request $request): bool|string
     {
-        $courseRequest = $request->getBody();
+        $body = $request->getBody();
+        $projectID = $body["projectID"];
 
-        $projectID = $courseRequest["projectID"];
         $canRemove = $this->projects->checkIfUserOwner(Session::get(SESSION_USERID), $projectID);
 
         if ($canRemove) {
@@ -124,7 +121,12 @@ class ProjectController extends Controller
         }
     }
 
-    public function getProjectForEdit(Request $request)
+    /**
+     * This method gets project that we want to edit.
+     * @param Request $request
+     * @return false|string
+     */
+    public function edit(Request $request): bool|string
     {
         $body = $request->getBody();
         $projectID = $body["projectID"];
@@ -149,9 +151,15 @@ class ProjectController extends Controller
         }
     }
 
-    public function updateProject(Request $request)
+    /**
+     * Update project.
+     * @param Request $request
+     * @return bool|string
+     * @throws GDResizeException
+     */
+    public function update(Request $request): bool|string
     {
-        $fileUploadName = 'project-file';
+        $fileUploadName = 'file';
         $userID = Session::get(SESSION_USERID);
 
         $body = $request->getBody();
@@ -162,7 +170,7 @@ class ProjectController extends Controller
             "link" => $body["link"],
             "name" => $body["name"],
             "description" => $body["description"],
-            "project-file" => $fileUploadName,
+            "file" => $fileUploadName,
             "customCheck" => "Off"
         ];
 
@@ -171,8 +179,7 @@ class ProjectController extends Controller
 
         if (count($errors) > 0) {
             $errorList = http_build_query(array('error' => $errors));
-            Application::$app->redirect("/UniShare/project/update?ID= $projectID&$errorList");
-            exit();
+            return $this->jsonResponse($errorList, 500);
         }
 
         $canUpdate = $this->projects->checkIfUserOwner($userID, $projectID);
@@ -181,9 +188,9 @@ class ProjectController extends Controller
             $originalImage = $_FILES[$fileUploadName];
             $resizedImage = $this->imageHandler->handleUploadResizing($originalImage);
             $this->projects->updateProject($projectID, $params, $resizedImage);
-            Application::$app->redirect("../profile?ID=$userID");
+            return $this->jsonResponse(true, 200);
         } else {
-            Application::$app->redirect("../");
+            return $this->jsonResponse(false, 401);
         }
     }
 }

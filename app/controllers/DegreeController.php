@@ -1,15 +1,12 @@
 <?php
 
 namespace App\controllers;
-
-use App\Core\Application;
 use App\Core\Session;
 use App\Core\Request;
-use App\Models\MVCModels\Degrees;
-use App\Models\MVCModels\Users;
-use App\Models\MVCModels\Degree;
+use App\models\Courses;
+use App\Models\Degrees;
 use App\Middleware\AuthenticationMiddleware;
-use JetBrains\PhpStorm\NoReturn;
+use App\models\Users;
 
 /**
  * Degree controller for handling degrees.
@@ -18,46 +15,26 @@ use JetBrains\PhpStorm\NoReturn;
 class DegreeController extends Controller
 {
     private Degrees $degrees;
+    private Users $users;
+    private Courses $courses;
 
     public function __construct()
     {
-        $this->setMiddlewares(new AuthenticationMiddleware(['view', 'uploadDegree', 'deleteDegree', 'updateDegree', 'getdegrees']));
+        $this->setMiddlewares(new AuthenticationMiddleware(['view', 'uploadDegree', 'deleteDegree', 'updateDegree', 'getdegrees', 'toggleCourseToDegree', 'getDegreesSettings']));
 
         $this->degrees = new Degrees();
-    }
-
-    /**
-     * This method shows the add degree page.
-     * @return string
-     */
-    public function add(): string
-    {
-        return $this->display('degrees/add', 'degrees', []);
-    }
-
-    /**
-     * This method shows the update degree page.
-     * @return string
-     */
-    public function update(): string
-    {
-        $ID = $_GET["ID"] ?? $this->display('degrees/update', 'degrees', []);
-
-        $params = [
-            'degreeID' => $ID
-        ];
-
-        return $this->display('degrees/update', 'degrees', $params);
+        $this->users = new Users();
+        $this->courses = new Courses();
     }
 
     /**
      * This method handles uploading a degree to a user.
      * @param Request $request
+     * @return bool|string|null
      */
-    public function uploadDegree(Request $request)
+    public function uploadDegree(Request $request): bool|string|null
     {
         $body = $request->getBody();
-        $userID = Session::get(SESSION_USERID);
 
         $params = [
             "name" => $body["name"],
@@ -73,23 +50,44 @@ class DegreeController extends Controller
 
         if (count($errors) > 0) {
             $errorList = http_build_query(array('error' => $errors));
-            Application::$app->redirect("/UniShare/profile?ID=$userID&$errorList");
-            exit();
+            return $this->jsonResponse($errorList, 500);
         }
 
         $this->degrees->uploadDegree($params, Session::get(SESSION_USERID));
-        Application::$app->redirect("/UniShare/profile?ID=$userID");
+        return $this->jsonResponse(true, 200);
     }
 
     /**
      * This method gets the degrees from the logged in user.
+     * @param Request $request
      * @return false|string
      */
-    public function getDegrees(): false|string
+    public function getDegrees(Request $request): false|string
     {
-        $degrees = $this->degrees->getDegrees(Session::get(SESSION_USERID));
-        $resp = ['success' => true, 'data' => ['degrees' => $degrees]];
+        $body = $request->getBody();
+        $ID = $body['profileID'];
+        $degrees = $this->degrees->getDegrees($ID);
+        $resp = ['degrees' => $degrees];
         return $this->jsonResponse($resp, 200);
+    }
+
+    public function getActiveDegreeID(): bool|string|null
+    {
+        $ID = Session::get(SESSION_USERID);
+        $activeDegreeID = $this->degrees->getActiveDegreeID($ID);
+        return $this->jsonResponse($activeDegreeID, 200);
+    }
+
+    public function getDegreesSettings(): bool|string|null
+    {
+        $ID = Session::get(SESSION_USERID);
+        $degrees = $this->degrees->getDegrees($ID);
+
+        $names = array();
+        foreach($degrees as $degree){
+            $names[] = ['name' => $degree->name, 'isActive' => $degree->isActiveDegree, 'degreeID' => $degree->ID];
+        }
+        return $this->jsonResponse($names, 200);
     }
 
     /**
@@ -121,11 +119,12 @@ class DegreeController extends Controller
     /**
      * This method updates a specific degree from ID from the logged in user.
      * @param Request $request
+     * @return bool|string|null
      */
-    #[NoReturn] public function updateDegree(Request $request)
+    public function updateDegree(Request $request): bool|string|null
     {
         $body = $request->getBody();
-        $degreeID = $body["degree"];
+        $degreeID = $body["degreeID"];
 
         $params = [
             'name' => $body["name"],
@@ -143,17 +142,16 @@ class DegreeController extends Controller
 
         if (count($errors) > 0) {
             $errorList = http_build_query(array('error' => $errors));
-            Application::$app->redirect("/UniShare/degree/update?ID=$degreeID&$errorList");
-            exit();
+            return $this->jsonResponse($errorList, 500);
         }
 
         $canUpdate = $this->degrees->checkIfUserOwner($userID, $degreeID);
 
         if ($canUpdate) {
             $this->degrees->updateDegree($body, $userID);
-            Application::$app->redirect("/UniShare/profile?ID=$userID");
+            return $this->setStatusCode(200);
         } else {
-            Application::$app->redirect("/UniShare/");
+            return $this->setStatusCode(401);
         }
     }
 
@@ -162,7 +160,7 @@ class DegreeController extends Controller
      * @param Request $request
      * @return false|string
      */
-    public function deleteDegree(Request $request)
+    public function deleteDegree(Request $request): bool|string
     {
         $body = $request->getBody();
         $degreeID = $body['degreeID'];
@@ -178,5 +176,40 @@ class DegreeController extends Controller
             $resp = ['success' => false];
             return $this->jsonResponse($resp, 401);
         }
+    }
+
+
+    /**
+     * This method handles the adding and removing of courses from our active degree.
+     * We make sure to check if the user has an active degree and informs the user
+     * if they need to add one. We return HTTP status codes to handle a valid response.
+     * @param Request $request
+     * @return false|string
+     */
+    public function toggleCourseToDegree(Request $request): bool|string
+    {
+        $body = $request->getBody();
+        $user = $this->users->getUser(Session::get(SESSION_USERID));
+
+        $degreeID = $user["activeDegreeID"];
+
+        if (is_null($degreeID)) {
+            $resp = ['success' => false, 'data' => ['Status' => 'No active degree']];
+            return $this->jsonResponse($resp, 500);
+        }
+
+        $courseID = $body["courseID"];
+
+        $isInActiveDegree = $this->courses->checkIfCourseExistsInActiveDegree($courseID);
+
+        if ($isInActiveDegree) {
+            $this->courses->deleteDegreeCourse($degreeID, $courseID);
+            $resp = ['success' => true, 'data' => ['Status' => 'Deleted']];
+        } else {
+            $this->courses->insertDegreeCourse($degreeID, $courseID);
+            $resp = ['success' => false, 'data' => ['Status' => 'Inserted']];
+        }
+
+        return $this->jsonResponse($resp, 200);
     }
 }

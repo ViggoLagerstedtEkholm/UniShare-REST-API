@@ -13,6 +13,13 @@ define('MAX_DEGREES_PROFILE', 10);
 define('MAX_COURSES_PROFILE', 200);
 define('MAX_UPLOAD_SIZE', 5000000);
 
+/*
+ * define('DATABASE_SERVER_NAME', 'atlas.dsv.su.se:3306');
+define('DATABASE_USER_NAME', 'usr_21980883');
+define('DATABASE_PASSWORD', '980883');
+define('DATABASE_NAME', 'db_21980883');
+ */
+
 define('DATABASE_SERVER_NAME', 'localhost');
 define('DATABASE_USER_NAME', 'root');
 define('DATABASE_PASSWORD', '');

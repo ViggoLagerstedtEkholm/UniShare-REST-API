@@ -4,9 +4,11 @@ namespace App\controllers;
 
 use App\Core\Application;
 use App\Core\Request;
-use App\Models\MVCModels\Courses;
-use App\Models\MVCModels\Requests;
+use App\core\Response;
+use App\Models\Courses;
+use App\Models\Requests;
 use App\Middleware\AuthenticationMiddleware;
+use App\models\Users;
 use Throwable;
 
 /**
@@ -15,54 +17,59 @@ use Throwable;
  */
 class AdminController extends Controller
 {
-    private Courses $courses;
     private Requests $requests;
+    private Users $users;
 
     public function __construct()
     {
-        //Add restriction to all methods and set the last parameter as true (require admin for whole controller).
-        $this->setMiddlewares(new AuthenticationMiddleware(['view', 'updateUser', 'removeUser', 'addUser', 'addCourse' . 'removeCourse', 'updateCourse'], true));
+        $this->setMiddlewares(new AuthenticationMiddleware(
+            ['getRequestedCourses', 'suspendUser', 'enableUser', 'deleteUser', 'approveRequest', 'denyRequest'],
+            true));
 
-        $this->courses = new Courses();
         $this->requests = new Requests();
+        $this->users = new Users();
+
     }
 
-    /**
-     * This method gets the requested courses and passes them to the view.
-     */
-    public function view(): string
+    public function getRequestedCourses(): bool|string|null
     {
-        $requests = $this->requests->getRequestedCourses();
-
-        $params = [
-            "requests" => $requests
-        ];
-
-        return $this->display('admin', 'admin', $params);
+        $requests = $this->requests->getRequestedCoursesAll();
+        return $this->jsonResponse($requests, 200);
     }
 
-    /**
-     * This method handles adding a course to the database.
-     * @param Request $request
-     */
-    public function addCourse(Request $request)
+    public function deleteUser(Request $request): bool|int
     {
         $body = $request->getBody();
+        $userID = $body['userID'];
 
-        $errors = $this->courses->validate($body);
-
-        if (count($errors) > 0) {
-            $errorList = http_build_query(array('error' => $errors));
-            Application::$app->redirect("/UniShare/admin?$errorList");
-            exit();
+        if($this->users->terminateAccount($userID)){
+            return $this->setStatusCode(200);
+        }else{
+            return $this->setStatusCode(500);
         }
+    }
 
-        $hasSucceeded = $this->courses->insertCourse($body);
+    public function suspendUser(Request $request): bool|int
+    {
+        $body = $request->getBody();
+        $userID = $body['userID'];
 
-        if ($hasSucceeded) {
-            Application::$app->redirect("/UniShare/admin");
-        } else {
-            Application::$app->redirect("/UniShare/admin?error=true");
+        if($this->users->suspend($userID)){
+            return $this->setStatusCode(200);
+        }else{
+            return $this->setStatusCode(500);
+        }
+    }
+
+    public function enableUser(Request $request): bool|int
+    {
+        $body = $request->getBody();
+        $userID = $body['userID'];
+
+        if($this->users->enable($userID)){
+            return $this->setStatusCode(200);
+        }else{
+            return $this->setStatusCode(500);
         }
     }
 
@@ -72,7 +79,7 @@ class AdminController extends Controller
      * @return false|string
      * @throws Throwable
      */
-    public function approveRequest(Request $request)
+    public function approveRequest(Request $request): bool|string
     {
         $body = $request->getBody();
         $requestID = $body["requestID"];
@@ -93,7 +100,7 @@ class AdminController extends Controller
      * @param Request $request
      * @return false|string
      */
-    public function denyRequest(Request $request)
+    public function denyRequest(Request $request): bool|string
     {
         $body = $request->getBody();
         $requestID = $body["requestID"];

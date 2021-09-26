@@ -2,9 +2,11 @@
 
 namespace App\controllers;
 
+use App\core\Exceptions\NotFoundException;
 use App\Core\Request;
 use App\Middleware\AuthenticationMiddleware;
-use App\Models\MVCModels\Posts;
+use App\Models\Forums;
+use App\Models\Posts;
 use App\Core\Session;
 use App\Core\Application;
 
@@ -15,33 +17,22 @@ use App\Core\Application;
 class PostController extends Controller
 {
     private Posts $posts;
+    private Forums $forums;
 
     function __construct()
     {
         $this->setMiddlewares(new AuthenticationMiddleware(['view', 'update', 'post', 'delete', 'addForum']));
 
         $this->posts = new Posts();
-    }
-
-    /**
-     * This method shows the post add page.
-     * @param Request $request
-     * @return string
-     */
-    public function view(Request $request): string
-    {
-        $body = $request->getBody();
-        $params = [
-            'forumID' => $body['ID'],
-        ];
-        return $this->display('post/add', 'post', $params);
+        $this->forums = new Forums();
     }
 
     /**
      * This method handles adding new posts.
      * @param Request $request
+     * @return bool|string|null
      */
-    public function addPost(Request $request)
+    public function addPost(Request $request): bool|string|null
     {
         $body = $request->getBody();
 
@@ -53,28 +44,15 @@ class PostController extends Controller
 
         if (count($errors) > 0) {
             $errorList = http_build_query(array('error' => $errors));
-            Application::$app->redirect("/UniShare/post?ID=$forumID&$errorList");
-            exit();
+            return $this->jsonResponse($errorList, 500);
         }
 
         $inserted = $this->posts->addPost($userID, $forumID, $text);
 
-        if ($inserted) {
-            Application::$app->redirect("/UniShare/forum?ID=$forumID");
-        } else {
-            Application::$app->redirect("/UniShare/post?ID=$forumID&error=failed");
+        if (!$inserted) {
+            return $this->setStatusCode(500);
+        }else{
+            return $this->setStatusCode(200);
         }
-    }
-
-    //TODO
-    public function updatePost(Request $request)
-    {
-        $body = $request->getBody();
-    }
-
-    //TODO
-    public function deletePost(Request $request)
-    {
-        $body = $request->getBody();
     }
 }

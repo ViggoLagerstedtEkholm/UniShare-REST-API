@@ -3,7 +3,7 @@
 namespace App\controllers;
 
 use App\Middleware\AuthenticationMiddleware;
-use App\Models\MVCModels\Reviews;
+use App\Models\Reviews;
 use App\Core\Session;
 use App\Core\Request;
 use App\Core\Application;
@@ -18,18 +18,9 @@ class ReviewController extends Controller
 
     function __construct()
     {
-        $this->setMiddlewares(new AuthenticationMiddleware(['setRate', 'getRate', 'uploadReview', 'deleteReview']));
+        $this->setMiddlewares(new AuthenticationMiddleware(['setRate', 'getRate', 'uploadReview', 'deleteReview', 'getReview']));
 
         $this->reviews = new Reviews();
-    }
-
-    /**
-     * This method shows the review course page.
-     * @return string
-     */
-    public function review(): string
-    {
-        return $this->display('review', 'review', []);
     }
 
     /**
@@ -37,7 +28,7 @@ class ReviewController extends Controller
      * @param Request $request
      * @return false|string
      */
-    public function getReview(Request $request)
+    public function getReview(Request $request): bool|string
     {
         $body = $request->getBody();
         $courseID = $body['courseID'];
@@ -51,8 +42,9 @@ class ReviewController extends Controller
     /**
      * This method handles deleting reviews by course ID and user ID (many to many table).
      * @param Request $request
+     * @return bool|string|null
      */
-    public function deleteReview(Request $request)
+    public function deleteReview(Request $request): bool|string|null
     {
         $body = $request->getBody();
 
@@ -61,9 +53,9 @@ class ReviewController extends Controller
 
         if ($userID == Session::get(SESSION_USERID)) {
             $this->reviews->deleteReview($userID, $courseID);
-            Application::$app->redirect("/UniShare/courses?ID=$courseID");
+            return $this->jsonResponse(true, 200);
         } else {
-            Application::$app->redirect("/UniShare/courses?ID=$courseID&error=failedremove");
+            return $this->jsonResponse(true, 500);
         }
     }
 
@@ -72,7 +64,7 @@ class ReviewController extends Controller
      * @param Request $request
      * @return false|string
      */
-    public function uploadReview(Request $request)
+    public function uploadReview(Request $request): bool|string
     {
         $body = $request->getBody();
 
@@ -82,29 +74,25 @@ class ReviewController extends Controller
             "environment" => $body["environment"],
             "difficulty" => $body["difficulty"],
             "grading" => $body["grading"],
-            "litterature" => $body["litterature"],
+            "literature" => $body["literature"],
             "overall" => $body["overall"],
             "text" => $body["text"],
         ];
 
         $errors = $this->reviews->validate($params);
 
-        $courseID = $params['courseID'];
         if (count($errors) > 0) {
             $errorList = http_build_query(array('error' => $errors));
-            Application::$app->redirect("/UniShare/review?ID=$courseID&$errorList");
-            exit();
+            return $this->jsonResponse($errorList, 500);
         }
 
         $success = $this->reviews->insertReview($params);
 
-        if ($success) {
-            Application::$app->redirect("/UniShare/courses?ID=$courseID");
-            exit();
-        } else {
-            //TODO check if this is necessary.
+        if (!$success) {
             $resp = ['success' => false, 'data' => ['Status' => 'Failed upload review']];
             return $this->jsonResponse($resp, 500);
+        }else{
+            return $this->jsonResponse(true, 200);
         }
     }
 }

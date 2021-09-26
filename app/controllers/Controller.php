@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Controllers;
+namespace App\controllers;
 
 use App\Middleware\Middleware;
 use App\Core\Application;
+use App\Core\Response;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Abstract class handling displaying/adding middleware/json responses/calculating
@@ -15,6 +17,7 @@ abstract class Controller
 {
     public string $action = '';
     protected array $middlewares = [];
+    protected Response $response;
 
     /**
      * Sets the middleware for the controller.
@@ -34,48 +37,32 @@ abstract class Controller
         return $this->middlewares;
     }
 
-    /**
-     * Display the view with the required parameters aquired from the controller.
-     * @param folder view folder
-     * @param page view file
-     * @param params parameters
-     */
-    protected function display($folder, $page, $params): string
+    protected function setStatusCode($code): bool|int
     {
-        return Application::$app->router->renderView($folder, $page, $params);
+        return $this->response->setStatusCode($code);
     }
 
-    /**
-     * Display the view with the required parameters aquired from the controller.
-     * @param count total amount of items that needs pagination.
-     * @param page the current page index.
-     * @param result_page_count_selected the amount of results per page.
-     * @return array all parameters to query the database with the offsets calculated.
-     */
-    protected function calculateOffsets($count, $page, $result_page_count_selected): array
+    protected function setResponse($response): bool|string
     {
-        $values = array();
-        $results_per_page = $result_page_count_selected;
-        $number_of_pages = ceil($count / $results_per_page);
-        $start_page_first_result = ($page - 1) * $results_per_page;
-
-        $values['number_of_pages'] = $number_of_pages;
-        $values['results_per_page'] = $results_per_page;
-        $values['start_page_first_result'] = $start_page_first_result;
-        return $values;
+        return $this->response->setResponseBody($response, JSON_PARTIAL_OUTPUT_ON_ERROR);
     }
 
     /**
      * Returns a json response that we can use to handle responses from user requests.
-     * @param resp the JSON type data.
-     * @param code status code.
-     * @return false|string
+     * @param mixed $resp
+     * @param int $code
+     * @param int $option
+     * @return bool|string|null
      */
-    protected function jsonResponse($resp, $code)
+    protected function jsonResponse(mixed $resp, int $code, int $option = JSON_PARTIAL_OUTPUT_ON_ERROR): bool|string|null
     {
-        header("Access-Control-Allow-Origin: *");
-        header("Content-Type: applicaton/json; charset=UTF-8");
-        http_response_code($code);
-        return json_encode($resp);
+        $response = new Response();
+        $response->setStatusCode($code);
+
+        if(!is_null($resp)){
+            return $response->setResponseBody($resp, $option);
+        }else{
+            return null;
+        }
     }
 }

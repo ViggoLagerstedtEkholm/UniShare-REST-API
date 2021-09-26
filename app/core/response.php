@@ -8,12 +8,13 @@ namespace App\core;
  */
 class Response
 {
-    /**
-     * Sets the response HTTP code.
-     * @param int $code
-     */
-    public function setStatusCode(int $code)
+    function setResponseBody(mixed $resp, string $option): bool|string
     {
-        http_response_code($code);
+        return json_encode($resp, $option);
+    }
+
+    function setStatusCode(int $code): bool|int
+    {
+        return http_response_code($code);
     }
 }

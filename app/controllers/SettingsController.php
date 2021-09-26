@@ -3,8 +3,8 @@
 namespace App\controllers;
 
 use App\Middleware\AuthenticationMiddleware;
-use App\Models\MVCModels\Users;
-use App\Models\MVCModels\Degrees;
+use App\Models\Users;
+use App\Models\Degrees;
 use App\Core\Session;
 use App\Core\Request;
 use App\Core\Application;
@@ -28,19 +28,11 @@ class SettingsController extends Controller
     }
 
     /**
-     * This method shows the user settings page.
-     * @return string
-     */
-    public function view(): string
-    {
-        return $this->display('settings', 'settings', []);
-    }
-
-    /**
      * This method handles updating the settings and validating inputs.
      * @param Request $request
+     * @return bool|string|null
      */
-    public function update(Request $request)
+    public function update(Request $request): bool|string|null
     {
         $fields = ["userFirstName", "userLastName", "userEmail", "userDisplayName", "usersPassword", "activeDegreeID", "description"];
 
@@ -94,8 +86,7 @@ class SettingsController extends Controller
 
         if (count($errors) > 0) {
             $errorList = http_build_query(array('error' => $errors));
-            Application::$app->redirect("/UniShare/settings?errors=$errorList");
-            exit();
+            return $this->jsonResponse($errorList, 500);
         }
 
         if ($updated_description != $description) {
@@ -117,14 +108,14 @@ class SettingsController extends Controller
             $this->users->updateUser($fields[3], $updated_display_name, $ID);
         }
 
-        Application::$app->redirect("../profile?ID=$ID");
+        return $this->jsonResponse(true, 200);
     }
 
     /**
      * Get the current settings and return the fields.
      * @return false|string
      */
-    public function fetch()
+    public function fetch(): bool|string
     {
         $user = $this->users->getUser(Session::get(SESSION_USERID));
         $first_name = $user["userFirstName"];

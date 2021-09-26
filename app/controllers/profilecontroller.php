@@ -4,15 +4,18 @@ namespace App\controllers;
 
 use App\Core\Application;
 use App\Core\Exceptions\GDResizeException;
+use App\core\Exceptions\NotFoundException;
 use App\Core\Request;
+use App\core\Response;
 use App\Core\Session;
 use App\Core\ImageHandler;
-use App\Models\MVCModels\Users;
-use App\Models\MVCModels\Projects;
-use App\Models\MVCModels\Degrees;
-use App\Models\MVCModels\Comments;
+use App\includes\ImageValidator;
+use App\Models\Users;
+use App\Models\Degrees;
+use App\Models\Comments;
 use App\Includes\Validate;
 use App\Middleware\AuthenticationMiddleware;
+use Google\ApiCore\ApiException;
 
 /**
  * Profile controller for handling profiles.
@@ -22,108 +25,113 @@ class ProfileController extends Controller
 {
     private ImageHandler $imageHandler;
     private Users $users;
-    private Projects $projects;
     private Degrees $degrees;
     private Comments $comments;
 
     public function __construct()
     {
-        $this->setMiddlewares(new AuthenticationMiddleware(['uploadImage', 'uploadProject', 'deleteProject', 'pubishCourse', 'getDegrees', 'removeCourseFromDegree', 'addComment']));
+        $this->setMiddlewares(new AuthenticationMiddleware(['uploadImage', 'removeCourseFromDegree', 'addComment']));
 
         $this->imageHandler = new ImageHandler();
         $this->users = new Users();
-        $this->projects = new Projects();
         $this->degrees = new Degrees();
         $this->comments = new Comments();
     }
 
-    /**
-     * This method shows the profile page.
-     * @return string
-     */
-    public function view(): string
+    public function appendVisits(Request $request)
     {
-        if (isset($_GET["ID"])) {
-            $ID = $_GET["ID"];
-            if (!empty($ID)) {
-
-                if (isset($_GET['page'])) {
-                    $page = $_GET['page'];
-                } else {
-                    $page = 1;
-                }
-
-                $comment_count = $this->comments->getCommentCount($ID);
-
-                $offsets = $this->calculateOffsets($comment_count, $page, 3);
-                $start_page_first_result = $offsets['start_page_first_result'];
-                $results_per_page = $offsets['results_per_page'];
-                $number_of_pages = $offsets['number_of_pages'];
-
-                $comments = $this->comments->getComments($start_page_first_result, $results_per_page, $ID);
-
-                $user = $this->users->getUser($ID);
-                $image = base64_encode($user["userImage"]);
-                $degrees = $this->degrees->getDegrees($ID);
-                $updatedVisitCount = $this->users->addVisitor($ID, $user);
-                $projects = $this->projects->getProjects($ID);
-
-                if (Session::isLoggedIn()) {
-                    $sessionID = Session::get(SESSION_USERID);
-
-                    if ($ID == $sessionID) {
-                        $this->users->addVisitDate($sessionID);
-                    }
-                }
-
-                $params = [
-                    'image' => $image,
-                    'comments' => $comments,
-                    'degrees' => $degrees,
-                    'updatedVisitCount' => $updatedVisitCount,
-                    'projects' => $projects,
-                    'page' => $page,
-                    'results_per_page' => $results_per_page,
-                    'number_of_pages' => $number_of_pages,
-                    'start_page_first_result' => $start_page_first_result,
-                    'currentPageID' => $ID,
-                    'visitDate' => $user["lastOnline"],
-                    'first_name' => $user["userFirstName"],
-                    'last_name' => $user["userLastName"],
-                    'display_name' => $user["userDisplayName"],
-                    'privilege' => $user["privilege"],
-                    'description' => $user["description"],
-                    'joined' => $user["joined"]
-                ];
-
-                return $this->display('profile', 'profile', $params);
-            }
+        $body = $request->getBody();
+        $profileID = $body['profileID'];
+        $this->users->addVisitor($profileID);
+        $userID = Session::get(SESSION_USERID);
+        if($profileID === $userID){
+            $this->users->addVisitDate($userID);
         }
-        Application::$app->redirect("./");
+    }
+
+    /**
+     * Get profile sidebar info.
+     * @param Request $request
+     * @return bool|string
+     */
+    public function getSideHUDInfo(Request $request): bool|string
+    {
+        $body = $request->getBody();
+        $ID = $body['profileID'];
+
+        $user = $this->users->getUser($ID);
+        if($user){
+            $image = base64_encode($user["userImage"]);
+            $firstname =  $user["userFirstName"];
+            $lastname = $user["userLastName"];
+            $username = $user["userDisplayName"];
+            $privilege = $user["privilege"];
+            $description = $user["description"];
+            $joined = $user["joined"];
+            $lastOnline = $user["lastOnline"];
+            $visits = $user['visits'];
+
+            $resp = ['success' => true, 'data' => [
+                'image' => $image,
+                'updatedVisitCount' => "test",
+                'firstname' => $firstname,
+                'lastname' => $lastname,
+                'username' => $username,
+                'privilege' => $privilege,
+                'description' => $description,
+                'lastOnline' => $lastOnline,
+                'visits' => $visits,
+                'joined' => $joined]];
+
+            return $this->jsonResponse($resp, 200);
+        }
+        return $this->jsonResponse("No such profile exists.", 404);
     }
 
     /**
      * This method resizes and uploads the image.
      * @throws GDResizeException
+     * @throws ApiException
      */
-    public function uploadImage()
+    public function uploadImage(): bool|string
     {
+        $response = new Response();
+
         $fileUploadName = 'file';
         $sessionID = Session::get(SESSION_USERID);
 
-        $isValid = Validate::hasValidUpload($fileUploadName);
+        if (ImageValidator::hasValidUpload($fileUploadName))
+        {
+            /*
+            try{
+                $stats = ImageValidator::checkImageForFeatures($fileUploadName);
+            }catch(\Exception $e){
+                return json_encode($e->getMessage());
+            }
+            */
 
-        if ($isValid) {
+            if (ImageValidator::hasInvalidImageExtension($fileUploadName))
+            {
+                return $response->setStatusCode(500);
+            }
+
             $originalImage = $_FILES[$fileUploadName];
             $image_resize = $this->imageHandler->handleUploadResizing($originalImage);
             $this->users->uploadImage($image_resize, $sessionID);
-            Application::$app->redirect("../../profile?ID=$sessionID");
+
+            return $response->setStatusCode(200);
         } else {
-            Application::$app->redirect("../../profile?ID=$sessionID&error=" . INVALID_UPLOAD);
+
+            return $response->setStatusCode(500);
         }
     }
 
-    public function deleteComment(Request $request)
+    /**
+     * Delete comment.
+     * @param Request $request
+     * @return false|string
+     */
+    public function deleteComment(Request $request): bool|string
     {
         $body = $request->getBody();
         $commentID = $body['commentID'];
@@ -140,12 +148,17 @@ class ProfileController extends Controller
         }
     }
 
-    public function addComment(Request $request)
+    /**
+     * Add comment.
+     * @param Request $request
+     * @return false|string
+     */
+    public function addComment(Request $request): bool|string
     {
         $body = $request->getBody();
 
         $params = [
-            'pageID' => $body['pageID'],
+            'profileID' => $body['profileID'],
             'text' => $body['text'],
         ];
 
@@ -158,7 +171,7 @@ class ProfileController extends Controller
 
         $posterID = Session::get(SESSION_USERID);
         $text = $body['text'];
-        $profileID = $body['pageID'];
+        $profileID = $body['profileID'];
 
         $succeeded = $this->comments->addComment($posterID, $profileID, $text);
         if ($succeeded) {
@@ -170,7 +183,12 @@ class ProfileController extends Controller
         }
     }
 
-    public function removeCourseFromDegree(Request $request)
+    /**
+     * Remove course from degree.
+     * @param Request $request
+     * @return false|string
+     */
+    public function removeCourseFromDegree(Request $request): bool|string
     {
         $courseRequest = $request->getBody();
 

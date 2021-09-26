@@ -2,8 +2,6 @@
 
 namespace App\includes;
 
-use JetBrains\PhpStorm\Pure;
-
 /**
  * Validation helper class for input validation.
  * @author Viggo Lagestedt Ekholm
@@ -11,74 +9,13 @@ use JetBrains\PhpStorm\Pure;
 class Validate
 {
     /**
-     * This method checks if a file has a valid extension and file size.
-     * @param $global
-     * @return bool
-     */
-    #[Pure] public static function hasValidUpload($global): bool
-    {
-        if (Validate::hasInvalidUpload($_FILES[$global]['tmp_name']) !== false) {
-            return false;
-        }
-
-        $fileSize = $_FILES[$global]['size'];
-        $fileErr = $_FILES[$global]['error'];
-        $fileType = $_FILES[$global]['type'];
-
-        if (Validate::hasInvalidImageExtension($fileType) !== false) {
-            return false;
-        }
-
-        //Check if file upload had any errors.
-        if ($fileErr === 0) {
-            //Enable max file size. 500 000 bytes
-            if ($fileSize < MAX_UPLOAD_SIZE) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * This method checks if a file has been uploaded by the user.
-     * @param mixed
-     * @return bool
-     */
-    public static function hasInvalidUpload($file): bool
-    {
-        if (!(file_exists($file)) || !(is_uploaded_file($file))) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * This method checks if a valid link has been uploaded by the user.
      * @param string $link
      * @return bool
      */
-    public static function hasInvalidProjectLink(string $link): bool
+    public static function hasValidURL(string $link): bool
     {
-        if (filter_var($link, FILTER_VALIDATE_URL) === FALSE) {
-            $result = true;
-        } else {
-            $result = false;
-        }
-        return $result;
-    }
-
-    /**
-     * This method checks if a valid image extension has been uploaded by the user.
-     * @param string $fileType
-     * @return bool
-     */
-    public static function hasInvalidImageExtension(string $fileType): bool
-    {
-        $allowed = array("image/jpeg", "image/gif", "image/png");
-        if (!in_array($fileType, $allowed)) {
+        if (filter_var($link, FILTER_VALIDATE_URL)) {
             $result = true;
         } else {
             $result = false;
@@ -142,8 +79,8 @@ class Validate
      */
     public static function arrayHasEmptyValue(array $array): bool
     {
-        foreach ($array as $v) {
-            if ($v == "" || is_null($v)) {
+        foreach ($array as $value) {
+            if (is_null($value) || $value === "") {
                 return true;
             }
         }
@@ -151,7 +88,7 @@ class Validate
     }
 
     /**
-     * This method checks if 2 strings mathch.
+     * This method checks if 2 strings match.
      * @param string $password
      * @param string $password_repeat
      * @return bool

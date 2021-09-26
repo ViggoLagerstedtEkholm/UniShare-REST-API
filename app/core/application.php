@@ -29,15 +29,6 @@ class Application
     }
 
     /**
-     * Redirect the user to the given path.
-     * @param string $path
-     */
-    public function redirect(string $path)
-    {
-        header('location: ' . $path);
-    }
-
-    /**
      * Route to the given URL. If this fails, we either get ForbiddenException (path does not exist)
      * or that the user lack privileges with PrivilegeException.
      */
@@ -45,9 +36,9 @@ class Application
     {
         try {
             echo $this->router->resolve();
-        } catch (Exception $e) {
-            $this->response->setStatusCode(403);
-            echo $this->router->renderView('exceptions', 'unauthorized', [], ['isError' => true]);
+        }
+        catch (Exception $e) {
+            $this->response->setStatusCode($e->getCode());
         }
     }
 
@@ -62,7 +53,7 @@ class Application
 
     /**
      * Get the controller.
-     * @return Controller controller object.
+     * @return Controller|null controller object.
      */
     public function getController(): ?Controller
     {
