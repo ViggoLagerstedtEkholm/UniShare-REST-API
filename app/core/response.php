@@ -8,7 +8,18 @@ namespace App\core;
  */
 class Response
 {
-    function setResponseBody(mixed $resp, string $option): bool|string
+    function jsonResponse(mixed $resp, int $code, int $option = JSON_PARTIAL_OUTPUT_ON_ERROR): bool|string|null
+    {
+        $this->setStatusCode($code);
+
+        if(!is_null($resp)){
+            return $this->setResponseBody($resp, $option);
+        }else{
+            return null;
+        }
+    }
+
+    function setResponseBody(mixed $resp, int $option = JSON_PARTIAL_OUTPUT_ON_ERROR): bool|string
     {
         return json_encode($resp, $option);
     }

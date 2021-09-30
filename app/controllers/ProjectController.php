@@ -3,14 +3,11 @@
 namespace App\controllers;
 
 use App\Core\Exceptions\GDResizeException;
-use App\core\Exceptions\NotFoundException;
-use App\includes\Validate;
-use App\Models\Projects;
-use App\Core\Request;
-use App\Core\Session;
-use App\Core\Application;
+use App\core\Handler;
 use App\Core\ImageHandler;
+use App\Core\Session;
 use App\Middleware\AuthenticationMiddleware;
+use App\Models\Projects;
 
 /**
  * Project controller for handling projects.
@@ -31,12 +28,12 @@ class ProjectController extends Controller
 
     /**
      * Get project from ID.
-     * @param Request $request
+     * @param Handler $handler
      * @return bool|string
      */
-    public function get(Request $request): bool|string
+    public function get(Handler $handler): bool|string
     {
-        $body = $request->getBody();
+        $body = $handler->getRequest()->getBody();
         $ID = $body['profileID'];
         $projects = $this->projects->getProjects($ID);
         $newArrData = array();
@@ -46,20 +43,20 @@ class ProjectController extends Controller
         }
 
         $resp = ['projects' => $newArrData];
-        return $this->jsonResponse($resp, 200);
+        return $handler->getResponse()->jsonResponse($resp, 200);
     }
 
     /**
      * This method handles adding new projects.
-     * @param Request $request
+     * @param Handler $handler
      * @return bool|string|null
      * @throws GDResizeException
      */
-    public function upload(Request $request): bool|string|null
+    public function upload(Handler $handler): bool|string|null
     {
         $fileUploadName = 'file';
         $userID = Session::get(SESSION_USERID);
-        $body = $request->getBody();
+        $body = $handler->getRequest()->getBody();
 
         $body['customCheck'] = json_decode($body['customCheck']);
 
@@ -81,11 +78,10 @@ class ProjectController extends Controller
             ];
         }
 
-
         $errors = $this->projects->validate($params);
 
         if (count($errors) > 0) {
-            return $this->jsonResponse($errors, 500);
+            return $handler->getResponse()->jsonResponse($errors, 422);
         }
 
         if ($params["customCheck"]) {
@@ -96,44 +92,41 @@ class ProjectController extends Controller
         }
 
         $this->projects->uploadProject($params, $userID, $image);
-        return $this->jsonResponse($params, 200);
+        return $handler->getResponse()->jsonResponse($params, 200);
     }
 
     /**
      * This method handles deleting projects.
-     * @param Request $request
-     * @return false|string
+     * @param Handler $handler
      */
-    public function delete(Request $request): bool|string
+    public function delete(Handler $handler)
     {
-        $body = $request->getBody();
+        $body = $handler->getRequest()->getBody();
         $projectID = $body["projectID"];
 
         $canRemove = $this->projects->checkIfUserOwner(Session::get(SESSION_USERID), $projectID);
 
         if ($canRemove) {
             $this->projects->deleteProject($projectID);
-            $resp = ['success' => true, 'data' => ['Status' => true, 'ID' => $projectID]];
-            return $this->jsonResponse($resp, 200);
+            $handler->getResponse()->setStatusCode(200);
         } else {
-            $resp = ['success' => false, 'data' => ['Status' => false, 'ID' => $projectID]];
-            return $this->jsonResponse($resp, 500);
+            $handler->getResponse()->setStatusCode(500);
         }
     }
 
     /**
      * This method gets project that we want to edit.
-     * @param Request $request
+     * @param Handler $handler
      * @return false|string
      */
-    public function edit(Request $request): bool|string
+    public function edit(Handler $handler): bool|string
     {
-        $body = $request->getBody();
+        $body = $handler->getRequest()->getBody();
         $projectID = $body["projectID"];
 
         if (empty($projectID)) {
             $resp = ['success' => false, 'status' => 'No matching ID!'];
-            return $this->jsonResponse($resp, 404);
+            return $handler->getResponse()->jsonResponse($resp, 404);
         }
 
         $project = $this->projects->getProject($projectID);
@@ -144,25 +137,25 @@ class ProjectController extends Controller
             $link = $project["link"];
             $description = $project["description"];
             $resp = ['success' => true, 'data' => ['Name' => $name, 'Link' => $link, 'Description' => $description]];
-            return $this->jsonResponse($resp, 200);
+            return $handler->getResponse()->jsonResponse($resp, 200);
         } else {
             $resp = ['success' => false, 'data' => ['Project' => $project]];
-            return $this->jsonResponse($resp, 403);
+            return $handler->getResponse()->jsonResponse($resp, 403);
         }
     }
 
     /**
      * Update project.
-     * @param Request $request
+     * @param Handler $handler
      * @return bool|string
      * @throws GDResizeException
      */
-    public function update(Request $request): bool|string
+    public function update(Handler $handler): bool|string
     {
         $fileUploadName = 'file';
         $userID = Session::get(SESSION_USERID);
 
-        $body = $request->getBody();
+        $body = $handler->getRequest()->getBody();
         $projectID = $body["projectID"];
 
         $params = [
@@ -178,8 +171,7 @@ class ProjectController extends Controller
         $errors = $this->projects->validate($params);
 
         if (count($errors) > 0) {
-            $errorList = http_build_query(array('error' => $errors));
-            return $this->jsonResponse($errorList, 500);
+            return $handler->getResponse()->jsonResponse($errors, 500);
         }
 
         $canUpdate = $this->projects->checkIfUserOwner($userID, $projectID);
@@ -188,9 +180,9 @@ class ProjectController extends Controller
             $originalImage = $_FILES[$fileUploadName];
             $resizedImage = $this->imageHandler->handleUploadResizing($originalImage);
             $this->projects->updateProject($projectID, $params, $resizedImage);
-            return $this->jsonResponse(true, 200);
+            return $handler->getResponse()->jsonResponse(true, 200);
         } else {
-            return $this->jsonResponse(false, 401);
+            return $handler->getResponse()->jsonResponse(false, 401);
         }
     }
 }

@@ -2,12 +2,11 @@
 
 namespace App\controllers;
 
-use App\core\Exceptions\NotFoundException;
+use App\core\Handler;
+use App\Core\Session;
 use App\Middleware\AuthenticationMiddleware;
 use App\Models\Courses;
 use App\Models\Reviews;
-use App\Core\Session;
-use App\Core\Request;
 
 /**
  * Course controller for course handling.
@@ -28,12 +27,12 @@ class CourseController extends Controller
 
     /**
      * Get statistics from a given course.
-     * @param Request $request
+     * @param Handler $handler
      * @return false|string
      */
-    public function getCourseStatistics(Request $request): bool|string
+    public function getCourseStatistics(Handler $handler): bool|string
     {
-        $body = $request->getBody();
+        $body = $handler->getRequest()->getBody();
         $ID = $body['courseID'];
 
         $result = $this->courses->getArithmeticMeanScore($ID);
@@ -52,64 +51,64 @@ class CourseController extends Controller
             "review_count" => $review_count
         ];
 
-        return $this->jsonResponse($params, 200);
+        return $handler->getResponse()->jsonResponse($params, 200);
     }
 
     /**
      * Get course by ID.
-     * @param Request $request
+     * @param Handler $handler
      * @return false|string
      */
-    public function getCourse(Request $request): bool|string
+    public function getCourse(Handler $handler): bool|string
     {
-        $body = $request->getBody();
+        $body = $handler->getRequest()->getBody();
         $ID = $body['courseID'];
         $course = $this->courses->getCourse($ID);
-        return $this->jsonResponse($course, 200);
+        return $handler->getResponse()->jsonResponse($course, 200);
     }
 
     /**
      * This method gets the rating graph data from the course ID.
-     * @param Request $request
+     * @param Handler $handler
      * @return false|string
      */
-    public function getRatingGraphData(Request $request): bool|string
+    public function getRatingGraphData(Handler $handler): bool|string
     {
-        $ratingRequest = $request->getBody();
+        $ratingRequest = $handler->getRequest()->getBody();
         $courseID = $ratingRequest["courseID"];
 
         $ratings = $this->courses->getGraphData($courseID);
         $resp = ['data' => ['ratings' => $ratings]];
 
-        return $this->jsonResponse($resp, 200);
+        return $handler->getResponse()->jsonResponse($resp, 200);
     }
 
     /**
      * This method sets the rating from the logged in user.
-     * @param Request $request
+     * @param Handler $handler
      * @return false|string
      */
-    public function setRate(Request $request): bool|string
+    public function setRate(Handler $handler): bool|string
     {
-        $body = $request->getBody();
+        $body = $handler->getRequest()->getBody();
         $courseID = $body["courseID"];
         $rating = $body["rating"];
         $this->courses->setRate(Session::get(SESSION_USERID), $courseID, $rating);
         $resp = ['success' => true, 'data' => ['rating' => $rating]];
-        return $this->jsonResponse($resp, 200);
+        return $handler->getResponse()->jsonResponse($resp, 200);
     }
 
     /**
      * This method gets the rating from the logged in user.
-     * @param Request $request
+     * @param Handler $handler
      * @return false|string
      */
-    public function getRate(Request $request): bool|string
+    public function getRate(Handler $handler): bool|string
     {
-        $body = $request->getBody();
+        $body = $handler->getRequest()->getBody();
         $courseID = $body["courseID"];
         $rating = $this->courses->getRate(Session::get(SESSION_USERID), $courseID);
         $resp = ['success' => true, 'data' => ['rating' => $rating]];
-        return $this->jsonResponse($resp, 200);
+        return $handler->getResponse()->jsonResponse($resp, 200);
     }
 }

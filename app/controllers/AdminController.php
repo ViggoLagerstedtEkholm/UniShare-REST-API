@@ -2,12 +2,9 @@
 
 namespace App\controllers;
 
-use App\Core\Application;
-use App\Core\Request;
-use App\core\Response;
-use App\Models\Courses;
-use App\Models\Requests;
+use App\core\Handler;
 use App\Middleware\AuthenticationMiddleware;
+use App\Models\Requests;
 use App\models\Users;
 use Throwable;
 
@@ -28,91 +25,84 @@ class AdminController extends Controller
 
         $this->requests = new Requests();
         $this->users = new Users();
-
     }
 
-    public function getRequestedCourses(): bool|string|null
+    public function getRequestedCourses(Handler $handler): bool|string|null
     {
         $requests = $this->requests->getRequestedCoursesAll();
-        return $this->jsonResponse($requests, 200);
+        return $handler->getResponse()->jsonResponse($requests, 200);
     }
 
-    public function deleteUser(Request $request): bool|int
+    public function deleteUser(Handler $handler)
     {
-        $body = $request->getBody();
+        $body = $handler->getRequest()->getBody();
         $userID = $body['userID'];
 
         if($this->users->terminateAccount($userID)){
-            return $this->setStatusCode(200);
+            $handler->getResponse()->setStatusCode(200);
         }else{
-            return $this->setStatusCode(500);
+            $handler->getResponse()->setStatusCode(500);
         }
     }
 
-    public function suspendUser(Request $request): bool|int
+    public function suspendUser(Handler $handler)
     {
-        $body = $request->getBody();
+        $body = $handler->getRequest()->getBody();
         $userID = $body['userID'];
 
         if($this->users->suspend($userID)){
-            return $this->setStatusCode(200);
+            $handler->getResponse()->setStatusCode(200);
         }else{
-            return $this->setStatusCode(500);
+            $handler->getResponse()->setStatusCode(500);
         }
     }
 
-    public function enableUser(Request $request): bool|int
+    public function enableUser(Handler $handler)
     {
-        $body = $request->getBody();
+        $body = $handler->getRequest()->getBody();
         $userID = $body['userID'];
 
         if($this->users->enable($userID)){
-            return $this->setStatusCode(200);
+            $handler->getResponse()->setStatusCode(200);
         }else{
-            return $this->setStatusCode(500);
+            $handler->getResponse()->setStatusCode(500);
         }
     }
 
     /**
      * This method handles approving requested courses from users.
-     * @param Request $request
-     * @return false|string
+     * @param Handler $handler
      * @throws Throwable
      */
-    public function approveRequest(Request $request): bool|string
+    public function approveRequest(Handler $handler)
     {
-        $body = $request->getBody();
+        $body = $handler->getRequest()->getBody();
         $requestID = $body["requestID"];
 
         $success = $this->requests->approveRequest($requestID);
 
         if ($success) {
-            $resp = ['success' => true, 'data' => ['Status' => true, 'ID' => $requestID]];
-            return $this->jsonResponse($resp, 200);
+            $handler->getResponse()->setStatusCode(200);
         } else {
-            $resp = ['success' => false, 'data' => ['Status' => false]];
-            return $this->jsonResponse($resp, 500);
+            $handler->getResponse()->setStatusCode(500);
         }
     }
 
     /**
      * This method handles denying requested courses from users.
-     * @param Request $request
-     * @return false|string
+     * @param Handler $handler
      */
-    public function denyRequest(Request $request): bool|string
+    public function denyRequest(Handler $handler)
     {
-        $body = $request->getBody();
+        $body = $handler->getRequest()->getBody();
         $requestID = $body["requestID"];
 
         $success = $this->requests->denyRequest($requestID);
 
         if ($success) {
-            $resp = ['success' => true, 'data' => ['Status' => true, 'ID' => $requestID]];
-            return $this->jsonResponse($resp, 200);
+            $handler->getResponse()->setStatusCode(200);
         } else {
-            $resp = ['success' => false, 'data' => ['Status' => false]];
-            return $this->jsonResponse($resp, 500);
+            $handler->getResponse()->setStatusCode(500);
         }
     }
 }

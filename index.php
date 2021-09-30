@@ -1,11 +1,19 @@
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
 
-header("Access-Control-Allow-Origin: *");
-header('Access-Control-Allow-Methods: GET, POST');
-header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token');
-header('Access-Control-Allow-Credentials: true');
-header('Content-Type: application/json; charset=utf-8');
+session_set_cookie_params(['SameSite' => 'None', 'Secure' => true]);
+session_start();
+
+// Allow from any origin
+if (isset($_SERVER['HTTP_ORIGIN'])) {
+    // Decide if the origin in $_SERVER['HTTP_ORIGIN'] is one
+    // you want to allow, and if so:
+    header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
+    header('Access-Control-Allow-Credentials: true');
+    header('Access-Control-Max-Age: 86400');    // cache for 1 day
+    header("Access-Control-Allow-Methods: GET, POST");
+    header("Access-Control-Allow-Headers: *");
+}
 
 use App\core\Application;
 use App\core\Cookie;
@@ -28,7 +36,6 @@ use App\controllers\FriendsController;
 
 require_once(__DIR__ . '/config.php');
 
-session_start();
 
 if(Cookie::exists(REMEMBER_ME_COOKIE_NAME) && !Session::exists(SESSION_USERID)){
   $authenticationController = new AuthenticationController();

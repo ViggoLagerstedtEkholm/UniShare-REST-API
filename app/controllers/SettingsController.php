@@ -2,13 +2,12 @@
 
 namespace App\controllers;
 
-use App\Middleware\AuthenticationMiddleware;
-use App\Models\Users;
-use App\Models\Degrees;
+use App\core\Handler;
 use App\Core\Session;
-use App\Core\Request;
-use App\Core\Application;
 use App\Includes\Validate;
+use App\Middleware\AuthenticationMiddleware;
+use App\Models\Degrees;
+use App\Models\Users;
 
 /**
  * Settings controller for handling user settings.
@@ -29,14 +28,14 @@ class SettingsController extends Controller
 
     /**
      * This method handles updating the settings and validating inputs.
-     * @param Request $request
+     * @param Handler $handler
      * @return bool|string|null
      */
-    public function update(Request $request): bool|string|null
+    public function update(Handler $handler): bool|string|null
     {
         $fields = ["userFirstName", "userLastName", "userEmail", "userDisplayName", "usersPassword", "activeDegreeID", "description"];
 
-        $updatedInfo = $request->getBody();
+        $updatedInfo = $handler->getRequest()->getBody();
 
         $updated_first_name = $updatedInfo["first_name"];
         $updated_last_name = $updatedInfo["last_name"];
@@ -86,7 +85,7 @@ class SettingsController extends Controller
 
         if (count($errors) > 0) {
             $errorList = http_build_query(array('error' => $errors));
-            return $this->jsonResponse($errorList, 500);
+            return $handler->getResponse()->jsonResponse($errorList, 500);
         }
 
         if ($updated_description != $description) {
@@ -108,14 +107,14 @@ class SettingsController extends Controller
             $this->users->updateUser($fields[3], $updated_display_name, $ID);
         }
 
-        return $this->jsonResponse(true, 200);
+        return $handler->getResponse()->jsonResponse(true, 200);
     }
 
     /**
      * Get the current settings and return the fields.
      * @return false|string
      */
-    public function fetch(): bool|string
+    public function fetch(Handler $handler): bool|string
     {
         $user = $this->users->getUser(Session::get(SESSION_USERID));
         $first_name = $user["userFirstName"];
@@ -126,18 +125,18 @@ class SettingsController extends Controller
 
         $resp = ['success' => true, 'data' => ['email' => $email, 'first_name' => $first_name, 'last_name' => $last_name, 'display_name' => $display_name, 'description' => $description]];
 
-        return $this->jsonResponse($resp, 200);
+        return $handler->getResponse()->jsonResponse($resp, 200);
     }
 
     /**
      * Delete the user account.
      */
-    public function deleteAccount()
+    public function deleteAccount(Handler $handler)
     {
         $userID = Session::get(SESSION_USERID);
 
         $this->users->terminateAccount($userID);
         $this->users->logout();
-        Application::$app->redirect("/UniShare/");
+        $handler->getResponse()->setStatusCode(200);
     }
 }

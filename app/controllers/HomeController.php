@@ -2,12 +2,11 @@
 
 namespace App\controllers;
 
-use App\core\Request;
-use App\middleware\AuthenticationMiddleware;
-use App\Models\Users;
+use App\core\Handler;
+use App\Core\Session;
 use App\Models\Courses;
 use App\Models\Forums;
-use App\Core\Session;
+use App\Models\Users;
 
 /**
  * Home controller for handling the home page.
@@ -30,9 +29,10 @@ class HomeController extends Controller
 
     /**
      * Get the current logged in user.
+     * @param Handler $handler
      * @return bool|string
      */
-    public function getCurrentUser(): bool|string
+    public function getCurrentUser(Handler $handler): bool|string
     {
         $ID = Session::get(SESSION_USERID);
         $currentUser = $this->users->getUser($ID);
@@ -57,28 +57,30 @@ class HomeController extends Controller
             'visits' => $visits,
             'image' => $userImage]];
 
-        return $this->jsonResponse($resp, 200);
+        return $handler->getResponse()->jsonResponse($resp, 200);
     }
 
     /**
      * Get the top 10 rated courses
+     * @param Handler $handler
      * @return bool|string
      */
-    public function getTOP10Courses(): bool|string
+    public function getTOP10Courses(Handler $handler): bool|string
     {
         $topRankedCourses = $this->courses->getTOP10Courses();
         $resp = ['TOP_RANKED_COURSES' => $topRankedCourses];
-        return $this->jsonResponse($resp, 200);
+        return $handler->getResponse()->jsonResponse($resp, 200);
     }
 
     /**
      * Get the top 10 viewed forums
+     * @param Handler $handler
      * @return bool|string
      */
-    public function getTOP10Forums(): bool|string
+    public function getTOP10Forums(Handler $handler): bool|string
     {
         $topViewedForums = $this->forums->getTOP10Forums();
         $resp = ['TOP_VIEWED_FORUMS' => $topViewedForums];
-        return $this->jsonResponse($resp, 200);
+        return $handler->getResponse()->jsonResponse($resp, 200);
     }
 }

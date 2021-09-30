@@ -2,20 +2,16 @@
 
 namespace App\controllers;
 
-use App\Core\Application;
 use App\Core\Exceptions\GDResizeException;
-use App\core\Exceptions\NotFoundException;
-use App\Core\Request;
-use App\core\Response;
-use App\Core\Session;
+use App\core\Handler;
 use App\Core\ImageHandler;
+use App\Core\Request;
+use App\Core\Session;
 use App\includes\ImageValidator;
-use App\Models\Users;
-use App\Models\Degrees;
-use App\Models\Comments;
-use App\Includes\Validate;
 use App\Middleware\AuthenticationMiddleware;
-use Google\ApiCore\ApiException;
+use App\Models\Comments;
+use App\Models\Degrees;
+use App\Models\Users;
 
 /**
  * Profile controller for handling profiles.
@@ -38,25 +34,27 @@ class ProfileController extends Controller
         $this->comments = new Comments();
     }
 
-    public function appendVisits(Request $request)
+    public function appendVisits(Handler $handler)
     {
-        $body = $request->getBody();
+        $body = $handler->getRequest()->getBody();
         $profileID = $body['profileID'];
         $this->users->addVisitor($profileID);
-        $userID = Session::get(SESSION_USERID);
-        if($profileID === $userID){
-            $this->users->addVisitDate($userID);
+        if(Session::isLoggedIn()){
+            $userID = Session::get(SESSION_USERID);
+            if($profileID === $userID){
+                $this->users->addVisitDate($userID);
+            }
         }
     }
 
     /**
      * Get profile sidebar info.
-     * @param Request $request
-     * @return bool|string
+     * @param Handler $handler
+     * @return bool|string|null
      */
-    public function getSideHUDInfo(Request $request): bool|string
+    public function getSideHUDInfo(Handler $handler): bool|string|null
     {
-        $body = $request->getBody();
+        $body = $handler->getRequest()->getBody();
         $ID = $body['profileID'];
 
         $user = $this->users->getUser($ID);
@@ -83,79 +81,66 @@ class ProfileController extends Controller
                 'visits' => $visits,
                 'joined' => $joined]];
 
-            return $this->jsonResponse($resp, 200);
+            return $handler->getResponse()->jsonResponse($resp, 200);
         }
-        return $this->jsonResponse("No such profile exists.", 404);
+        $handler->getResponse()->setStatusCode(404);
+        return null;
     }
 
     /**
      * This method resizes and uploads the image.
      * @throws GDResizeException
-     * @throws ApiException
      */
-    public function uploadImage(): bool|string
+    public function uploadImage(Handler $handler)
     {
-        $response = new Response();
-
         $fileUploadName = 'file';
         $sessionID = Session::get(SESSION_USERID);
 
         if (ImageValidator::hasValidUpload($fileUploadName))
         {
-            /*
-            try{
-                $stats = ImageValidator::checkImageForFeatures($fileUploadName);
-            }catch(\Exception $e){
-                return json_encode($e->getMessage());
-            }
-            */
-
-            if (ImageValidator::hasInvalidImageExtension($fileUploadName))
+            if (!ImageValidator::hasValidImageExtension($fileUploadName))
             {
-                return $response->setStatusCode(500);
+                $handler->getResponse()->setStatusCode(500);
             }
 
             $originalImage = $_FILES[$fileUploadName];
             $image_resize = $this->imageHandler->handleUploadResizing($originalImage);
             $this->users->uploadImage($image_resize, $sessionID);
 
-            return $response->setStatusCode(200);
+            $handler->getResponse()->setStatusCode(200);
         } else {
 
-            return $response->setStatusCode(500);
+            $handler->getResponse()->setStatusCode(500);
         }
     }
 
     /**
      * Delete comment.
-     * @param Request $request
-     * @return false|string
+     * @param Handler $handler
      */
-    public function deleteComment(Request $request): bool|string
+    public function deleteComment(Handler $handler)
     {
-        $body = $request->getBody();
+        $body = $handler->getRequest()->getBody();
         $commentID = $body['commentID'];
 
         $canRemove = $this->comments->checkIfUserAuthor(Session::get(SESSION_USERID), $commentID);
 
         if ($canRemove) {
             $this->comments->deleteComment($commentID);
-            $resp = ['success' => true, 'data' => ['Status' => true, 'ID' => $commentID]];
-            return $this->jsonResponse($resp, 200);
+            $handler->getResponse()->setStatusCode(200);
         } else {
-            $resp = ['success' => true, 'data' => ['Status' => false, 'ID' => $commentID]];
-            return $this->jsonResponse($resp, 500);
+            $handler->getResponse()->setStatusCode(403);
         }
     }
 
     /**
      * Add comment.
-     * @param Request $request
-     * @return false|string
+     * @param Handler $handler
+     * @return bool|string|null
      */
-    public function addComment(Request $request): bool|string
+    public function addComment(Handler $handler): bool|string|null
     {
-        $body = $request->getBody();
+        $body = $handler->getRequest()->getBody();
 
         $params = [
             'profileID' => $body['profileID'],
@@ -165,8 +150,7 @@ class ProfileController extends Controller
         $errors = $this->comments->validate($params);
 
         if (count($errors) > 0) {
-            $resp = ['success' => false, 'data' => ['Status' => 'Invalid comment']];
-            return $this->jsonResponse($resp, 500);
+            return $handler->getResponse()->jsonResponse($errors, 422);
         }
 
         $posterID = Session::get(SESSION_USERID);
@@ -174,13 +158,13 @@ class ProfileController extends Controller
         $profileID = $body['profileID'];
 
         $succeeded = $this->comments->addComment($posterID, $profileID, $text);
+
         if ($succeeded) {
-            $resp = ['success' => true, 'data' => ['Status' => 'Added comment']];
-            return $this->jsonResponse($resp, 200);
+            $handler->getResponse()->setStatusCode( 200);
         } else {
-            $resp = ['success' => false, 'data' => ['Status' => 'Error']];
-            return $this->jsonResponse($resp, 500);
+            $handler->getResponse()->setStatusCode(500);
         }
+        return null;
     }
 
     /**
@@ -199,11 +183,9 @@ class ProfileController extends Controller
 
         if ($succeeded) {
             $this->degrees->deleteCourseFromDegree($degreeID, $courseID);
-            $resp = ['success' => true, 'data' => ['Status' => true, 'ID' => $courseID, 'degreeID' => $degreeID]];
-            return $this->jsonResponse($resp, 200);
+            return $this->setStatusCode(200);
         } else {
-            $resp = ['success' => false, 'data' => ['Status' => 'Error']];
-            return $this->jsonResponse($resp, 403);
+            return $this->setStatusCode(403);
         }
     }
 }

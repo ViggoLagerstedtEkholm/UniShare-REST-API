@@ -2,11 +2,10 @@
 
 namespace App\controllers;
 
-use App\Core\Request;
-use App\Models\Requests;
+use App\core\Handler;
 use App\Core\Session;
 use App\Middleware\AuthenticationMiddleware;
-use App\Core\Application;
+use App\Models\Requests;
 
 /**
  * Request controller for handling course requests.
@@ -18,25 +17,25 @@ class RequestController extends Controller
 
     function __construct()
     {
-        $this->setMiddlewares(new AuthenticationMiddleware(['view', 'uploadRequest', 'deletePending']));
+        $this->setMiddlewares(new AuthenticationMiddleware(['uploadRequest', 'deletePending', 'getRequests']));
 
         $this->requests = new Requests();
     }
 
-    public function getRequests(): bool|string|null
+    public function getRequests(Handler $handler): bool|string|null
     {
         $requests = $this->requests->getRequestedCoursesFromUser();
-        return $this->jsonResponse($requests, 200);
+        return $handler->getResponse()->jsonResponse($requests, 200);
     }
 
     /**
      * This method handles uploading new course requests.
-     * @param Request $request
+     * @param Handler $handler
      * @return bool|string|null
      */
-    public function uploadRequest(Request $request): bool|string|null
+    public function uploadRequest(Handler $handler): bool|string|null
     {
-        $courseRequest = $request->getBody();
+        $courseRequest = $handler->getRequest()->getBody();
 
         $params = [
             "name" => $courseRequest["name"],
@@ -51,33 +50,29 @@ class RequestController extends Controller
         $errors = $this->requests->validate($params);
 
         if (count($errors) > 0) {
-            $query = http_build_query(array('error' => $errors));
-            return $this->jsonResponse($query, 500);
+            return $handler->getResponse()->jsonResponse($errors, 500);
         }
 
         $this->requests->insertRequestedCourse($params, Session::get(SESSION_USERID));
-        return $this->jsonResponse(true, 200);
+        return $handler->getResponse()->jsonResponse(true, 200);
     }
 
     /**
      * This method handles deleting pending requests.
-     * @param Request $request
-     * @return false|string
+     * @param Handler $handler
      */
-    function deletePending(Request $request): bool|string
+    function deletePending(Handler $handler)
     {
-        $courseRequest = $request->getBody();
+        $courseRequest = $handler->getRequest()->getBody();
 
         $requestID = $courseRequest["requestID"];
         $canRemove = $this->requests->checkIfUserOwner(Session::get(SESSION_USERID), $requestID);
 
         if ($canRemove) {
             $this->requests->deleteRequest($requestID);
-            $resp = ['success' => true, 'data' => ['Status' => true, 'ID' => $requestID]];
-            return $this->jsonResponse($resp, 200);
+            $handler->getResponse()->setStatusCode(200);
         } else {
-            $resp = ['success' => false, 'data' => ['Status' => false, 'ID' => $requestID]];
-            return $this->jsonResponse($resp, 500);
+            $handler->getResponse()->setStatusCode(500);
         }
     }
 }

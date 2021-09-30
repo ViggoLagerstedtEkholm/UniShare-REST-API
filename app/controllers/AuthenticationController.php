@@ -2,13 +2,12 @@
 
 namespace App\controllers;
 
-use App\Core\Application;
-use App\Core\Request;
-use App\Models\Users;
-use App\Models\Register;
-use App\Models\Login;
-use App\Middleware\AuthenticationMiddleware;
+use App\core\Handler;
 use App\Core\Session;
+use App\Middleware\AuthenticationMiddleware;
+use App\Models\Login;
+use App\Models\Register;
+use App\Models\Users;
 
 /**
  * Authentication controller for handling login/register/logout.
@@ -44,29 +43,30 @@ class AuthenticationController extends Controller
     public function logout(): bool|string
     {
         $this->users->logout();
-        $resp = ['success' => true];
-        return $this->jsonResponse($resp, 200);
+        return $this->setStatusCode(200);
     }
 
     /**
      * Get login status.
+     * @param Handler $handler
      * @return bool|string
      */
-    public function isLoggedIn(): bool|string
+    public function isLoggedIn(Handler $handler): bool|string
     {
         $isLoggedIn = Session::isLoggedIn();
         $resp = ['success' => true, 'data' => ['LoggedIn' => $isLoggedIn]];
-        return $this->jsonResponse($resp, 200);
+        $handler->getResponse()->setStatusCode(200);
+        return $handler->getResponse()->setResponseBody($resp);
     }
 
     /**
      * This method handles logging in a user.
-     * @param Request $request
-     * @return bool|string
+     * @param Handler $handler
+     * @return bool|string|null
      */
-    public function login(Request $request): bool|string
+    public function login(Handler $handler): bool|string|null
     {
-        $body = $request->getBody();
+        $body = $handler->getRequest()->getBody();
 
         $params = [
             'email' => $body["email"],
@@ -78,7 +78,8 @@ class AuthenticationController extends Controller
 
         if (count($errors) > 0) {
             $resp = ['missingField' => $body];
-            return $this->jsonResponse($resp, 500);
+            $handler->getResponse()->setStatusCode(422);
+            return $handler->getResponse()->setResponseBody($resp);
         }
 
         $success = $this->login->login($params);
@@ -86,21 +87,23 @@ class AuthenticationController extends Controller
         if ($success) {
             $_POST = array();
             $resp = ['userID' => Session::get(SESSION_USERID), 'privilege' => Session::get(SESSION_PRIVILEGE)];
-            return $this->jsonResponse($resp, 200);
+
+            $handler->getResponse()->setStatusCode(200);
+            return $handler->getResponse()->setResponseBody($resp);
         } else {
-            $resp = ['success' => false, 'data' => ['INVALID_CREDENTIALS' => true]];
-            return $this->setStatusCode(500);
+            $handler->getResponse()->setStatusCode(500);
         }
+        return null;
     }
 
     /**
      * This method handles registering in a user.
-     * @param Request $request
+     * @param Handler $handler
      * @return bool|string|null
      */
-    public function register(Request $request): bool|string|null
+    public function register(Handler $handler): bool|string|null
     {
-        $body = $request->getBody();
+        $body = $handler->getRequest()->getBody();
 
         $params = [
             'first_name' => $body["first_name"],
@@ -114,12 +117,12 @@ class AuthenticationController extends Controller
         $errors = $this->register->validate($params);
 
         if (count($errors) > 0) {
-            $errorList = http_build_query(array('error' => $errors));
-            return $this->jsonResponse($errorList,500);
+            $handler->getResponse()->setStatusCode(422);
+            $handler->getResponse()->setResponseBody($errors);
         }
 
         $this->register->register($params);
 
-        return $this->setStatusCode(200);
+        return $handler->getResponse()->setStatusCode(200);
     }
 }

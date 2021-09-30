@@ -69,6 +69,10 @@ class Router
             }
         }
 
-        return call_user_func($callback, $this->request);
+        $handler = new Handler();
+        $handler->setResponse($this->response);
+        $handler->setRequest($this->request);
+
+        return call_user_func($callback, $handler);
     }
 }

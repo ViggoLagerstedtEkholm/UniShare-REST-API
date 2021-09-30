@@ -147,10 +147,8 @@ class Friends extends Database
         return $this->fetchResults($results);
     }
 
-    public function getFriends(): array
+    public function getFriends(int $userID): array
     {
-        $userID = Session::get(SESSION_USERID);
-
         $sql = "SELECT * 
                 FROM friends
                 WHERE user_one = ?

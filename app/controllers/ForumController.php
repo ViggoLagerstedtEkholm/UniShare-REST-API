@@ -2,12 +2,9 @@
 
 namespace App\controllers;
 
-use App\core\Exceptions\NotFoundException;
-use App\Core\Request;
+use App\core\Handler;
 use App\Middleware\AuthenticationMiddleware;
 use App\Models\Forums;
-use App\Models\Posts;
-use App\Core\Application;
 use Throwable;
 
 /**
@@ -25,37 +22,36 @@ class ForumController extends Controller
         $this->forums = new Forums();
     }
 
-    public function getForum(Request $request): bool|string|null
+    public function getForum(Handler $handler): bool|string|null
     {
-        $body = $request->getBody();
+        $body = $handler->getRequest()->getBody();
         $forumID = $body['forumID'];
         $forum = $this->forums->getForum($forumID);
-        return $this->jsonResponse($forum, 200);
+        return $handler->getResponse()->jsonResponse($forum, 200);
     }
-
 
     /**
      * This method handles adding a forum.
-     * @param Request $request
+     * @param Handler $handler
      * @return bool|string|null
      * @throws Throwable
      */
-    public function addForum(Request $request): bool|string|null
+    public function addForum(Handler $handler): bool|string|null
     {
-        $body = $request->getBody();
+        $body = $handler->getRequest()->getBody();
 
         $errors = $this->forums->validate($body);
 
         if (count($errors) > 0) {
             $errorList = http_build_query(array('error' => $errors));
-            return $this->jsonResponse($errorList, 500);
+            return $handler->getResponse()->jsonResponse($errorList, 500);
         }
 
         $forumID = $this->forums->insertForum($body);
 
         if (is_null($forumID)) {
-            return $this->jsonResponse(false, 500);
+            return $handler->getResponse()->jsonResponse(false, 500);
         }
-        return $this->jsonResponse(true, 200);
+        return $handler->getResponse()->jsonResponse(true, 200);
     }
 }

@@ -48,16 +48,20 @@ class ImageValidator
      * @param string $global
      * @return bool
      */
-    public static function hasInvalidImageExtension(string $global): bool
+    public static function hasValidImageExtension(string $global): bool
     {
-        $fileType = $_FILES[$global]['type'];
+        $result = false;
+        if(isset( $_FILES[$global])){
+            $fileType = $_FILES[$global]['type'];
 
-        $allowed = array("image/jpeg", "image/gif", "image/png");
-        if (!in_array($fileType, $allowed)) {
-            $result = true;
-        } else {
-            $result = false;
+            $allowed = array("image/jpeg", "image/gif", "image/png");
+            if (in_array($fileType, $allowed)) {
+                $result = true;
+            } else {
+                $result = false;
+            }
         }
+
         return $result;
     }
 
@@ -68,10 +72,13 @@ class ImageValidator
      */
     public static function hasValidUpload(string $global): bool
     {
-        $file = $_FILES[$global]['tmp_name'];
-        if (!(file_exists($file)) || !(is_uploaded_file($file))) {
-            return false;
+        if(isset($_FILES[$global])){
+            $file = $_FILES[$global]['tmp_name'];
+            if (!file_exists($file) || !is_uploaded_file($file)) {
+                return false;
+            }
         }
+
         return true;
     }
 }

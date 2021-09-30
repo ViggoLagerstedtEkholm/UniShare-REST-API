@@ -2,6 +2,7 @@
 
 namespace App\controllers;
 
+use App\core\Handler;
 use App\models\Courses;
 use App\models\filtering\Filter;
 use App\models\Friends;
@@ -58,12 +59,12 @@ class ContentController extends Controller
     /**
      * Use the parameters to calculate the amount of pages required to showcase
      * all the items. The method filters people.
-     * @param Request $request
+     * @param Handler $handler
      * @return string
      */
-    public function people(Request $request): string
+    public function people(Handler $handler): string
     {
-        $userInputFilter = $this->getFilter($request);
+        $userInputFilter = $this->getFilter($handler->getRequest());
 
         $filter = new Filter;
         $filter->setPage($userInputFilter['page']);
@@ -97,14 +98,14 @@ class ContentController extends Controller
             'start_page_first_result' => $pagination->getStartPageFirstResult()
         ];
 
-        return $this->jsonResponse($params, 200);
+        return $handler->getResponse()->jsonResponse($params, 200);
     }
 
-    public function posts(Request $request): string
+    public function posts(Handler $handler): string
     {
-        $userInputFilter = $this->getFilter($request);
+        $userInputFilter = $this->getFilter($handler->getRequest());
 
-        $forumID = $request->getBody()['ID'];
+        $forumID = $handler->getRequest()->getBody()['ID'];
 
         $filter = new Filter;
         $filter->setPage($userInputFilter['page']);
@@ -132,18 +133,18 @@ class ContentController extends Controller
             'start_page_first_result' => $pagination->getStartPageFirstResult()
         ];
 
-        return $this->jsonResponse($params, 200);
+        return $handler->getResponse()->jsonResponse($params, 200);
     }
 
     /**
      * Use the parameters to calculate the amount of pages required to showcase
      * all the items. The method filters courses.
-     * @param Request $request
+     * @param Handler $handler
      * @return bool|string|null
      */
-    public function courses(Request $request): bool|string|null
+    public function courses(Handler $handler): bool|string|null
     {
-        $userInputFilter = $this->getFilter($request);
+        $userInputFilter = $this->getFilter($handler->getRequest());
 
         $filter = new Filter;
         $filter->setPage($userInputFilter['page']);
@@ -175,18 +176,18 @@ class ContentController extends Controller
             'start_page_first_result' => $pagination->getStartPageFirstResult()
         ];
 
-        return $this->jsonResponse($params, 200);
+        return $handler->getResponse()->jsonResponse($params, 200);
     }
 
     /**
      * Use the parameters to calculate the amount of pages required to showcase
      * all the items. The method filters forums.
-     * @param Request $request
+     * @param Handler $handler
      * @return string
      */
-    public function forum(Request $request): string
+    public function forum(Handler $handler): string
     {
-        $userInputFilter = $this->getFilter($request);
+        $userInputFilter = $this->getFilter($handler->getRequest());
 
         $filter = new Filter;
         $filter->setPage($userInputFilter['page']);
@@ -209,12 +210,12 @@ class ContentController extends Controller
             'start_page_first_result' => $pagination->getStartPageFirstResult()
         ];
 
-        return $this->jsonResponse($params, 200);
+        return $handler->getResponse()->jsonResponse($params, 200);
     }
 
-    public function requests(Request $request): string
+    public function requests(Handler $handler): string
     {
-        $userInputFilter = $this->getFilter($request);
+        $userInputFilter = $this->getFilter($handler->getRequest());
 
         $filter = new Filter;
         $filter->setPage($userInputFilter['page']);
@@ -237,21 +238,21 @@ class ContentController extends Controller
             'start_page_first_result' => $pagination->getStartPageFirstResult()
         ];
 
-        return $this->jsonResponse($params, 200);
+        return $handler->getResponse()->jsonResponse($params, 200);
     }
 
 
     /**
      * Use the parameters to calculate the amount of pages required to showcase
      * all the items. The method filters forums.
-     * @param Request $request
+     * @param Handler $handler
      * @return string
      */
-    public function reviews(Request $request): string
+    public function reviews(Handler $handler): string
     {
-        $userInputFilter = $this->getFilter($request);
+        $userInputFilter = $this->getFilter($handler->getRequest());
 
-        $courseID = $request->getBody()['ID'];
+        $courseID = $handler->getRequest()->getBody()['ID'];
 
         $filter = new Filter;
         $filter->setPage($userInputFilter['page']);
@@ -279,20 +280,20 @@ class ContentController extends Controller
             'start_page_first_result' => $pagination->getStartPageFirstResult()
         ];
 
-        return $this->jsonResponse($params, 200);
+        return $handler->getResponse()->jsonResponse($params, 200);
     }
 
     /**
      * Use the parameters to calculate the amount of pages required to showcase
      * all the items. The method filters forums.
-     * @param Request $request
+     * @param Handler $handler
      * @return string
      */
-    public function comments(Request $request): string
+    public function comments(Handler $handler): string
     {
-        $userInputFilter = $this->getFilter($request);
+        $userInputFilter = $this->getFilter($handler->getRequest());
 
-        $profileID = $request->getBody()['ID'];
+        $profileID = $handler->getRequest()->getBody()['ID'];
 
         $filter = new Filter;
         $filter->setPage($userInputFilter['page']);
@@ -321,6 +322,6 @@ class ContentController extends Controller
             'start_page_first_result' => $pagination->getStartPageFirstResult()
         ];
 
-        return $this->jsonResponse($params, 200);
+        return $handler->getResponse()->jsonResponse($params, 200);
     }
 }

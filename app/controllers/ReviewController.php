@@ -2,11 +2,10 @@
 
 namespace App\controllers;
 
+use App\core\Handler;
+use App\Core\Session;
 use App\Middleware\AuthenticationMiddleware;
 use App\Models\Reviews;
-use App\Core\Session;
-use App\Core\Request;
-use App\Core\Application;
 
 /**
  * Review controller for handling reviews.
@@ -25,48 +24,48 @@ class ReviewController extends Controller
 
     /**
      * This method handles getting review by course ID.
-     * @param Request $request
+     * @param Handler $handler
      * @return false|string
      */
-    public function getReview(Request $request): bool|string
+    public function getReview(Handler $handler): bool|string
     {
-        $body = $request->getBody();
+        $body = $handler->getRequest()->getBody();
         $courseID = $body['courseID'];
         $userID = Session::get(SESSION_USERID);
 
         $result = $this->reviews->getReview($userID, $courseID);
         $resp = ['success' => true, 'data' => ['result' => $result]];
-        return $this->jsonResponse($resp, 200);
+        return $handler->getResponse()->jsonResponse($resp, 200);
     }
 
     /**
      * This method handles deleting reviews by course ID and user ID (many to many table).
-     * @param Request $request
+     * @param Handler $handler
      * @return bool|string|null
      */
-    public function deleteReview(Request $request): bool|string|null
+    public function deleteReview(Handler $handler): bool|string|null
     {
-        $body = $request->getBody();
+        $body = $handler->getRequest()->getBody();
 
         $courseID = $body['courseID'];
         $userID = $body['userID'];
 
         if ($userID == Session::get(SESSION_USERID)) {
             $this->reviews->deleteReview($userID, $courseID);
-            return $this->jsonResponse(true, 200);
+            return $handler->getResponse()->jsonResponse(true, 200);
         } else {
-            return $this->jsonResponse(true, 500);
+            return $handler->getResponse()->jsonResponse(true, 500);
         }
     }
 
     /**
      * This method handles uploading reviews.
-     * @param Request $request
-     * @return false|string
+     * @param Handler $handler
+     * @return bool|string|null
      */
-    public function uploadReview(Request $request): bool|string
+    public function uploadReview(Handler $handler): bool|string|null
     {
-        $body = $request->getBody();
+        $body = $handler->getRequest()->getBody();
 
         $params = [
             "courseID" => $body["courseID"],
@@ -82,17 +81,16 @@ class ReviewController extends Controller
         $errors = $this->reviews->validate($params);
 
         if (count($errors) > 0) {
-            $errorList = http_build_query(array('error' => $errors));
-            return $this->jsonResponse($errorList, 500);
+            return $handler->getResponse()->jsonResponse($errors, 500);
         }
 
         $success = $this->reviews->insertReview($params);
 
         if (!$success) {
-            $resp = ['success' => false, 'data' => ['Status' => 'Failed upload review']];
-            return $this->jsonResponse($resp, 500);
-        }else{
-            return $this->jsonResponse(true, 200);
+            $handler->getResponse()->setStatusCode(500);
+        } else {
+            $handler->getResponse()->setStatusCode(200);
         }
+        return null;
     }
 }
