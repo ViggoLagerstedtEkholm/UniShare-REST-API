@@ -169,12 +169,11 @@ class ProfileController extends Controller
 
     /**
      * Remove course from degree.
-     * @param Request $request
-     * @return false|string
+     * @param Handler $handler
      */
-    public function removeCourseFromDegree(Request $request): bool|string
+    public function removeCourseFromDegree(Handler $handler)
     {
-        $courseRequest = $request->getBody();
+        $courseRequest = $handler->getRequest()->getBody();
 
         $courseID = $courseRequest["courseID"];
         $degreeID = $courseRequest["degreeID"];
@@ -183,9 +182,9 @@ class ProfileController extends Controller
 
         if ($succeeded) {
             $this->degrees->deleteCourseFromDegree($degreeID, $courseID);
-            return $this->setStatusCode(200);
+            $handler->getResponse()->setStatusCode(200);
         } else {
-            return $this->setStatusCode(403);
+            $handler->getResponse()->setStatusCode(403);
         }
     }
 }
