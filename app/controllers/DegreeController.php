@@ -140,8 +140,7 @@ class DegreeController extends Controller
         $errors = $this->degrees->validate($params);
 
         if (count($errors) > 0) {
-            $errorList = http_build_query(array('error' => $errors));
-            return $handler->getResponse()->jsonResponse($errorList, 500);
+            return $handler->getResponse()->jsonResponse($errors, 500);
         }
 
         $canUpdate = $this->degrees->checkIfUserOwner($userID, $degreeID);

@@ -179,6 +179,73 @@ class ContentController extends Controller
         return $handler->getResponse()->jsonResponse($params, 200);
     }
 
+    public function profileTotalRatings(Handler $handler): string
+    {
+        $userInputFilter = $this->getFilter($handler->getRequest());
+
+        $profileID = $handler->getRequest()->getBody()['ID'];
+
+        $filter = new Filter;
+        $filter->setPage($userInputFilter['page']);
+        $filter->setFilterOption($userInputFilter['filterOption'] ?? "review.added");
+        $filter->setFilterOrder($userInputFilter['filterOrder']);
+        $filter->setResultsPerPageCount($userInputFilter['results_per_page_count']);
+        $filter->setSearch($userInputFilter['search']);
+
+        //Get the results in the interval of the pagination.
+        $results = $this->search->doSearchProfileRatings($filter, $profileID);
+
+        $result = $results['result'];
+        $pagination = $results['pagination'];
+        $total = $results['total'];
+
+        $params = [
+            'ratings' => $result,
+            'total' => $total,
+            'number_of_pages' => $pagination->getNumberOfPages(),
+            'results_per_page_count' => $pagination->getResultsPerPage(),
+            'start_page_first_result' => $pagination->getStartPageFirstResult()
+        ];
+
+        return $handler->getResponse()->jsonResponse($params, 200);
+    }
+
+    public function profileTotalReviews(Handler $handler): string
+    {
+        $userInputFilter = $this->getFilter($handler->getRequest());
+
+        $profileID = $handler->getRequest()->getBody()['ID'];
+
+        $filter = new Filter;
+        $filter->setPage($userInputFilter['page']);
+        $filter->setFilterOption($userInputFilter['filterOption'] ?? "added");
+        $filter->setFilterOrder($userInputFilter['filterOrder']);
+        $filter->setResultsPerPageCount($userInputFilter['results_per_page_count']);
+        $filter->setSearch($userInputFilter['search']);
+
+        //Get the results in the interval of the pagination.
+        $results = $this->search->doSearchProfileReviews($filter, $profileID);
+
+        $data = array();
+        foreach($results['result'] as $key => $value){
+            $data[$key] = $value;
+            $data[$key]['course'] = $this->courses->getCourse($value['courseID'])[0];
+        }
+
+        $pagination = $results['pagination'];
+        $total = $results['total'];
+
+        $params = [
+            'reviews' => $data,
+            'total' => $total,
+            'number_of_pages' => $pagination->getNumberOfPages(),
+            'results_per_page_count' => $pagination->getResultsPerPage(),
+            'start_page_first_result' => $pagination->getStartPageFirstResult()
+        ];
+
+        return $handler->getResponse()->jsonResponse($params, 200);
+    }
+
     /**
      * Use the parameters to calculate the amount of pages required to showcase
      * all the items. The method filters forums.

@@ -77,9 +77,7 @@ class AuthenticationController extends Controller
         $errors = $this->login->validate($params);
 
         if (count($errors) > 0) {
-            $resp = ['missingField' => $body];
-            $handler->getResponse()->setStatusCode(422);
-            return $handler->getResponse()->setResponseBody($resp);
+            return $handler->getResponse()->jsonResponse($errors, 422);
         }
 
         $success = $this->login->login($params);
@@ -88,8 +86,7 @@ class AuthenticationController extends Controller
             $_POST = array();
             $resp = ['userID' => Session::get(SESSION_USERID), 'privilege' => Session::get(SESSION_PRIVILEGE)];
 
-            $handler->getResponse()->setStatusCode(200);
-            return $handler->getResponse()->setResponseBody($resp);
+            return $handler->getResponse()->jsonResponse($resp, 200);
         } else {
             $handler->getResponse()->setStatusCode(500);
         }

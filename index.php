@@ -105,6 +105,8 @@ $app->router->get('/search/courses', [ContentController::class, 'courses']);
 $app->router->get('/search/forums', [ContentController::class, 'forum']);
 $app->router->get('/search/posts', [ContentController::class, 'posts']);
 $app->router->get('/search/requests', [ContentController::class, 'requests']);
+$app->router->get('/search/profile/ratings', [ContentController::class, 'profileTotalRatings']);
+$app->router->get('/search/profile/reviews', [ContentController::class, 'profileTotalReviews']);
 
 $app->router->get('/admin/course/requests', [AdminController::class, 'getRequestedCourses']);
 $app->router->post('/admin/users/suspend', [AdminController::class, 'suspendUser']);
