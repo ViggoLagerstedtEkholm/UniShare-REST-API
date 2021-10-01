@@ -20,7 +20,7 @@ class DegreeController extends Controller
 
     public function __construct()
     {
-        $this->setMiddlewares(new AuthenticationMiddleware(['view', 'uploadDegree', 'deleteDegree', 'updateDegree', 'getdegrees', 'toggleCourseToDegree', 'getDegreesSettings']));
+        $this->setMiddlewares(new AuthenticationMiddleware(['uploadDegree', 'deleteDegree', 'updateDegree', 'getdegrees', 'toggleCourseToDegree', 'getDegreesSettings']));
 
         $this->degrees = new Degrees();
         $this->users = new Users();
