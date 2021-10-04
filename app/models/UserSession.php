@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\models;
 
 use App\Core\Cookie;
 use App\Core\Session;
@@ -9,7 +9,7 @@ use App\Core\Session;
  * Model for handling user sessions.
  * @author Viggo Lagestedt Ekholm
  */
-class userSession extends Database
+class UserSession extends Database
 {
     /**
      * Delete existing session.

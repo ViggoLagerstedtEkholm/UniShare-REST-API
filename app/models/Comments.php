@@ -3,7 +3,6 @@
 namespace App\models;
 
 use App\core\Session;
-use App\Includes\Validate;
 use JetBrains\PhpStorm\Pure;
 
 /**
@@ -19,25 +18,7 @@ class Comments extends Database implements IValidate
      */
     #[Pure] public function validate(array $params): array
     {
-        $errors = array();
-
-        if (Validate::arrayHasEmptyValue($params) === true) {
-            $errors[] = EMPTY_FIELDS;
-        }
-
-        return $errors;
-    }
-
-    /**
-     * Get the amount of total comments in the comments table.
-     * @param int $userID
-     * @return int
-     */
-    function getCommentCount(int $userID): int
-    {
-        $sql = "SELECT Count(*) FROM profilecomment WHERE profile = ?;";
-        $result = $this->executeQuery($sql, 'i', array($userID));
-        return $result->fetch_assoc()["Count(*)"];
+        return array();
     }
 
     /**
@@ -50,7 +31,7 @@ class Comments extends Database implements IValidate
     function addComment(int $posterID, int $profileID, string $comment): bool
     {
         date_default_timezone_set("Europe/Stockholm");
-        $date = date("Y-m-d", time());
+        $date = date('Y-m-d H:i:s');
 
         $sql = "INSERT INTO profilecomment (text, date, author, profile) values(?,?,?,?);";
 

@@ -4,7 +4,6 @@ namespace App\models;
 
 use MySQLi;
 use mysqli_result;
-use App\models\filtering\Filter;
 
 /**
  * Abstract class for handling querying the database and opening/closing the connection.
@@ -123,7 +122,7 @@ abstract class Database
 
             $searchTerms = array();
             while ($column = $columns->fetch_assoc()) {
-                if (!in_array($column['COLUMN_NAME'], $ignoreFields)) {
+                if (in_array($column['COLUMN_NAME'], $ignoreFields)) {
                     $searchTerms[] = $table . "." . $column['COLUMN_NAME'] . " LIKE '%$search%' ";
                 }
             }

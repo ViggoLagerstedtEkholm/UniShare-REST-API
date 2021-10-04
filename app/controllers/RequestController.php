@@ -40,7 +40,6 @@ class RequestController extends Controller
         $params = [
             "name" => $courseRequest["name"],
             "credits" => $courseRequest["credits"],
-            "duration" => $courseRequest["duration"],
             "country" => $courseRequest["country"],
             "city" => $courseRequest["city"],
             "university" => $courseRequest["university"],

@@ -20,40 +20,18 @@ class DegreeController extends Controller
 
     public function __construct()
     {
-        $this->setMiddlewares(new AuthenticationMiddleware(['uploadDegree', 'deleteDegree', 'updateDegree', 'getdegrees', 'toggleCourseToDegree', 'getDegreesSettings']));
+        $this->setMiddlewares(new AuthenticationMiddleware([
+            'getDegree',
+            'uploadDegree',
+            'deleteDegree',
+            'updateDegree',
+            'getdegrees',
+            'toggleCourseToDegree',
+            'getDegreesSettings']));
 
         $this->degrees = new Degrees();
         $this->users = new Users();
         $this->courses = new Courses();
-    }
-
-    /**
-     * This method handles uploading a degree to a user.
-     * @param Handler $handler
-     * @return bool|string|null
-     */
-    public function uploadDegree(Handler $handler): bool|string|null
-    {
-        $body = $handler->getRequest()->getBody();
-
-        $params = [
-            "name" => $body["name"],
-            "field_of_study" => $body["field_of_study"],
-            "start_date" => $body["start_date"],
-            "end_date" => $body["end_date"],
-            "country" => $body["country"],
-            "city" => $body["city"],
-            "university" => $body["university"],
-        ];
-
-        $errors = $this->degrees->validate($params);
-
-        if (count($errors) > 0) {
-            return $handler->getResponse()->jsonResponse($errors, 500);
-        }
-
-        $this->degrees->uploadDegree($params, Session::get(SESSION_USERID));
-        return $handler->getResponse()->jsonResponse(true, 200);
     }
 
     /**
@@ -99,9 +77,9 @@ class DegreeController extends Controller
         $body = $handler->getRequest()->getBody();
         $degreeID = $body["degreeID"];
 
-        if (!empty($degreeID)) {
-            $degree = $this->degrees->getDegree($degreeID);
-        } else {
+        $degree = $this->degrees->getDegree($degreeID);
+
+        if (empty($degreeID)) {
             $resp = ['success' => false, 'status' => 'No matching ID!'];
             return $handler->getResponse()->jsonResponse($resp, 404);
         }
@@ -115,6 +93,7 @@ class DegreeController extends Controller
         }
     }
 
+    //<editor-fold desc="Update/Upload degree">
     /**
      * This method updates a specific degree from ID from the logged in user.
      * @param Handler $handler
@@ -124,35 +103,56 @@ class DegreeController extends Controller
     {
         $body = $handler->getRequest()->getBody();
         $degreeID = $body["degreeID"];
+        $userID = Session::get(SESSION_USERID);
+
+        //Validate input.
+        $params = $this->validateUpload($handler);
+
+        $canUpdate = $this->degrees->checkIfUserOwner($userID, $degreeID);
+
+        if ($canUpdate && !empty($degreeID)) {
+            $this->degrees->updateDegree($params, $userID, $degreeID);
+            return $handler->getResponse()->setStatusCode(200);
+        } else {
+            return $handler->getResponse()->setStatusCode(403);
+        }
+    }
+
+    /**
+     * This method handles uploading a degree to a user.
+     * @param Handler $handler
+     * @return bool|string|null
+     */
+    public function uploadDegree(Handler $handler): bool|string|null
+    {
+        $params = $this->validateUpload($handler);
+
+        $this->degrees->uploadDegree($params, Session::get(SESSION_USERID));
+        return $handler->getResponse()->jsonResponse(true, 200);
+    }
+
+    private function validateUpload(Handler $handler): bool|array|string|null
+    {
+        $body = $handler->getRequest()->getBody();
 
         $params = [
-            'name' => $body["name"],
-            'field_of_study' => $body["field_of_study"],
-            'start_date' => $body["start_date"],
-            'end_date' => $body["end_date"],
-            'country' => $body["country"],
-            'city' => $body["city"],
-            'university' => $body["university"],
+            "name" => $body["name"],
+            "field_of_study" => $body["field_of_study"],
+            "start_date" => $body["start_date"],
+            "end_date" => $body["end_date"],
+            "country" => $body["country"],
+            "city" => $body["city"],
+            "university" => $body["university"],
         ];
-
-        $userID = Session::get(SESSION_USERID);
 
         $errors = $this->degrees->validate($params);
 
         if (count($errors) > 0) {
             return $handler->getResponse()->jsonResponse($errors, 500);
         }
-
-        $canUpdate = $this->degrees->checkIfUserOwner($userID, $degreeID);
-
-        if ($canUpdate) {
-            $this->degrees->updateDegree($body, $userID);
-            $handler->getResponse()->setStatusCode(200);
-        } else {
-            $handler->getResponse()->setStatusCode(401);
-        }
-        return null;
+        return $params;
     }
+    //</editor-fold>
 
     /**
      * This method deletes a specific degree from ID from the logged in user.

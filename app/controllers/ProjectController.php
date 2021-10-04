@@ -20,7 +20,7 @@ class ProjectController extends Controller
 
     function __construct()
     {
-        $this->setMiddlewares(new AuthenticationMiddleware(['uploadProject', 'deleteProject', 'getProject', 'updateProject']));
+        $this->setMiddlewares(new AuthenticationMiddleware(['edit', 'uploadProject', 'deleteProject', 'getProject', 'updateProject']));
 
         $this->projects = new Projects();
         $this->imageHandler = new ImageHandler();
@@ -44,55 +44,6 @@ class ProjectController extends Controller
 
         $resp = ['projects' => $newArrData];
         return $handler->getResponse()->jsonResponse($resp, 200);
-    }
-
-    /**
-     * This method handles adding new projects.
-     * @param Handler $handler
-     * @return bool|string|null
-     * @throws GDResizeException
-     */
-    public function upload(Handler $handler): bool|string|null
-    {
-        $fileUploadName = 'file';
-        $userID = Session::get(SESSION_USERID);
-        $body = $handler->getRequest()->getBody();
-
-        $body['customCheck'] = json_decode($body['customCheck']);
-
-        if ($body["customCheck"] == false) {
-            $params = [
-                "link" => $body["link"],
-                "name" => $body["name"],
-                "file" => $fileUploadName,
-                "description" => $body["description"],
-                "customCheck" => $body["customCheck"]
-            ];
-        } else {
-            $params = [
-                "link" => $body["link"],
-                "name" => $body["name"],
-                "description" => $body["description"],
-                "text" => $body["text"],
-                "customCheck" => $body["customCheck"]
-            ];
-        }
-
-        $errors = $this->projects->validate($params);
-
-        if (count($errors) > 0) {
-            return $handler->getResponse()->jsonResponse($errors, 422);
-        }
-
-        if ($params["customCheck"]) {
-            $image = $this->imageHandler->createImageFromText($params["text"]);
-        } else {
-            $originalImage = $_FILES[$fileUploadName];
-            $image = $this->imageHandler->handleUploadResizing($originalImage);
-        }
-
-        $this->projects->uploadProject($params, $userID, $image);
-        return $handler->getResponse()->jsonResponse($params, 200);
     }
 
     /**
@@ -131,26 +82,21 @@ class ProjectController extends Controller
 
         $project = $this->projects->getProject($projectID);
 
-        //Check if the currently logged in user is the one that owns the project.
-        if ($project["userID"] == Session::get(SESSION_USERID)) {
-            $name = $project["name"];
-            $link = $project["link"];
-            $description = $project["description"];
-            $resp = ['success' => true, 'data' => ['Name' => $name, 'Link' => $link, 'Description' => $description]];
-            return $handler->getResponse()->jsonResponse($resp, 200);
+        if (empty($project)) {
+            return $handler->getResponse()->setStatusCode(404);
         } else {
-            $resp = ['success' => false, 'data' => ['Project' => $project]];
-            return $handler->getResponse()->jsonResponse($resp, 403);
+            return $handler->getResponse()->jsonResponse($project, 200);
         }
     }
+
 
     /**
      * Update project.
      * @param Handler $handler
-     * @return bool|string
+     * @return bool|int
      * @throws GDResizeException
      */
-    public function update(Handler $handler): bool|string
+    public function update(Handler $handler): bool|int
     {
         $fileUploadName = 'file';
         $userID = Session::get(SESSION_USERID);
@@ -158,31 +104,81 @@ class ProjectController extends Controller
         $body = $handler->getRequest()->getBody();
         $projectID = $body["projectID"];
 
-        $params = [
-            "projectID" => $projectID,
-            "link" => $body["link"],
-            "name" => $body["name"],
-            "description" => $body["description"],
-            "file" => $fileUploadName,
-            "customCheck" => "Off"
-        ];
-
-        //Check all fields + image validity
-        $errors = $this->projects->validate($params);
-
-        if (count($errors) > 0) {
-            return $handler->getResponse()->jsonResponse($errors, 500);
-        }
+        $params = $this->validateUpload($handler, $fileUploadName);
 
         $canUpdate = $this->projects->checkIfUserOwner($userID, $projectID);
 
-        if ($canUpdate) {
-            $originalImage = $_FILES[$fileUploadName];
-            $resizedImage = $this->imageHandler->handleUploadResizing($originalImage);
-            $this->projects->updateProject($projectID, $params, $resizedImage);
-            return $handler->getResponse()->jsonResponse(true, 200);
-        } else {
-            return $handler->getResponse()->jsonResponse(false, 401);
+        if($canUpdate && !empty($projectID)){
+            if ($params["customCheck"]) {
+                $image = $this->imageHandler->createImageFromText($params["text"]);
+            } else {
+                $originalImage = $_FILES[$fileUploadName];
+                $image = $this->imageHandler->handleUploadResizing($originalImage);
+            }
+            $this->projects->updateProject($projectID, $params, $image);
+
+            //Success
+            return $handler->getResponse()->setStatusCode(200);
         }
+        //Not your project!
+        return $handler->getResponse()->setStatusCode(403);
+    }
+
+    /**
+     * This method handles adding new projects.
+     * @param Handler $handler
+     * @return bool|string|null
+     * @throws GDResizeException
+     */
+    public function upload(Handler $handler): bool|string|null
+    {
+        $fileUploadName = 'file';
+        $params = $this->validateUpload($handler, $fileUploadName);
+
+        $userID = Session::get(SESSION_USERID);
+
+        if ($params["customCheck"]) {
+            $image = $this->imageHandler->createImageFromText($params["text"]);
+        } else {
+            $originalImage = $_FILES[$fileUploadName];
+            $image = $this->imageHandler->handleUploadResizing($originalImage);
+        }
+
+        $this->projects->uploadProject($params, $userID, $image);
+
+        return $handler->getResponse()->jsonResponse($params, 200);
+    }
+
+    private function validateUpload(Handler $handler, $fileUploadName): bool|array|string|null
+    {
+        $body = $handler->getRequest()->getBody();
+
+        $body['customCheck'] = json_decode($body['customCheck']);
+
+        if ($body["customCheck"] === false) {
+            $params = [
+                "link" => $body["link"],
+                "name" => $body["name"],
+                "file" => $fileUploadName,
+                "description" => $body["description"],
+                "customCheck" => $body["customCheck"]
+            ];
+        } else {
+            $params = [
+                "link" => $body["link"],
+                "name" => $body["name"],
+                "description" => $body["description"],
+                "text" => $body["text"],
+                "customCheck" => $body["customCheck"]
+            ];
+        }
+
+        $errors = $this->projects->validate($params);
+
+        if (count($errors) > 0) {
+            return $handler->getResponse()->jsonResponse($errors, 422);
+        }
+
+        return $params;
     }
 }

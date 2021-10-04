@@ -1,15 +1,12 @@
 <?php
 
 
-namespace App\includes;
-
+namespace App\validation;
 
 use Google\ApiCore\ApiException;
-use Google\ApiCore\ValidationException;
 use JetBrains\PhpStorm\ArrayShape;
 use Google\Cloud\Vision\V1\ImageAnnotatorClient;
 use Google\Cloud\Vision\V1\Feature\Type;
-use Google\Cloud\Vision\V1\Likelihood;
 
 class ImageValidator
 {
@@ -18,7 +15,6 @@ class ImageValidator
      * @param string $global
      * @return array
      * @throws ApiException
-     * @throws ValidationException
      */
     #[ArrayShape(['adult' => "int", 'medical' => "int", 'spoof' => "int", 'violence' => "int", 'racy' => "int"])]
     public static function checkImageForFeatures(string $global): array

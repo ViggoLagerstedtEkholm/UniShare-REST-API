@@ -2,9 +2,8 @@
 
 namespace App\models;
 
-use App\includes\ImageValidator;
-use App\Includes\Validate;
-use JetBrains\PhpStorm\Pure;
+use App\validation\ProjectValidator;
+use App\validation\SharedValidation;
 
 /**
  * Model for handling post queries.
@@ -21,19 +20,14 @@ class Projects extends Database implements IValidate
     {
         $errors = array();
 
-        if (Validate::arrayHasEmptyValue($params) === true) {
-           $errors[] = EMPTY_FIELDS;
-        }
-
-        if (!Validate::hasValidURL($params["link"])) {
+        if (!ProjectValidator::validURL($params["link"])){
             $errors[] = INVALID_PROJECT_LINK;
         }
-
-        if(!$params['customCheck']){
-            if (!ImageValidator::hasValidUpload('file') || !ImageValidator::hasValidImageExtension('file'))
-            {
-                $errors[] = INVALID_IMAGE;
-            }
+        if (!SharedValidation::validName($params["name"])){
+            $errors[] = INVALID_PROJECT_NAME;
+        }
+        if (!SharedValidation::validDescription($params["description"])){
+            $errors[] = INVALID_PROJECT_DESCRIPTION;
         }
 
         return $errors;

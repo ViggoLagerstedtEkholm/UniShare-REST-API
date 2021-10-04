@@ -3,7 +3,8 @@
 namespace App\models;
 
 use App\core\Session;
-use App\Includes\Validate;
+use App\validation\RequestValidation;
+use App\validation\SharedValidation;
 use JetBrains\PhpStorm\Pure;
 use Throwable;
 
@@ -18,15 +19,27 @@ class Requests extends Database implements IValidate
      * @param array $params
      * @return array
      */
-    #[Pure] public function validate(array $params): array
+    public function validate(array $params): array
     {
         $errors = array();
-        if (Validate::arrayHasEmptyValue($params) === true) {
-            $errors[] = EMPTY_FIELDS;
-        }
 
-        if (!is_numeric($params["credits"]) || !is_numeric($params["duration"])) {
-            $errors[] = NOTNUMERIC;
+        if(!SharedValidation::validName($params['name'])){
+            $errors[] = INVALID_NAME;
+        }
+        if(!RequestValidation::validCredits($params['credits'])){
+            $errors[] = INVALID_CREDITS;
+        }
+        if(!SharedValidation::validCountry($params['country'])){
+            $errors[] = INVALID_CREDITS;
+        }
+        if(!SharedValidation::validCity($params['city'])){
+            $errors[] = INVALID_CITY;
+        }
+        if(!SharedValidation::validUniversity($params['university'])){
+            $errors[] = INVALID_UNIVERSITY;
+        }
+        if(!SharedValidation::validDescription($params['description'])){
+            $errors[] = INVALID_UNIVERSITY;
         }
 
         return $errors;
@@ -43,9 +56,9 @@ class Requests extends Database implements IValidate
         date_default_timezone_set("Europe/Stockholm");
         $date = date('Y-m-d H:i:s');
 
-        $sql = "INSERT INTO request (name, credits, duration, country, city, isHandled, university, description, userID, date) 
-                values(?,?,?,?,?,?,?,?,?,?);";
-        return $this->insertOrUpdate($sql, 'siisssisis', array($params["name"], $params["credits"], $params["duration"],
+        $sql = "INSERT INTO request (name, credits, country, city, isHandled, university, description, userID, date) 
+                values(?,?,?,?,?,?,?,?,?);";
+        return $this->insertOrUpdate($sql, 'sisssssis', array($params["name"], $params["credits"],
             $params["country"], $params["city"], false, $params["university"], $params["description"], $userID, $date));
     }
 
@@ -108,8 +121,9 @@ class Requests extends Database implements IValidate
             date_default_timezone_set("Europe/Stockholm");
             $date = date('Y-m-d H:i:s');
 
-            $sql = "INSERT INTO courses (name, credits, duration, added, country, city, university) values(?,?,?,?,?,?,?);";
-            $inserted = $this->insertOrUpdate($sql, 'siissss', array($request["name"], $request["credits"], $request["duration"], $date, $request["country"], $request["city"], $request["university"]));
+            $sql = "INSERT INTO courses (name, credits, added, country, city, university) values(?,?,?,?,?,?);";
+            $inserted = $this->insertOrUpdate($sql, 'sissss', array($request["name"], $request["credits"], $date,
+                $request["country"], $request["city"], $request["university"]));
             if (!$inserted) {
                 $this->getConnection()->rollback();
             }

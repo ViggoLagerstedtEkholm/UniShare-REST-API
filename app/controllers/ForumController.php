@@ -43,8 +43,7 @@ class ForumController extends Controller
         $errors = $this->forums->validate($body);
 
         if (count($errors) > 0) {
-            $errorList = http_build_query(array('error' => $errors));
-            return $handler->getResponse()->jsonResponse($errorList, 500);
+            return $handler->getResponse()->jsonResponse($errors, 500);
         }
 
         $forumID = $this->forums->insertForum($body);

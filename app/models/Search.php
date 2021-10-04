@@ -11,10 +11,8 @@ use JetBrains\PhpStorm\ArrayShape;
  * Model for handling registering users.
  * @author Viggo Lagestedt Ekholm
  */
-class Search extends Database implements IValidate
+class Search extends Database
 {
-    public function validate(array $params)
-    {}
 
     function getTableCount(string $table, ?string $types, ?array $params): ?int
     {
@@ -34,9 +32,10 @@ class Search extends Database implements IValidate
     #[ArrayShape(['total' => "int|null", 'result' => "array", 'pagination' => "\App\models\Filtering\Pagination"])]
     public function doSearchForums(Filter $filter): array
     {
-        $ignoreSearchColumns = array(
-            'forumID',
-            'creator',
+        $searchColumns = array(
+            'title',
+            'topic',
+            'created'
         );
 
         $option = $filter->getFilterOption();
@@ -44,20 +43,26 @@ class Search extends Database implements IValidate
         $search = $filter->getSearch();
 
         if (!is_null($search)) {
-            $MATCH = $this->buildMultipleTableQuery(array('forum'), $ignoreSearchColumns, $search);
+            $MATCH = $this->buildMultipleTableQuery(array('forum'), $searchColumns, $search);
 
-            $searchQuery = "SELECT *
-                      FROM forum
-                      WHERE $MATCH
-                      ORDER BY $option $order
-                      LIMIT ?, ?;";
+            $searchQuery = "SELECT forum.*, count(posts.forumID) as TOTAL_POSTS
+                            FROM forum 
+                            LEFT JOIN posts 
+                            ON posts.forumID = forum.forumID 
+                            GROUP BY posts.forumID
+                            WHERE $MATCH
+                            ORDER BY $option $order
+                            LIMIT ?, ?;";
 
             $count = $this->getTableCountMatch('forum', $MATCH, null, null);
         } else {
-            $searchQuery = "SELECT *
-                     FROM forum
-                     ORDER BY $option $order
-                     LIMIT ?, ?;";
+            $searchQuery = "SELECT forum.*, count(posts.forumID) as TOTAL_POSTS
+                            FROM forum 
+                            LEFT JOIN posts 
+                            ON posts.forumID = forum.forumID 
+                            GROUP BY posts.forumID
+                            ORDER BY $option $order
+                            LIMIT ?, ?;";
             $count = $this->getTableCount('forum', null, null);
         }
 
@@ -76,12 +81,13 @@ class Search extends Database implements IValidate
     #[ArrayShape(['total' => "int", 'result' => "array", 'pagination' => "\App\models\Filtering\Pagination"])]
     public function doSearchPeople(Filter $filter): array
     {
-        $ignoreSearchColumns = array(
-            'usersPassword',
-            'userImage',
-            'description',
-            'activeDegreeID',
-            'usersID'
+        $searchColumns = array(
+            'userFirstName',
+            'userLastName',
+            'userDisplayName',
+            'lastOnline',
+            'joined',
+            'privilege'
         );
 
         $option = $filter->getFilterOption();
@@ -89,7 +95,7 @@ class Search extends Database implements IValidate
         $search = $filter->getSearch();
 
         if (!is_null($search)) {
-            $MATCH = $this->buildMultipleTableQuery(array('users'), $ignoreSearchColumns, $search);
+            $MATCH = $this->buildMultipleTableQuery(array('users'), $searchColumns, $search);
 
             $searchQuery = "SELECT usersID, userFirstName, userLastName, userDisplayName, userImage, visits, lastOnline, joined, isSuspended
                       FROM users
@@ -145,20 +151,11 @@ class Search extends Database implements IValidate
     #[ArrayShape(['total' => "int", 'result' => "array", 'pagination' => "\App\models\Filtering\Pagination"])]
     public function doSearchReviews(Filter $filter, ?int $courseID): array
     {
-        $ignoreSearchColumns = array(
-            'usersPassword',
-            'userImage',
-            'description',
-            'activeDegreeID',
-            'usersID',
-            'courseID',
-            'recommend',
-            'fulfilling',
-            'environment',
-            'difficulty',
-            'grading',
-            'literature',
-            'overall'
+        $searchColumns = array(
+            'text',
+            'updated',
+            'added',
+            'userDisplayName'
         );
 
         $option = $filter->getFilterOption();
@@ -166,7 +163,7 @@ class Search extends Database implements IValidate
         $search = $filter->getSearch();
 
         if (!is_null($search)) {
-            $MATCH = $this->buildMultipleTableQuery(array('review', 'users'), $ignoreSearchColumns, $search);
+            $MATCH = $this->buildMultipleTableQuery(array('review', 'users'), $searchColumns, $search);
 
             $searchQuery = "SELECT userImage, userDisplayName, review.*
                             FROM review
@@ -227,9 +224,10 @@ class Search extends Database implements IValidate
     #[ArrayShape(['total' => "int", 'result' => "array", 'pagination' => "\App\models\Filtering\Pagination"])]
     public function doSearchPosts(Filter $filter, ?int $forumID): array
     {
-        $ignoreSearchColumns = array(
-            'userID',
-            'forumID'
+        $searchColumns = array(
+            'text',
+            'date',
+            'userDisplayName'
         );
 
         $option = $filter->getFilterOption();
@@ -237,7 +235,7 @@ class Search extends Database implements IValidate
         $search = $filter->getSearch();
 
         if (!is_null($search)) {
-            $MATCH = $this->buildMultipleTableQuery(array('posts'), $ignoreSearchColumns, $search);
+            $MATCH = $this->buildMultipleTableQuery(array('posts', 'users'), $searchColumns, $search);
 
             $searchQuery = "SELECT posts.*, users.userDisplayName, users.userImage 
                             FROM posts 
@@ -276,9 +274,13 @@ class Search extends Database implements IValidate
     public function doSearchCoursesWithRatings(Filter $filter): array
     {
         $ignoreColumns = array(
-            'forumID',
-            'courseID',
-            'creator',
+            'name',
+            'credits',
+            'added',
+            'country',
+            'city',
+            'university',
+            'code'
         );
 
         $option = $filter->getFilterOption();
@@ -332,7 +334,8 @@ class Search extends Database implements IValidate
         return $result->fetch_assoc()["Count(*)"];
     }
 
-    private function getCommentCount(int $profileID){
+    private function getCommentCount(int $profileID)
+    {
         $sql = "SELECT Count(*)
             FROM profilecomment
             JOIN users
@@ -347,9 +350,9 @@ class Search extends Database implements IValidate
     public function doSearchComments(Filter $filter, ?int $profileID): array
     {
         $ignoreColumns = array(
-            'profile',
-            'author',
-            'commentID',
+            'text',
+            'date',
+            'userDisplayName',
         );
 
         $option = $filter->getFilterOption();
@@ -464,9 +467,13 @@ class Search extends Database implements IValidate
     #[ArrayShape(['total' => "int", 'result' => "array", 'pagination' => "\App\models\Filtering\Pagination"])]
     public function doSearchProfileRatings(Filter $filter, ?int $profileID): array
     {
-        $ignoreSearchColumns = array(
-            'courseID',
-            'description',
+        $searchColumns = array(
+            'name',
+            'credits',
+            'university',
+            'added',
+            'code',
+            'city',
         );
 
         $option = $filter->getFilterOption();
@@ -474,9 +481,9 @@ class Search extends Database implements IValidate
         $search = $filter->getSearch();
 
         if (!is_null($search)) {
-            $MATCH = $this->buildMultipleTableQuery(array('courses'), $ignoreSearchColumns, $search);
+            $MATCH = $this->buildMultipleTableQuery(array('courses'), $searchColumns, $search);
 
-            $searchQuery = "SELECT courses.name, courses.credits, courses.duration, courses.university, 
+            $searchQuery = "SELECT courses.name, courses.credits, courses.university, 
                             courses.added, courses.code, rating.rating, courses.courseID, courses.city
                             FROM courses
                             JOIN rating
@@ -487,7 +494,7 @@ class Search extends Database implements IValidate
 
             $count = $this->getRatingsProfileCountSearch($MATCH, $profileID);
         } else {
-            $searchQuery = "SELECT courses.name, courses.credits, courses.duration, courses.university, 
+            $searchQuery = "SELECT courses.name, courses.credits, courses.university, 
                             courses.added, courses.code, rating.rating, courses.courseID, courses.city
                             FROM courses
                             JOIN rating
@@ -538,16 +545,14 @@ class Search extends Database implements IValidate
     #[ArrayShape(['total' => "int", 'result' => "array", 'pagination' => "\App\models\Filtering\Pagination"])]
     public function doSearchProfileReviews(Filter $filter, ?int $profileID): array
     {
-        $ignoreSearchColumns = array(
-            'courseID',
-            'userID',
-            'credits',
-            'duration',
+        $searchColumns = array(
+            'text',
+            'update',
             'added',
-            'country',
-            'city',
-            'description',
-            'code'
+            'updated',
+            'userDisplayName',
+            'name',
+            'university'
         );
 
         $option = $filter->getFilterOption();
@@ -555,7 +560,7 @@ class Search extends Database implements IValidate
         $search = $filter->getSearch();
 
         if (!is_null($search)) {
-            $MATCH = $this->buildMultipleTableQuery(array('review', 'courses'), $ignoreSearchColumns, $search);
+            $MATCH = $this->buildMultipleTableQuery(array('review', 'courses'), $searchColumns, $search);
 
             $searchQuery = "SELECT review.*, courses.courseID
                             FROM review

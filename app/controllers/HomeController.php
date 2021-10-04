@@ -2,6 +2,7 @@
 
 namespace App\controllers;
 
+use App\Middleware\AuthenticationMiddleware;
 use App\core\Handler;
 use App\Core\Session;
 use App\Models\Courses;
@@ -20,7 +21,7 @@ class HomeController extends Controller
 
     public function __construct()
     {
-        //$this->setMiddlewares(new AuthenticationMiddleware(['getCurrentUser']));
+        $this->setMiddlewares(new AuthenticationMiddleware(['getCurrentUser']));
 
         $this->users = new Users();
         $this->courses = new Courses();
@@ -32,10 +33,11 @@ class HomeController extends Controller
      * @param Handler $handler
      * @return bool|string
      */
-    public function getCurrentUser(Handler $handler): bool|string
+    public function getUser(Handler $handler): bool|string
     {
-        $ID = Session::get(SESSION_USERID);
-        $currentUser = $this->users->getUser($ID);
+        $body = $handler->getRequest()->getBody();
+        $userID = $body['userID'];
+        $currentUser = $this->users->getUser($userID);
 
         $firstname = $currentUser['userFirstName'];
         $lastname = $currentUser['userLastName'];
@@ -82,5 +84,21 @@ class HomeController extends Controller
         $topViewedForums = $this->forums->getTOP10Forums();
         $resp = ['TOP_VIEWED_FORUMS' => $topViewedForums];
         return $handler->getResponse()->jsonResponse($resp, 200);
+    }
+
+    public function getWebsiteStatistics(Handler $handler): bool|string|null
+    {
+        $forumCount = $this->forums->getForumsCount();
+        $usersCount = $this->users->getUsersCount();
+        $courseCount = $this->courses->getCourseCount();
+
+        $resp = [
+            'forumCount' => $forumCount,
+            'userCount' => $usersCount,
+            'courseCount' => $courseCount,
+        ];
+
+        return $handler->getResponse()->jsonResponse($resp, 200);
+
     }
 }

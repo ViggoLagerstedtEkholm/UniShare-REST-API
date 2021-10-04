@@ -2,33 +2,15 @@
 
 namespace App\models;
 
-use App\Includes\Validate;
 use App\Core\Session;
 use App\Core\Cookie;
-use JetBrains\PhpStorm\Pure;
 
 /**
  * Model for handling forum queries.
  * @author Viggo Lagestedt Ekholm
  */
-class Login extends Database implements IValidate
+class Login extends Database
 {
-    /**
-     * Check if the user input is sufficient enough.
-     * @param array $params
-     * @return array
-     */
-    #[Pure] public function validate(array $params): array
-    {
-        $errors = array();
-
-        if (Validate::arrayHasEmptyValue($params) === true) {
-            $errors[] = INVALID_CREDENTIALS;
-        }
-
-        return $errors;
-    }
-
     /**
      * Login using the user's cookie.
      */
@@ -55,17 +37,20 @@ class Login extends Database implements IValidate
     /**
      * Login user.
      * @param array $params
-     * @return bool
+     * @return array|false
      */
-    function login(array $params): bool
+    function login(array $params): array|false
     {
         $userSession = new UserSession();
         $users = new Users();
 
         $user = $users->userExists("userEmail", $params['email']);
 
-        if ($user === false) {
-            return false;
+        if ($user === null) {
+            return [
+                'ERRORS' => [INVALID_CREDENTIALS],
+                'success' => false
+            ];
         }
 
         $passwordHash = $user["usersPassword"];
@@ -73,14 +58,28 @@ class Login extends Database implements IValidate
         $comparePassword = password_verify($params['password'], $passwordHash);
 
         if ($comparePassword === false) {
-            return false;
+            return [
+                'ERRORS' => [INVALID_CREDENTIALS],
+                'success' => false
+            ];
         } else {
+            $errors = array();
+
             $ID = $user["usersID"];
             $Email = $user["userEmail"];
             $privilege = $user["privilege"];
             $isSuspended = $user["isSuspended"];
+            $isVerified = $user["isVerified"];
 
-            if($isSuspended == 0){
+            if($isSuspended == 1){
+                $errors[] = "SUSPENDED";
+            }
+
+            if($isVerified == 0){
+                $errors[] = "NOT_VERIFIED";
+            }
+
+            if($isSuspended == 0 && $isVerified == 1){
                 Session::set(SESSION_USERID, $ID);
                 Session::set(SESSION_MAIL, $Email);
                 Session::set(SESSION_PRIVILEGE, $privilege);
@@ -92,9 +91,15 @@ class Login extends Database implements IValidate
                     $userSession->deleteExistingSession($ID, $user_agent); //If any previous session exists, remove.
                     $userSession->insertSession($ID, $user_agent, $hash); //Insert the new session ID.
                 }
-                return true;
+                return [
+                    'ERRORS' => $errors,
+                    'success' => true
+                ];
             }else{
-                return false;
+                return [
+                    'ERRORS' => $errors,
+                    'success' => false
+                ];
             }
         }
     }

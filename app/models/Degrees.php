@@ -2,9 +2,9 @@
 
 namespace App\models;
 
-use App\Includes\Validate;
 use App\Core\Session;
-use JetBrains\PhpStorm\Pure;
+use App\validation\DegreeValidator;
+use App\validation\SharedValidation;
 
 /**
  * Model for handling degrees queries.
@@ -17,16 +17,27 @@ class Degrees extends Database implements IValidate
      * @param array $params
      * @return array
      */
-    #[Pure] public function validate(array $params): array
+    public function validate(array $params): array
     {
         $errors = array();
 
-        if (Validate::arrayHasEmptyValue($params) === true) {
-            $errors[] = EMPTY_FIELDS;
+        if (!SharedValidation::validName($params["name"])) {
+            $errors[] = INVALID_NAME;
         }
-
-        if (Validate::hasInvalidDates($params["start_date"], $params["end_date"]) === true) {
+        if (!DegreeValidator::validFieldOfStudy($params["field_of_study"])) {
+            $errors[] = INVALID_FIELD_OF_STUDY;
+        }
+        if (!DegreeValidator::validDates($params["start_date"], $params["end_date"])) {
             $errors[] = INVALID_DATES;
+        }
+        if (!SharedValidation::validCountry($params["country"])){
+            $errors[] = INVALID_COUNTRY;
+        }
+        if (!SharedValidation::validCity($params["city"])){
+            $errors[] = INVALID_CITY;
+        }
+        if (!SharedValidation::validUniversity($params["university"])){
+            $errors[] = INVALID_UNIVERSITY;
         }
 
         return $errors;
@@ -112,13 +123,14 @@ class Degrees extends Database implements IValidate
      * Update a degree.
      * @param array $params
      * @param int $userID
+     * @param int $degreeID
      * @return bool
      */
-    function updateDegree(array $params, int $userID): bool
+    function updateDegree(array $params, int $userID, int $degreeID): bool
     {
-        $sql = "UPDATE degrees SET name = ?, fieldOfStudy = ?, start_date = ?, end_date = ?, country = ?, city = ?, university = ? WHERE userID = ?;";
-        return $this->insertOrUpdate($sql, 'sssssssi', array($params["name"], $params["field_of_study"],
-            $params["start_date"], $params["end_date"], $params["country"], $params["city"], $params["university"], $userID));
+        $sql = "UPDATE degrees SET name = ?, fieldOfStudy = ?, start_date = ?, end_date = ?, country = ?, city = ?, university = ? WHERE userID = ? AND degreeID = ?;";
+        return $this->insertOrUpdate($sql, 'sssssssii', array($params["name"], $params["field_of_study"],
+            $params["start_date"], $params["end_date"], $params["country"], $params["city"], $params["university"], $userID, $degreeID));
     }
 
     /**

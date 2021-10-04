@@ -3,8 +3,8 @@
 namespace App\models;
 
 use App\Core\Session;
-use App\Includes\Validate;
 use JetBrains\PhpStorm\Pure;
+use mysqli_result;
 
 /**
  * Model for handling courses.
@@ -19,13 +19,15 @@ class Courses extends Database implements IValidate
      */
     #[Pure] public function validate(array $params): array
     {
-        $errors = array();
+        return array();
+    }
 
-        if (Validate::arrayHasEmptyValue($params) === true) {
-            $errors[] = EMPTY_FIELDS;
-        }
-
-        return $errors;
+    function getCourseCount(): int
+    {
+        $sql = "SELECT Count(*)
+               FROM courses;";
+        $result = $this->executeQuery($sql);
+        return $result->fetch_assoc()['Count(*)'];
     }
 
     /**
@@ -49,9 +51,9 @@ class Courses extends Database implements IValidate
     /**
      * Get the popularity rank of a given course ID.
      * @param int $courseID
-     * @return mixed
+     * @return bool|mysqli_result
      */
-    function getPopularityRank(int $courseID): mixed
+    function getPopularityRank(int $courseID): bool|mysqli_result
     {
         $sql = "SELECT *
             FROM
@@ -67,9 +69,9 @@ class Courses extends Database implements IValidate
     /**
      * Get the rating rank of a given course ID.
      * @param int $courseID
-     * @return mixed
+     * @return bool|mysqli_result
      */
-    function getOverallRankingRating(int $courseID): mixed
+    function getOverallRankingRating(int $courseID): bool|mysqli_result
     {
         $sql = "SELECT *
             FROM
@@ -80,19 +82,6 @@ class Courses extends Database implements IValidate
             WHERE RANKINGS.courseID = ?;";
 
         return $this->executeQuery($sql, "i", array($courseID));
-    }
-
-    /**
-     * Insert a course.
-     * @param array $params
-     * @return bool
-     */
-    function insertCourse(array $params): bool
-    {
-        $sql = "INSERT INTO courses (name, credits, duration, added, country, city, university) values(?,?,?,?,?,?,?);";
-        date_default_timezone_set("Europe/Stockholm");
-        $date = date("Y-m-d", time());
-        return $this->insertOrUpdate($sql, 'ssssss', array($params["name"], $params["credits"], $params["duration"], $date, $params["fieldOfStudy"], $params["location"]));
     }
 
     /**

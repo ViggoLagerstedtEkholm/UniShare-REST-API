@@ -1,6 +1,6 @@
 <?php
 
-namespace App\models\filtering;
+namespace App\models\Filtering;
 
 class Filter
 {

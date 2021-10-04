@@ -8,6 +8,8 @@ use App\Middleware\AuthenticationMiddleware;
 use App\Models\Login;
 use App\Models\Register;
 use App\Models\Users;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 /**
  * Authentication controller for handling login/register/logout.
@@ -28,6 +30,28 @@ class AuthenticationController extends Controller
         $this->register = new Register();
     }
 
+    public function verify(Handler $handler)
+    {
+        $body =$handler->getRequest()->getBody();
+        $email = $body['email'];
+        $hash = $body['hash'];
+
+        $result = $this->users->verifyUser($email);
+
+        $verificationHash = $result[0]['verificationHash'];
+
+        $verifiedUser = false;
+        if($hash === $verificationHash){
+            $verifiedUser = $this->users->setVerified($email);
+        }
+
+        if($verifiedUser){
+            $handler->getResponse()->setStatusCode(200);
+        }else{
+            $handler->getResponse()->setStatusCode(500);
+        }
+    }
+
     /**
      * Login using cookie with session ID.
      */
@@ -38,12 +62,12 @@ class AuthenticationController extends Controller
 
     /**
      * Logout and redirect to start page.
-     * @return bool|string
+     * @param Handler $handler
      */
-    public function logout(): bool|string
+    public function logout(Handler $handler)
     {
         $this->users->logout();
-        return $this->setStatusCode(200);
+        $handler->getResponse()->setStatusCode(200);
     }
 
     /**
@@ -55,8 +79,7 @@ class AuthenticationController extends Controller
     {
         $isLoggedIn = Session::isLoggedIn();
         $resp = ['success' => true, 'data' => ['LoggedIn' => $isLoggedIn]];
-        $handler->getResponse()->setStatusCode(200);
-        return $handler->getResponse()->setResponseBody($resp);
+        return $handler->getResponse()->jsonResponse($resp, 200);
     }
 
     /**
@@ -74,23 +97,14 @@ class AuthenticationController extends Controller
             'rememberMe' => $body['rememberMe']
         ];
 
-        $errors = $this->login->validate($params);
+        $response = $this->login->login($params);
 
-        if (count($errors) > 0) {
-            return $handler->getResponse()->jsonResponse($errors, 422);
-        }
-
-        $success = $this->login->login($params);
-
-        if ($success) {
-            $_POST = array();
+        if ($response['success']) {
             $resp = ['userID' => Session::get(SESSION_USERID), 'privilege' => Session::get(SESSION_PRIVILEGE)];
-
             return $handler->getResponse()->jsonResponse($resp, 200);
-        } else {
-            $handler->getResponse()->setStatusCode(500);
         }
-        return null;
+
+        return $handler->getResponse()->jsonResponse($response['ERRORS'], 403);
     }
 
     /**
@@ -111,15 +125,69 @@ class AuthenticationController extends Controller
             'password_repeat' => $body['password_repeat'],
         ];
 
-        $errors = $this->register->validate($params);
+        $validationErrors = $this->register->validate($params);
 
-        if (count($errors) > 0) {
-            $handler->getResponse()->setStatusCode(422);
-            $handler->getResponse()->setResponseBody($errors);
+        if (count($validationErrors) > 0) {
+            return $handler->getResponse()->jsonResponse($validationErrors, 422);
         }
 
-        $this->register->register($params);
+        $result = $this->register->register($params);
 
-        return $handler->getResponse()->setStatusCode(200);
+        $didRegister = $result['registered'];
+        $verificationHash = $result['hash'];
+
+        if($didRegister){
+            $verificationLink = "http://localhost:3000/verify/" . $params['email'] . "/" . $verificationHash;
+
+            $mail = new PHPMailer(true);
+
+            $sentVerification = $this->sendVerificationMail($mail, $verificationLink, $params['email']);
+
+            if($sentVerification['success']){
+                $handler->getResponse()->setStatusCode(200);
+            }else{
+                return $handler->getResponse()->jsonResponse($sentVerification['ERROR'], 500);
+            }
+        }else{
+             $handler->getResponse()->setStatusCode( 500);
+        }
+        return null;
+    }
+
+    private function sendVerificationMail(PHPMailer $mail, string $verificationLink, string $recipientMail): array
+    {
+        try {
+            //Server settings
+            $mail->isSMTP();                                            //Send using SMTP
+            $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
+            $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
+            $mail->Username = EMAIL;
+            $mail->Password = EMAIL_PASSWORD;                            //SMTP password
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
+            $mail->Port       = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+
+            //Recipients
+            $mail->setFrom(EMAIL, 'UniShare');
+            $mail->addAddress($recipientMail);
+
+            //Content
+            $mail->isHTML(true);
+            $mail->Subject = 'Verification email from UniShare';
+            $mail->Body    = 'Verify email by clicking this link: <b>'. $verificationLink.
+                            '</b> <br/> If you did not register an account ignore this mail';
+            $mail->AltBody = 'Copy and paste this link into the URL: ' . $verificationLink;
+
+            $mail->send();
+
+            return [
+                'ERROR' => [],
+                'success' => true
+            ];
+        } catch (Exception $e) {
+            return [
+                'ERROR' => $mail->ErrorInfo,
+                'success' => false
+            ];
+        }
     }
 }

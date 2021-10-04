@@ -2,9 +2,8 @@
 
 namespace App\models;
 
-use App\Includes\Validate;
 use App\Core\Session;
-use JetBrains\PhpStorm\Pure;
+use App\validation\ReviewValidator;
 
 /**
  * Model for handling reviews from users.
@@ -17,16 +16,25 @@ class Reviews extends Database implements IValidate
      * @param array $params
      * @return array
      */
-    #[Pure] public function validate(array $params): array
+    public function validate(array $params): array
     {
         $errors = array();
 
-        if (Validate::arrayHasEmptyValue($params) === true) {
-            $errors[] = EMPTY_FIELDS;
+        $ratings = [
+            "fulfilling" => $params["fulfilling"],
+            "environment" => $params["environment"],
+            "difficulty" => $params["difficulty"],
+            "grading" => $params["grading"],
+            "literature" => $params["literature"],
+            "overall" => $params["overall"],
+        ];
+
+        if (!ReviewValidator::validRatings($ratings)){
+            $errors[] = INVALID_RATING;
         }
 
-        if (strlen($params["text"]) < 200) {
-            $errors[] = "DESCRIPTION_CHARS_NOT_ENOUGH";
+        if (!ReviewValidator::validText($params["text"])){
+            $errors[] = INVALID_REVIEW_TEXT;
         }
 
         return $errors;

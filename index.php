@@ -34,7 +34,7 @@ use App\controllers\ReviewController;
 use App\controllers\PostController;
 use App\controllers\FriendsController;
 
-require_once(__DIR__ . '/config.php');
+require_once(__DIR__ . './app/config/config.php');
 
 
 if(Cookie::exists(REMEMBER_ME_COOKIE_NAME) && !Session::exists(SESSION_USERID)){
@@ -52,14 +52,16 @@ $app->router->get('/received/pending', [FriendsController::class, 'getMyPendingR
 $app->router->get('/sent/pending', [FriendsController::class, 'getMyPendingSentRequest']);
 $app->router->get('/get/friends', [FriendsController::class, 'getFriends']);
 
-$app->router->get('/getCurrentUser', [HomeController::class, 'getCurrentUser']);
+$app->router->get('/get/user', [HomeController::class, 'getUser']);
 $app->router->get('/getTOP10Courses', [HomeController::class, 'getTOP10Courses']);
 $app->router->get('/getTOP10Forums', [HomeController::class, 'getTOP10Forums']);
+$app->router->get('/getStatistics', [HomeController::class, 'getWebsiteStatistics']);
 
 $app->router->get('/isLoggedIn', [AuthenticationController::class, 'isLoggedIn']);
 $app->router->post('/register', [AuthenticationController::class, 'register']);
 $app->router->post('/login', [AuthenticationController::class, 'login']);
 $app->router->post('/logout', [AuthenticationController::class, 'logout']);
+$app->router->post('/verify', [AuthenticationController::class, 'verify']);
 
 $app->router->get('/profile/sideHUD', [ProfileController::class, 'getSideHUDInfo']);
 $app->router->post('/profile/upload/image', [ProfileController::class, 'uploadImage']);
@@ -75,8 +77,12 @@ $app->router->post('/project/delete', [ProjectController::class, 'delete']);
 $app->router->post('/project/update', [ProjectController::class, 'update']);
 
 $app->router->get('/settings/get', [SettingsController::class, 'fetch']);
-$app->router->post('/settings/deleteAccount', [SettingsController::class, 'deleteAccount']);
-$app->router->post('/settings/update', [SettingsController::class, 'update']);
+$app->router->post('/settings/delete/account', [SettingsController::class, 'deleteAccount']);
+$app->router->post('/settings/update/account', [SettingsController::class, 'updateAccount']);
+$app->router->post('/settings/update/password', [SettingsController::class, 'updatePassword']);
+$app->router->post('/settings/update/active/degree', [SettingsController::class, 'updateActiveDegree']);
+$app->router->post('/settings/check/username/available', [SettingsController::class, 'checkUsernameAvailability']);
+$app->router->post('/settings/check/email/available', [SettingsController::class, 'checkEmailAvailability']);
 
 $app->router->get('/course/get', [CourseController::class, 'getCourse']);
 $app->router->get('/course/statistics', [CourseController::class, 'getCourseStatistics']);

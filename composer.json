@@ -8,6 +8,7 @@
     "ext-json": "*",
     "google/cloud-vision": "^1.5",
     "ext-gd": "*",
-    "ext-mysqli": "*"
+    "ext-mysqli": "*",
+    "phpmailer/phpmailer": "^6.5"
   }
 }

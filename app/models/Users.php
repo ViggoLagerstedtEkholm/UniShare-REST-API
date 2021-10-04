@@ -29,6 +29,31 @@ class Users extends Database
         }
     }
 
+    function setVerified(string $email): bool
+    {
+        $sql = "UPDATE users SET isVerified = 1 WHERE userEmail = ?";
+        return $this->insertOrUpdate($sql,'s', array($email));
+    }
+
+    function verifyUser(string $email): array
+    {
+        $sql = "SELECT verificationHash
+                FROM users
+                WHERE userEmail = ?;";
+
+        $results = $this->executeQuery($sql, 's', array($email));
+        return $this->fetchResults($results);
+    }
+
+    function getUsersCount(): int
+    {
+        $sql = "SELECT Count(*)
+               FROM users;";
+
+        $result = $this->executeQuery($sql);
+        return $result->fetch_assoc()['Count(*)'];
+    }
+
     function suspend(int $userID): bool
     {
         $sql = "UPDATE users SET isSuspended = 1 WHERE usersID = ?;";

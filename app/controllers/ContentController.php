@@ -10,7 +10,6 @@ use App\models\Search;
 use App\Core\Request;
 use App\Core\Session;
 use JetBrains\PhpStorm\ArrayShape;
-use JetBrains\PhpStorm\Pure;
 
 /**
  * Content controller for handling searching and filtering website content.
@@ -32,10 +31,10 @@ class ContentController extends Controller
     /**
      * Get filters from search.
      * @param Request $request
-     * @return array
+     * @return Filter
      */
-    #[Pure] #[ArrayShape(['page' => "int", 'filterOption' => "mixed|null", 'filterOrder' => "mixed|null", 'results_per_page_count' => "int", 'search' => "mixed|null"])]
-    private function getFilter(Request $request): array
+    #[ArrayShape(['page' => "int", 'filterOption' => "mixed|null", 'filterOrder' => "mixed|null", 'results_per_page_count' => "int", 'search' => "mixed|null"])]
+    private function getFilter(Request $request): Filter
     {
         $body = $request->getBody();
         $search = empty($body['search']) ? null : $body['search'];
@@ -43,17 +42,18 @@ class ContentController extends Controller
         $filterOrder = $body['filterOrder'] ?? 'DESC';
         $page = (int)$body['page'] ?? 1;
         $results_per_page_count = (int)$body['results_per_page_count'] ?? 7;
-        if($results_per_page_count < 1){
+        if($results_per_page_count < 1 || $results_per_page_count > 10){
             $results_per_page_count = 7;
         }
 
-        return [
-            'page' => $page,
-            'filterOption' => $filterOption,
-            'filterOrder' => $filterOrder,
-            'results_per_page_count' => $results_per_page_count,
-            'search' => $search
-        ];
+        $filter = new Filter;
+        $filter->setPage($page);
+        $filter->setFilterOption($filterOption);
+        $filter->setFilterOrder($filterOrder);
+        $filter->setResultsPerPageCount($results_per_page_count);
+        $filter->setSearch($search);
+
+        return $filter;
     }
 
     /**
@@ -64,14 +64,9 @@ class ContentController extends Controller
      */
     public function people(Handler $handler): string
     {
-        $userInputFilter = $this->getFilter($handler->getRequest());
-
-        $filter = new Filter;
-        $filter->setPage($userInputFilter['page']);
-        $filter->setFilterOption($userInputFilter['filterOption'] ?? "visits");
-        $filter->setFilterOrder($userInputFilter['filterOrder']);
-        $filter->setResultsPerPageCount($userInputFilter['results_per_page_count']);
-        $filter->setSearch($userInputFilter['search']);
+        $filter = $this->getFilter($handler->getRequest());
+        $option = $filter->getFilterOption();
+        $filter->setFilterOption($option?? "visits");
 
         //Get the results in the interval of the pagination.
         $results = $this->search->doSearchPeople($filter);
@@ -103,16 +98,10 @@ class ContentController extends Controller
 
     public function posts(Handler $handler): string
     {
-        $userInputFilter = $this->getFilter($handler->getRequest());
-
+        $filter = $this->getFilter($handler->getRequest());
+        $option = $filter->getFilterOption();
+        $filter->setFilterOption($option?? "date");
         $forumID = $handler->getRequest()->getBody()['ID'];
-
-        $filter = new Filter;
-        $filter->setPage($userInputFilter['page']);
-        $filter->setFilterOption($userInputFilter['filterOption'] ?? "date");
-        $filter->setFilterOrder($userInputFilter['filterOrder']);
-        $filter->setResultsPerPageCount($userInputFilter['results_per_page_count']);
-        $filter->setSearch($userInputFilter['search']);
 
         $results = $this->search->doSearchPosts($filter, $forumID);
 
@@ -144,14 +133,9 @@ class ContentController extends Controller
      */
     public function courses(Handler $handler): bool|string|null
     {
-        $userInputFilter = $this->getFilter($handler->getRequest());
-
-        $filter = new Filter;
-        $filter->setPage($userInputFilter['page']);
-        $filter->setFilterOption($userInputFilter['filterOption'] ?? "average_rating");
-        $filter->setFilterOrder($userInputFilter['filterOrder']);
-        $filter->setResultsPerPageCount($userInputFilter['results_per_page_count']);
-        $filter->setSearch($userInputFilter['search']);
+        $filter = $this->getFilter($handler->getRequest());
+        $option = $filter->getFilterOption();
+        $filter->setFilterOption($option?? "average_rating");
 
         //Get the results in the interval of the pagination.
         $results = $this->search->doSearchCoursesWithRatings($filter);
@@ -181,16 +165,12 @@ class ContentController extends Controller
 
     public function profileTotalRatings(Handler $handler): string
     {
-        $userInputFilter = $this->getFilter($handler->getRequest());
+        $filter = $this->getFilter($handler->getRequest());
+        $option = $filter->getFilterOption();
+        $filter->setFilterOption($option?? "review.added");
 
         $profileID = $handler->getRequest()->getBody()['ID'];
 
-        $filter = new Filter;
-        $filter->setPage($userInputFilter['page']);
-        $filter->setFilterOption($userInputFilter['filterOption'] ?? "review.added");
-        $filter->setFilterOrder($userInputFilter['filterOrder']);
-        $filter->setResultsPerPageCount($userInputFilter['results_per_page_count']);
-        $filter->setSearch($userInputFilter['search']);
 
         //Get the results in the interval of the pagination.
         $results = $this->search->doSearchProfileRatings($filter, $profileID);
@@ -212,16 +192,11 @@ class ContentController extends Controller
 
     public function profileTotalReviews(Handler $handler): string
     {
-        $userInputFilter = $this->getFilter($handler->getRequest());
+        $filter = $this->getFilter($handler->getRequest());
+        $option = $filter->getFilterOption();
+        $filter->setFilterOption($option?? "added");
 
         $profileID = $handler->getRequest()->getBody()['ID'];
-
-        $filter = new Filter;
-        $filter->setPage($userInputFilter['page']);
-        $filter->setFilterOption($userInputFilter['filterOption'] ?? "added");
-        $filter->setFilterOrder($userInputFilter['filterOrder']);
-        $filter->setResultsPerPageCount($userInputFilter['results_per_page_count']);
-        $filter->setSearch($userInputFilter['search']);
 
         //Get the results in the interval of the pagination.
         $results = $this->search->doSearchProfileReviews($filter, $profileID);
@@ -254,14 +229,9 @@ class ContentController extends Controller
      */
     public function forum(Handler $handler): string
     {
-        $userInputFilter = $this->getFilter($handler->getRequest());
-
-        $filter = new Filter;
-        $filter->setPage($userInputFilter['page']);
-        $filter->setFilterOption($userInputFilter['filterOption'] ?? "views");
-        $filter->setFilterOrder($userInputFilter['filterOrder']);
-        $filter->setResultsPerPageCount($userInputFilter['results_per_page_count']);
-        $filter->setSearch($userInputFilter['search']);
+        $filter = $this->getFilter($handler->getRequest());
+        $option = $filter->getFilterOption();
+        $filter->setFilterOption($option?? "views");
 
         $results = $this->search->doSearchForums($filter);
 
@@ -282,14 +252,9 @@ class ContentController extends Controller
 
     public function requests(Handler $handler): string
     {
-        $userInputFilter = $this->getFilter($handler->getRequest());
-
-        $filter = new Filter;
-        $filter->setPage($userInputFilter['page']);
-        $filter->setFilterOption($userInputFilter['filterOption'] ?? "date");
-        $filter->setFilterOrder($userInputFilter['filterOrder']);
-        $filter->setResultsPerPageCount($userInputFilter['results_per_page_count']);
-        $filter->setSearch($userInputFilter['search']);
+        $filter = $this->getFilter($handler->getRequest());
+        $option = $filter->getFilterOption();
+        $filter->setFilterOption($option?? "date");
 
         $results = $this->search->doSearchRequests($filter);
 
@@ -317,16 +282,11 @@ class ContentController extends Controller
      */
     public function reviews(Handler $handler): string
     {
-        $userInputFilter = $this->getFilter($handler->getRequest());
+        $filter = $this->getFilter($handler->getRequest());
+        $option = $filter->getFilterOption();
+        $filter->setFilterOption($option?? "helpful");
 
         $courseID = $handler->getRequest()->getBody()['ID'];
-
-        $filter = new Filter;
-        $filter->setPage($userInputFilter['page']);
-        $filter->setFilterOption($userInputFilter['filterOption'] ?? "helpful");
-        $filter->setFilterOrder($userInputFilter['filterOrder']);
-        $filter->setResultsPerPageCount($userInputFilter['results_per_page_count']);
-        $filter->setSearch($userInputFilter['search']);
 
         $results = $this->search->doSearchReviews($filter, $courseID);
 
@@ -358,16 +318,11 @@ class ContentController extends Controller
      */
     public function comments(Handler $handler): string
     {
-        $userInputFilter = $this->getFilter($handler->getRequest());
+        $filter = $this->getFilter($handler->getRequest());
+        $option = $filter->getFilterOption();
+        $filter->setFilterOption($option ?? "date");
 
         $profileID = $handler->getRequest()->getBody()['ID'];
-
-        $filter = new Filter;
-        $filter->setPage($userInputFilter['page']);
-        $filter->setFilterOption($userInputFilter['filterOption'] ?? "date");
-        $filter->setFilterOrder($userInputFilter['filterOrder']);
-        $filter->setResultsPerPageCount($userInputFilter['results_per_page_count']);
-        $filter->setSearch($userInputFilter['search']);
 
         //Get the results in the interval of the pagination.
         $results = $this->search->doSearchComments($filter, $profileID);

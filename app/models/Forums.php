@@ -3,7 +3,8 @@
 namespace App\models;
 
 use App\Core\Session;
-use App\Includes\Validate;
+use App\validation\ForumValidator;
+use App\validation\PostValidator;
 use JetBrains\PhpStorm\Pure;
 use Throwable;
 
@@ -18,15 +19,29 @@ class Forums extends Database implements IValidate
      * @param array $params
      * @return array
      */
-    #[Pure] public function validate(array $params): array
+    public function validate(array $params): array
     {
         $errors = array();
-
-        if (Validate::arrayHasEmptyValue($params) === true) {
-            $errors[] = EMPTY_FIELDS;
+        if(!ForumValidator::validTitle($params['title'])){
+            $errors[] = INVALID_TITLE;
+        }
+        if(!ForumValidator::validTopic($params['topic'])){
+            $errors[] = INVALID_TOPIC;
+        }
+        if(!PostValidator::validPost($params['text'])){
+            $errors[] = INVALID_TEXT;
         }
 
         return $errors;
+    }
+
+    function getForumsCount(): int
+    {
+        $sql = "SELECT Count(*)
+                FROM forum;";
+
+        $result = $this->executeQuery($sql);
+        return $result->fetch_assoc()['Count(*)'];
     }
 
     /**
@@ -110,5 +125,13 @@ class Forums extends Database implements IValidate
             LIMIT 10;";
         $result = $this->executeQuery($sql);
         return $this->fetchResults($result);
+    }
+
+    public function getPostsCount(int $forumID)
+    {
+        $sql = "SELECT Count(*)
+                FROM posts
+                WHERE forumID = ?";
+        $this->executeQuery($sql,'i', array($forumID));
     }
 }

@@ -17,7 +17,12 @@ class ReviewController extends Controller
 
     function __construct()
     {
-        $this->setMiddlewares(new AuthenticationMiddleware(['setRate', 'getRate', 'uploadReview', 'deleteReview', 'getReview']));
+        $this->setMiddlewares(new AuthenticationMiddleware([
+            'setRate',
+            'getRate',
+            'uploadReview',
+            'deleteReview',
+            'getReview']));
 
         $this->reviews = new Reviews();
     }
@@ -86,11 +91,10 @@ class ReviewController extends Controller
 
         $success = $this->reviews->insertReview($params);
 
-        if (!$success) {
-            $handler->getResponse()->setStatusCode(500);
+        if ($success) {
+            return $handler->getResponse()->setStatusCode(200);
         } else {
-            $handler->getResponse()->setStatusCode(200);
+            return $handler->getResponse()->setStatusCode(500);
         }
-        return null;
     }
 }

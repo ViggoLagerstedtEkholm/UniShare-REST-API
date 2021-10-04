@@ -49,5 +49,6 @@ class PostController extends Controller
         }else{
             $handler->getResponse()->setStatusCode(200);
         }
+        return null;
     }
 }
