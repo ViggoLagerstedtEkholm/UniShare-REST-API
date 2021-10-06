@@ -37,7 +37,7 @@ class UserValidation
     {
         //[A-Za-z ]{1,50} will check for the characters and length, while the negative lookahead (?!.*?\s{2})
         // will check for the spaces condition. (\b) to disallow white space at ends.
-        if(preg_match("/^(?=.{2,30}$)[a-zA-Z\x{00C0}-\x{00ff}]+(?:[-'\s][a-zA-Z\x{00C0}-\x{00ff}]+)*$/", $password)){
+        if(preg_match("/^(?=.{2,50}$)[a-zA-Z\x{00C0}-\x{00ff}]+(?:[-'\s][a-zA-Z\x{00C0}-\x{00ff}]+)*$/", $password)){
             $result = true;
         }else{
             $result = false;
@@ -49,7 +49,7 @@ class UserValidation
     {
         //[A-Za-z ]{1,50} will check for the characters and length, while the negative lookahead (?!.*?\s{2})
         // will check for the spaces condition. (\b) to disallow white space at ends.
-        if(preg_match("/^(?=.{2,30}$)[a-zA-Z\x{00C0}-\x{00ff}]+(?:[-'\s][a-zA-Z\x{00C0}-\x{00ff}]+)*$/", $password)){
+        if(preg_match("/^(?=.{2,50}$)[a-zA-Z\x{00C0}-\x{00ff}]+(?:[-'\s][a-zA-Z\x{00C0}-\x{00ff}]+)*$/", $password)){
             $result = true;
         }else{
             $result = false;

@@ -171,4 +171,24 @@ class Users extends Database
         $this->insertOrUpdate($sql, 'si', array($date, $ID));
         return $date;
     }
+
+    public function deleteGitHub(int $userID){
+        $sql = "UPDATE users SET github = NULL WHERE usersID = ?";
+        $this->insertOrUpdate($sql, 'i', array($userID));
+    }
+
+    public function deleteLinkedIn(int $userID){
+        $sql = "UPDATE users SET linkedin = NULL WHERE usersID = ?";
+        $this->insertOrUpdate($sql, 'i', array($userID));
+    }
+
+    public function addGitHub(string $github, int $userID){
+        $sql = "UPDATE users SET github = ? WHERE usersID = ?";
+        $this->insertOrUpdate($sql, 'si', array($github, $userID));
+    }
+
+    public function addLinkedIn(string $linkedIn, int $userID){
+        $sql = "UPDATE users SET linkedin = ? WHERE usersID = ?";
+        $this->insertOrUpdate($sql, 'si', array($linkedIn, $userID));
+    }
 }

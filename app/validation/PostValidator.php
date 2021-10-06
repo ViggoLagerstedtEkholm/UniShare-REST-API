@@ -8,7 +8,7 @@ class PostValidator
 {
     public static function validPost(string $text): bool
     {
-        if (preg_match("/^.{5,500}$/", $text))
+        if (preg_match("/^[\s\S]{5,500}$/", $text))
         {
             $result = true;
         }else{

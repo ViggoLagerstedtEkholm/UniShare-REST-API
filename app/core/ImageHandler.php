@@ -34,9 +34,9 @@ class ImageHandler
         $ext = pathinfo($path, PATHINFO_EXTENSION);
 
         return match ($ext) {
-            "jpg" => $this->createResizedJPEG($image_object),
-            "gif" => file_get_contents($image_object['tmp_name']),
-            "png" => $this->createResizedPNG($image_object),
+            "jpg", "JPEG" => $this->createResizedJPEG($image_object),
+            "gif", "GIF" => file_get_contents($image_object['tmp_name']),
+            "png", "PNG" => $this->createResizedPNG($image_object),
             default => null,
         };
     }

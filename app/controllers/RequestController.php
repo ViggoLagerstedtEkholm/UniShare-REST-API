@@ -43,7 +43,9 @@ class RequestController extends Controller
             "country" => $courseRequest["country"],
             "city" => $courseRequest["city"],
             "university" => $courseRequest["university"],
-            "description" => $courseRequest["description"]
+            "description" => $courseRequest["description"],
+            "code" => $courseRequest["code"],
+            "link" => $courseRequest["link"]
         ];
 
         $errors = $this->requests->validate($params);

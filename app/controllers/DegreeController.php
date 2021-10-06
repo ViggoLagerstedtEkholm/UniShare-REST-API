@@ -76,20 +76,17 @@ class DegreeController extends Controller
     {
         $body = $handler->getRequest()->getBody();
         $degreeID = $body["degreeID"];
-
-        $degree = $this->degrees->getDegree($degreeID);
+        $userID = Session::get(SESSION_USERID);
+        $degree = $this->degrees->getLoggedInUserDegree($degreeID, $userID);
 
         if (empty($degreeID)) {
-            $resp = ['success' => false, 'status' => 'No matching ID!'];
-            return $handler->getResponse()->jsonResponse($resp, 404);
+            return $handler->getResponse()->setStatusCode(404);
         }
 
-        if (!is_null($degree)) {
-            $resp = ['success' => true, 'data' => ['degree' => $degree[0]]];
-            return $handler->getResponse()->jsonResponse($resp, 200);
+        if (!empty($degree)) {
+            return $handler->getResponse()->jsonResponse($degree[0], 200);
         } else {
-            $resp = ['success' => false];
-            return $handler->getResponse()->jsonResponse($resp, 500);
+            return $handler->getResponse()->setStatusCode(404);
         }
     }
 

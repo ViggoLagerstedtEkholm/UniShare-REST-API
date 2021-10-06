@@ -63,7 +63,7 @@ $app->router->post('/login', [AuthenticationController::class, 'login']);
 $app->router->post('/logout', [AuthenticationController::class, 'logout']);
 $app->router->post('/verify', [AuthenticationController::class, 'verify']);
 
-$app->router->get('/profile/sideHUD', [ProfileController::class, 'getSideHUDInfo']);
+$app->router->get('/profile/get', [ProfileController::class, 'getUser']);
 $app->router->post('/profile/upload/image', [ProfileController::class, 'uploadImage']);
 $app->router->post('/profile/append/visits', [ProfileController::class, 'appendVisits']);
 $app->router->post('/profile/add/comment', [ProfileController::class, 'addComment']);
@@ -76,6 +76,10 @@ $app->router->post('/project/upload', [ProjectController::class, 'upload']);
 $app->router->post('/project/delete', [ProjectController::class, 'delete']);
 $app->router->post('/project/update', [ProjectController::class, 'update']);
 
+$app->router->post('/settings/delete/handle/linkedin', [SettingsController::class, 'deleteLinkedIn']);
+$app->router->post('/settings/delete/handle/github', [SettingsController::class, 'deleteGitHub']);
+$app->router->post('/settings/update/handles', [SettingsController::class, 'updateHandles']);
+$app->router->get('/settings/get/handles', [SettingsController::class, 'getHandles']);
 $app->router->get('/settings/get', [SettingsController::class, 'fetch']);
 $app->router->post('/settings/delete/account', [SettingsController::class, 'deleteAccount']);
 $app->router->post('/settings/update/account', [SettingsController::class, 'updateAccount']);
@@ -114,6 +118,7 @@ $app->router->get('/search/requests', [ContentController::class, 'requests']);
 $app->router->get('/search/profile/ratings', [ContentController::class, 'profileTotalRatings']);
 $app->router->get('/search/profile/reviews', [ContentController::class, 'profileTotalReviews']);
 
+$app->router->post('/admin/course/update', [AdminController::class, 'updateCourse']);
 $app->router->get('/admin/course/requests', [AdminController::class, 'getRequestedCourses']);
 $app->router->post('/admin/users/suspend', [AdminController::class, 'suspendUser']);
 $app->router->post('/admin/users/enable', [AdminController::class, 'enableUser']);

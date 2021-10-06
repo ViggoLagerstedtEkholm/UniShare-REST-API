@@ -78,6 +78,27 @@ class Search extends Database
     //</editor-fold>
 
     //<editor-fold desc="Search people">
+    private function getPeopleCountSearch(string $MATCH)
+    {
+        $sql = "SELECT Count(*)
+                FROM users
+                WHERE isSuspended = 0 AND isVerified = 1 AND ( $MATCH )";
+
+        $result = $this->executeQuery($sql);
+        return $result->fetch_assoc()["Count(*)"];
+    }
+
+    private function getPeopleCount()
+    {
+        $sql = "SELECT Count(*)
+                FROM users
+                WHERE isSuspended = 0 AND isVerified = 1";
+
+        $result = $this->executeQuery($sql);
+        return $result->fetch_assoc()["Count(*)"];
+    }
+
+
     #[ArrayShape(['total' => "int", 'result' => "array", 'pagination' => "\App\models\Filtering\Pagination"])]
     public function doSearchPeople(Filter $filter): array
     {
@@ -99,17 +120,19 @@ class Search extends Database
 
             $searchQuery = "SELECT usersID, userFirstName, userLastName, userDisplayName, userImage, visits, lastOnline, joined, isSuspended
                       FROM users
-                      WHERE $MATCH
+                      WHERE $MATCH AND isSuspended = 0 AND isVerified = 1
                       ORDER BY $option $order
                       LIMIT ?, ?;";
 
-            $count = $this->getTableCountMatch('users', $MATCH, null, null);
+            $count = $this->getPeopleCountSearch($MATCH);
         } else {
             $searchQuery = "SELECT usersID, userFirstName, userLastName, userDisplayName, userImage, visits, lastOnline, joined, isSuspended
                      FROM users
+                     WHERE isSuspended = 0 AND isVerified = 1
                      ORDER BY $option $order
                      LIMIT ?, ?;";
-            $count = $this->getTableCount('users', null, null);
+
+            $count = $this->getPeopleCount();
         }
 
         $pagination = $this->calculateOffsets($count, $filter->getPage(), $filter->getResultsPerPageCount());
@@ -280,7 +303,8 @@ class Search extends Database
             'country',
             'city',
             'university',
-            'code'
+            'code',
+            'link'
         );
 
         $option = $filter->getFilterOption();
@@ -289,7 +313,7 @@ class Search extends Database
 
         if (!is_null($search)) {
             $MATCH = $this->buildMultipleTableQuery(array('courses'), $ignoreColumns, $search);
-            $searchQuery = "SELECT AVG(rating) AS average_rating, courses.*
+            $searchQuery = "SELECT ROUND(AVG(rating),2) AS average_rating, courses.*
                       FROM rating
                       RIGHT JOIN courses
                       ON rating.courseID = courses.courseID
@@ -300,7 +324,7 @@ class Search extends Database
 
             $count = $this->getTableCountMatch('courses', $MATCH, null, null);
         } else {
-            $searchQuery = "SELECT AVG(rating) AS average_rating, courses.*
+            $searchQuery = "SELECT ROUND(AVG(rating),2) AS average_rating, courses.*
                       FROM rating
                       RIGHT JOIN courses
                       ON rating.courseID = courses.courseID

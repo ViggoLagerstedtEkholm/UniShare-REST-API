@@ -51,7 +51,7 @@ class ProfileController extends Controller
      * @param Handler $handler
      * @return bool|string|null
      */
-    public function getSideHUDInfo(Handler $handler): bool|string|null
+    public function getUser(Handler $handler): bool|string|null
     {
         $body = $handler->getRequest()->getBody();
         $ID = $body['profileID'];
@@ -67,8 +67,11 @@ class ProfileController extends Controller
             $joined = $user["joined"];
             $lastOnline = $user["lastOnline"];
             $visits = $user['visits'];
+            $email = $user['userEmail'];
+            $linkedin = $user['linkedin'];
+            $github = $user['github'];
 
-            $resp = ['success' => true, 'data' => [
+            $resp = [
                 'image' => $image,
                 'updatedVisitCount' => "test",
                 'firstname' => $firstname,
@@ -78,12 +81,15 @@ class ProfileController extends Controller
                 'description' => $description,
                 'lastOnline' => $lastOnline,
                 'visits' => $visits,
-                'joined' => $joined]];
+                'joined' => $joined,
+                'email' => $email,
+                'linkedin' => $linkedin,
+                'github' => $github
+            ];
 
             return $handler->getResponse()->jsonResponse($resp, 200);
         }
-        $handler->getResponse()->setStatusCode(404);
-        return null;
+        return $handler->getResponse()->setStatusCode( 404);
     }
 
     /**

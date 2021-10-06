@@ -30,45 +30,6 @@ class FriendsController extends Controller
         $this->friends = new Friends;
     }
 
-    // CHECK IF ALREADY FRIENDS
-    function isFriendsWith(Handler $handler): bool|string|null
-    {
-        $body = $handler->getRequest()->getBody();
-        $otherID = $body['otherID'];
-        $isFriendWith = $this->friends->isAlreadyFriends($otherID);
-        return $handler->getResponse()->jsonResponse($isFriendWith, 200);
-    }
-
-    //  IF I AM THE REQUEST SENDER
-    function ifSender(Handler $handler): bool|string|null
-    {
-        $body = $handler->getRequest()->getBody();
-        $otherID = $body['otherID'];
-
-        $isRequestSender = $this->friends->isRequestSender($otherID);
-        return $handler->getResponse()->jsonResponse($isRequestSender, 200);
-    }
-
-    //  IF I AM THE RECEIVER
-    function ifReceiver(Handler $handler): bool|string|null
-    {
-        $body = $handler->getRequest()->getBody();
-        $otherID = $body['otherID'];
-
-        $isRequestReceiver = $this->friends->isRequestReceiver($otherID);
-        return $handler->getResponse()->jsonResponse($isRequestReceiver, 200);
-    }
-
-    // CHECK IF REQUEST HAS ALREADY BEEN SENT
-    function isRequestSent(Handler $handler): bool|string|null
-    {
-        $body = $handler->getRequest()->getBody();
-        $otherID = $body['otherID'];
-
-        $isRequestAlreadySent = $this->friends->isRequestAlreadySent($otherID);
-        return $handler->getResponse()->jsonResponse($isRequestAlreadySent, 200);
-    }
-
     // MAKE PENDING FRIENDS (SEND FRIEND REQUEST)
     function request(Handler $handler): bool|string|null
     {

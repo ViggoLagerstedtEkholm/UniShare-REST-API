@@ -36,30 +36,35 @@ class HomeController extends Controller
     public function getUser(Handler $handler): bool|string
     {
         $body = $handler->getRequest()->getBody();
-        $userID = $body['userID'];
-        $currentUser = $this->users->getUser($userID);
 
-        $firstname = $currentUser['userFirstName'];
-        $lastname = $currentUser['userLastName'];
-        $email = $currentUser['userEmail'];
-        $username = $currentUser['userDisplayName'];
-        $lastOnline = $currentUser['lastOnline'];
-        $visits = $currentUser['visits'];
-        $userID = $currentUser['usersID'];
+        if(!empty($body['userID'])){
+            $userID = $body['userID'];
 
-        $userImage = base64_encode($currentUser['userImage']);
+            $user = $this->users->getUser($userID);
+            $firstname = $user['userFirstName'];
+            $lastname = $user['userLastName'];
+            $email = $user['userEmail'];
+            $username = $user['userDisplayName'];
+            $lastOnline = $user['lastOnline'];
+            $visits = $user['visits'];
+            $userID = $user['usersID'];
 
-        $resp = ['success'=>true, 'data'=> [
-            'userID' => $userID,
-            'firstName' => $firstname,
-            'lastName' => $lastname,
-            'email' => $email,
-            'username' => $username,
-            'lastOnline' => $lastOnline,
-            'visits' => $visits,
-            'image' => $userImage]];
+            $userImage = base64_encode($user['userImage']);
 
-        return $handler->getResponse()->jsonResponse($resp, 200);
+            $resp = ['success'=>true, 'data'=> [
+                'userID' => $userID,
+                'firstName' => $firstname,
+                'lastName' => $lastname,
+                'email' => $email,
+                'username' => $username,
+                'lastOnline' => $lastOnline,
+                'visits' => $visits,
+                'image' => $userImage]];
+
+            return $handler->getResponse()->jsonResponse($resp, 200);
+        }else{
+            return $handler->getResponse()->setStatusCode(404);
+        }
     }
 
     /**

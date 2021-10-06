@@ -4,6 +4,7 @@ namespace App\controllers;
 
 use App\core\Handler;
 use App\Middleware\AuthenticationMiddleware;
+use App\models\Courses;
 use App\Models\Requests;
 use App\models\Users;
 use Throwable;
@@ -16,15 +17,41 @@ class AdminController extends Controller
 {
     private Requests $requests;
     private Users $users;
+    private Courses $courses;
 
     public function __construct()
     {
         $this->setMiddlewares(new AuthenticationMiddleware(
-            ['getRequestedCourses', 'suspendUser', 'enableUser', 'deleteUser', 'approveRequest', 'denyRequest'],
+            ['updateCourse', 'getRequestedCourses', 'suspendUser', 'enableUser', 'deleteUser', 'approveRequest', 'denyRequest'],
             true));
 
         $this->requests = new Requests();
         $this->users = new Users();
+        $this->courses = new Courses();
+    }
+
+    public function updateCourse(Handler $handler): bool|string|null
+    {
+        $body = $handler->getRequest()->getBody();
+
+        $params = [
+            "name" => $body["name"],
+            "credits" => $body["credits"],
+            "country" => $body["country"],
+            "city" => $body["city"],
+            "university" => $body["university"],
+            "description" => $body["description"],
+            "code" => $body["code"],
+        ];
+
+        $errors = $this->requests->validate($params);
+
+        if(count($errors) > 0){
+            return $handler->getResponse()->jsonResponse($errors, 422);
+        }
+
+        $this->courses->updateCourse($body);
+        return $handler->getResponse()->setStatusCode(200);
     }
 
     public function getRequestedCourses(Handler $handler): bool|string|null

@@ -40,8 +40,8 @@ class CourseController extends Controller
         $RATING_RANK = $this->courses->getOverallRankingRating($ID)->fetch_assoc()["RATING_RANK"] ?? "Not set!";
         $review_count = $this->reviews->getReviewCount($ID);
 
-        $arithmeticMean = $result["AVG(rating)"];
-        $COUNT = $result["COUNT(rating)"];
+        $arithmeticMean = $result["rating"];
+        $COUNT = $result["amount"];
 
         $params = [
             "score" => $arithmeticMean,
@@ -64,7 +64,11 @@ class CourseController extends Controller
         $body = $handler->getRequest()->getBody();
         $ID = $body['courseID'];
         $course = $this->courses->getCourse($ID);
-        return $handler->getResponse()->jsonResponse($course, 200);
+
+        if($course){
+            return $handler->getResponse()->jsonResponse($course[0], 200);
+        }
+        return $handler->getResponse()->setStatusCode( 404);
     }
 
     /**
@@ -93,9 +97,12 @@ class CourseController extends Controller
         $body = $handler->getRequest()->getBody();
         $courseID = $body["courseID"];
         $rating = $body["rating"];
-        $this->courses->setRate(Session::get(SESSION_USERID), $courseID, $rating);
-        $resp = ['success' => true, 'data' => ['rating' => $rating]];
-        return $handler->getResponse()->jsonResponse($resp, 200);
+        if($rating >= 1 && $rating <= 10){
+            $this->courses->setRate(Session::get(SESSION_USERID), $courseID, $rating);
+            return $handler->getResponse()->setStatusCode(200);
+        }else{
+            return $handler->getResponse()->setStatusCode(500);
+        }
     }
 
     /**

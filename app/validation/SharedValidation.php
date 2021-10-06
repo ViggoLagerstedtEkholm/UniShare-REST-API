@@ -41,7 +41,7 @@ class SharedValidation
 
     public static function validDescription(string $description): bool
     {
-        if (preg_match("/^.{5,2000}$/", $description))
+        if (preg_match("/^[\s\S]{1,5000}$/", $description))
         {
             $result = true;
         }else{
@@ -52,10 +52,20 @@ class SharedValidation
 
     public static function validName (string $name): bool
     {
-        if (preg_match("/^(?=.{1,150}$)[a-zA-Z\x{00C0}-\x{00ff}]+(?:[-'\s][a-zA-Z\x{00C0}-\x{00ff}]+)*$/", $name))
+        if (preg_match("/^[\s\S]{1,300}$/", $name))
         {
             $result = true;
         }else{
+            $result = false;
+        }
+        return $result;
+    }
+
+    public static function validURL(string $link): bool
+    {
+        if (filter_var($link, FILTER_VALIDATE_URL)) {
+            $result = true;
+        } else {
             $result = false;
         }
         return $result;

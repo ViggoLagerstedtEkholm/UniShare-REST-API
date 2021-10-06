@@ -8,6 +8,8 @@ use App\Core\ImageHandler;
 use App\Core\Session;
 use App\Middleware\AuthenticationMiddleware;
 use App\Models\Projects;
+use App\validation\ImageValidator;
+use JetBrains\PhpStorm\ArrayShape;
 
 /**
  * Project controller for handling projects.
@@ -104,7 +106,13 @@ class ProjectController extends Controller
         $body = $handler->getRequest()->getBody();
         $projectID = $body["projectID"];
 
-        $params = $this->validateUpload($handler, $fileUploadName);
+        $result = $this->validateUpload($handler, $fileUploadName);
+        $params = $result['params'];
+        $errors = $result['errors'];
+
+        if (count($errors) > 0) {
+            return $handler->getResponse()->jsonResponse($errors, 422);
+        }
 
         $canUpdate = $this->projects->checkIfUserOwner($userID, $projectID);
 
@@ -133,7 +141,9 @@ class ProjectController extends Controller
     public function upload(Handler $handler): bool|string|null
     {
         $fileUploadName = 'file';
-        $params = $this->validateUpload($handler, $fileUploadName);
+        $result = $this->validateUpload($handler, $fileUploadName);
+        $params = $result['params'];
+        $errors = $result['errors'];
 
         $userID = Session::get(SESSION_USERID);
 
@@ -144,11 +154,20 @@ class ProjectController extends Controller
             $image = $this->imageHandler->handleUploadResizing($originalImage);
         }
 
-        $this->projects->uploadProject($params, $userID, $image);
+        if (count($errors) > 0) {
+            return $handler->getResponse()->jsonResponse($errors, 422);
+        }
 
-        return $handler->getResponse()->jsonResponse($params, 200);
+        $success = $this->projects->uploadProject($params, $userID, $image);
+
+        if($success){
+            return $handler->getResponse()->setStatusCode(200);
+        }else{
+            return $handler->getResponse()->setStatusCode(500);
+        }
     }
 
+    #[ArrayShape(['params' => "array", 'errors' => "array"])]
     private function validateUpload(Handler $handler, $fileUploadName): bool|array|string|null
     {
         $body = $handler->getRequest()->getBody();
@@ -175,10 +194,9 @@ class ProjectController extends Controller
 
         $errors = $this->projects->validate($params);
 
-        if (count($errors) > 0) {
-            return $handler->getResponse()->jsonResponse($errors, 422);
-        }
-
-        return $params;
+        return [
+            'params' => $params,
+            'errors' => $errors
+        ];
     }
 }

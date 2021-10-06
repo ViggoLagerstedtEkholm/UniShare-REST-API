@@ -101,19 +101,6 @@ class Forums extends Database implements IValidate
 
     /**
      * Add view to forum.
-     * @param int $forumID
-     */
-    function addViews(int $forumID)
-    {
-        $forum = $this->getForum($forumID);
-        $views = $forum["views"];
-        $updatedViews = $views + 1;
-        $sql = "UPDATE forum SET views =? WHERE forumID = ?;";
-        $this->insertOrUpdate($sql, 'ii', array($updatedViews, $forumID));
-    }
-
-    /**
-     * Add view to forum.
      * @return array|null
      */
     function getTOP10Forums(): array|null

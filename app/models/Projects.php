@@ -2,6 +2,7 @@
 
 namespace App\models;
 
+use App\validation\ImageValidator;
 use App\validation\ProjectValidator;
 use App\validation\SharedValidation;
 
@@ -20,7 +21,7 @@ class Projects extends Database implements IValidate
     {
         $errors = array();
 
-        if (!ProjectValidator::validURL($params["link"])){
+        if (!SharedValidation::validURL($params["link"])){
             $errors[] = INVALID_PROJECT_LINK;
         }
         if (!SharedValidation::validName($params["name"])){
@@ -29,6 +30,17 @@ class Projects extends Database implements IValidate
         if (!SharedValidation::validDescription($params["description"])){
             $errors[] = INVALID_PROJECT_DESCRIPTION;
         }
+
+        if(!$params['customCheck'] && !ImageValidator::hasValidUpload($params['file']))
+        {
+            $errors[] = INVALID_UPLOAD;
+        }
+
+        if (!$params['customCheck'] && !ImageValidator::hasValidImageExtension($params['file']))
+        {
+            $errors[] = INVALID_FILE_EXTENSION;
+        }
+
 
         return $errors;
     }
@@ -102,16 +114,17 @@ class Projects extends Database implements IValidate
 
     /**
      * Upload project with the given parameters.
-     * @param int $ID
      * @param array $params
+     * @param int $ID
      * @param mixed $image
+     * @return bool
      */
-    function uploadProject(array $params, int $ID, mixed $image)
+    function uploadProject(array $params, int $ID, mixed $image): bool
     {
         $sql = "INSERT INTO projects (name, description, link, userID, image, added) values (?,?,?,?,?,?);";
         date_default_timezone_set("Europe/Stockholm");
         $date = date('Y-m-d H:i:s');
 
-        $this->insertOrUpdate($sql, 'ssssss', array($params["name"], $params["description"], $params["link"], $ID, $image, $date));
+        return $this->insertOrUpdate($sql, 'sssiss', array($params["name"], $params["description"], $params["link"], $ID, $image, $date));
     }
 }

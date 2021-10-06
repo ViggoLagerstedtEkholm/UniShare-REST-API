@@ -44,36 +44,6 @@ class Degrees extends Database implements IValidate
     }
 
     /**
-     * Check if the new degree ID exists for the current user.
-     * @param int $newActiveDegreeID
-     * @return bool
-     */
-    function userHasDegreeID(int $newActiveDegreeID): bool
-    {
-        $sql = "SELECT degreeID FROM degrees
-            JOIN users
-            ON degrees.userID = users.usersID
-            WHERE usersID = ?;";
-
-        $ID = Session::get(SESSION_USERID);
-
-        $result = $this->executeQuery($sql, 'i', array($ID));
-
-        $IDs = array();
-        while ($row = $result->fetch_array()) {
-            $IDs[] = $row["degreeID"];
-        }
-
-        $exists = in_array($newActiveDegreeID, $IDs);
-
-        if ($exists) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * Delete course from degree.
      * @param int $degreeID
      * @param int $courseID
@@ -146,12 +116,13 @@ class Degrees extends Database implements IValidate
     /**
      * Get a degree.
      * @param int $ID
+     * @param int $userID
      * @return array
      */
-    function getDegree(int $ID): array
+    function getLoggedInUserDegree(int $ID, int $userID): array
     {
-        $sql = "SELECT * FROM degrees WHERE degreeID = ?;";
-        $result = $this->executeQuery($sql, 'i', array($ID));
+        $sql = "SELECT * FROM degrees WHERE degreeID = ? AND userID = ?;";
+        $result = $this->executeQuery($sql, 'ii', array($ID, $userID));
         return $this->fetchResults($result);
     }
 
@@ -178,7 +149,12 @@ class Degrees extends Database implements IValidate
      */
     function getDegrees(int $userID): array
     {
-        $sql = "SELECT * FROM degrees WHERE userID = ?;";
+        $sql = "SELECT * 
+                FROM degrees 
+                LEFT JOIN users
+                ON users.activeDegreeID = degrees.degreeID
+                WHERE userID = ?
+                ORDER BY activeDegreeID DESC;";
         $result = $this->executeQuery($sql, 'i', array($userID));
 
         $degrees = array();
@@ -230,12 +206,12 @@ class Degrees extends Database implements IValidate
     function getTotalDegreeCredits(int $degreeID): string|null
     {
         $sql = "SELECT SUM(credits)
-            FROM courses
-            JOIN degrees_courses
-            ON courses.courseID = degrees_courses.courseID
-            JOIN degrees
-            ON degrees_courses.degreeID = degrees.degreeID
-            WHERE degrees.degreeID = ?;";
+                FROM courses
+                JOIN degrees_courses
+                ON courses.courseID = degrees_courses.courseID
+                JOIN degrees
+                ON degrees_courses.degreeID = degrees.degreeID
+                WHERE degrees.degreeID = ?;";
 
         $result = $this->executeQuery($sql, 'i', array($degreeID));
         return $result->fetch_assoc()["SUM(credits)"];

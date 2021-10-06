@@ -4,6 +4,7 @@ namespace App\controllers;
 
 use App\core\Handler;
 use App\Core\Session;
+use App\validation\SharedValidation;
 use App\validation\UserValidation;
 use App\Middleware\AuthenticationMiddleware;
 use App\Models\Users;
@@ -22,9 +23,14 @@ class SettingsController extends Controller
             'deleteAccount',
             'getSettings',
             'update',
+            'fetch',
             'updatePassword',
             'checkEmailAvailability',
-            'checkUsernameAvailability']));
+            'checkUsernameAvailability',
+            'getHandles',
+            'deleteLinkedIn',
+            'deleteGitHub',
+            'updateHandles']));
 
         $this->users = new Users();
     }
@@ -37,7 +43,6 @@ class SettingsController extends Controller
     public function updateAccount(Handler $handler): bool|string|null
     {
         $updatedInfo = $handler->getRequest()->getBody();
-
         $currentUserID = Session::get(SESSION_USERID);
         //New settings
         $updated_first_name = $updatedInfo["first_name"];
@@ -94,13 +99,13 @@ class SettingsController extends Controller
             $this->users->updateUser("userLastName", $updated_last_name, $currentUserID);
         }
         if ($updated_email != $email) {
-            $this->users->updateUser("userEmail", $updated_email, $currentUserID);
+            //$this->users->updateUser("userEmail", $updated_email, $currentUserID);
         }
         if ($updated_display_name != $display_name) {
             $this->users->updateUser("userDisplayName", $updated_display_name, $currentUserID);
         }
 
-        return $handler->getResponse()->setStatusCode( 200);
+        return $handler->getResponse()->jsonResponse( $updated_description, 200);
     }
 
     public function checkUsernameAvailability(Handler $handler): bool|string|null
@@ -182,6 +187,56 @@ class SettingsController extends Controller
         $this->users->terminateAccount($userID);
         $this->users->logout();
         $handler->getResponse()->setStatusCode(200);
+    }
+
+    public function deleteLinkedIn(){
+        $userID = Session::get(SESSION_USERID);
+        $this->users->deleteLinkedIn($userID);
+    }
+
+    public function deleteGitHub(){
+        $userID = Session::get(SESSION_USERID);
+        $this->users->deleteGitHub($userID);
+    }
+
+    public function updateHandles(Handler $handler): bool|int|string|null
+    {
+        $body = $handler->getRequest()->getBody();
+        $linkedIn = $body['linkedin'];
+        $github = $body['github'];
+        $userID = Session::get(SESSION_USERID);
+
+        if(!empty($linkedIn) && !SharedValidation::validURL($linkedIn)){
+            return $handler->getResponse()->jsonResponse(INVALID_LINK, 422);
+        }
+
+        if(!empty($linkedIn)){
+            $this->users->addLinkedIn($linkedIn, $userID);
+        }
+
+        if(!empty($github) && !SharedValidation::validURL($github)){
+            return $handler->getResponse()->jsonResponse(INVALID_LINK, 422);
+        }
+
+        if(!empty($github)){
+            $this->users->addGitHub($github, $userID);
+        }
+
+        return $handler->getResponse()->setStatusCode(200);
+    }
+
+    public function getHandles(Handler $handler): bool|string|null
+    {
+        $user = $this->users->getUser(Session::get(SESSION_USERID));
+        $linkedIn = $user["linkedin"];
+        $github = $user["github"];
+
+        $resp =[
+            'github' => $github,
+            'linkedin' => $linkedIn
+        ];
+
+        return $handler->getResponse()->jsonResponse($resp, 200);
     }
 
     /**

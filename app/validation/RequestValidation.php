@@ -15,4 +15,14 @@ class RequestValidation
         }
         return $result;
     }
+
+    public static function validCode(string $code): bool
+    {
+        if (preg_match("/^.{1,20}$/", $code)) {
+            $result = true;
+        } else {
+            $result = false;
+        }
+        return $result;
+    }
 }

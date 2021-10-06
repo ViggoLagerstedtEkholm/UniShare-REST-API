@@ -27,7 +27,11 @@ class ForumController extends Controller
         $body = $handler->getRequest()->getBody();
         $forumID = $body['forumID'];
         $forum = $this->forums->getForum($forumID);
-        return $handler->getResponse()->jsonResponse($forum, 200);
+        if(!empty($forum)){
+            return $handler->getResponse()->jsonResponse($forum, 200);
+        }else{
+            return $handler->getResponse()->setStatusCode(404);
+        }
     }
 
     /**

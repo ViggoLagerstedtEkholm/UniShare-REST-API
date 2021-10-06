@@ -5,11 +5,13 @@ namespace App\controllers;
 use App\core\Handler;
 use App\models\Courses;
 use App\models\filtering\Filter;
+use App\models\Filtering\Pagination;
 use App\models\Friends;
 use App\models\Search;
 use App\Core\Request;
 use App\Core\Session;
 use JetBrains\PhpStorm\ArrayShape;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Content controller for handling searching and filtering website content.
@@ -56,13 +58,26 @@ class ContentController extends Controller
         return $filter;
     }
 
+    #[Pure] #[ArrayShape(['result' => "array|null", 'total' => "mixed", 'number_of_pages' => "", 'results_per_page_count' => "", 'start_page_first_result' => ""])]
+    private function returnFilteredResult(Pagination $pagination, int $count, ?array $data): array
+    {
+        return [
+            'result' => $data,
+            'total' => $count,
+            'number_of_pages' => $pagination->getNumberOfPages(),
+            'results_per_page_count' => $pagination->getResultsPerPage(),
+            'start_page_first_result' => $pagination->getStartPageFirstResult()
+        ];
+    }
+
     /**
      * Use the parameters to calculate the amount of pages required to showcase
      * all the items. The method filters people.
      * @param Handler $handler
-     * @return string
+     * @return bool|string
      */
-    public function people(Handler $handler): string
+
+    public function people(Handler $handler): bool|string
     {
         $filter = $this->getFilter($handler->getRequest());
         $option = $filter->getFilterOption();
@@ -71,29 +86,20 @@ class ContentController extends Controller
         //Get the results in the interval of the pagination.
         $results = $this->search->doSearchPeople($filter);
 
-        $data = array();
+        $result = array();
         foreach($results['result'] as $key => $value){
-            $data[$key] = $value;
-            $data[$key]['userImage'] = base64_encode($value['userImage']);
+            $result[$key] = $value;
+            $result[$key]['userImage'] = base64_encode($value['userImage']);
             if(Session::isLoggedIn()){
-                $data[$key]['isFriend'] = $this->friends->isAlreadyFriends($value['usersID']);
-                $data[$key]['isSent'] = $this->friends->isRequestSender($value['usersID']);
-                $data[$key]['isReceived'] = $this->friends->isRequestReceiver($value['usersID']);
+                $result[$key]['isFriend'] = $this->friends->isAlreadyFriends($value['usersID']);
+                $result[$key]['isSent'] = $this->friends->isRequestSender($value['usersID']);
+                $result[$key]['isReceived'] = $this->friends->isRequestReceiver($value['usersID']);
             }
         }
 
         $pagination = $results['pagination'];
-        $total = $results['total'];
-
-        $params = [
-            'users' => $data,
-            'total' => $total,
-            'number_of_pages' => $pagination->getNumberOfPages(),
-            'results_per_page_count' => $pagination->getResultsPerPage(),
-            'start_page_first_result' => $pagination->getStartPageFirstResult()
-        ];
-
-        return $handler->getResponse()->jsonResponse($params, 200);
+        $count = $results['total'];
+        return $handler->getResponse()->jsonResponse($this->returnFilteredResult($pagination, $count, $result), 200);
     }
 
     public function posts(Handler $handler): string
@@ -105,24 +111,15 @@ class ContentController extends Controller
 
         $results = $this->search->doSearchPosts($filter, $forumID);
 
-        $data = array();
+        $result = array();
         foreach($results['result'] as $key => $value){
-            $data[$key] = $value;
-            $data[$key]['userImage'] = base64_encode($value['userImage']);
+            $result[$key] = $value;
+            $result[$key]['userImage'] = base64_encode($value['userImage']);
         }
 
         $pagination = $results['pagination'];
-        $total = $results['total'];
-
-        $params = [
-            'posts' => $data,
-            'total' => $total,
-            'number_of_pages' => $pagination->getNumberOfPages(),
-            'results_per_page_count' => $pagination->getResultsPerPage(),
-            'start_page_first_result' => $pagination->getStartPageFirstResult()
-        ];
-
-        return $handler->getResponse()->jsonResponse($params, 200);
+        $count = $results['total'];
+        return $handler->getResponse()->jsonResponse($this->returnFilteredResult($pagination, $count, $result), 200);
     }
 
     /**
@@ -150,17 +147,8 @@ class ContentController extends Controller
         }
 
         $pagination = $results['pagination'];
-        $total = $results['total'];
-
-        $params = [
-            'courses' => $result,
-            'total' => $total,
-            'number_of_pages' => $pagination->getNumberOfPages(),
-            'results_per_page_count' => $pagination->getResultsPerPage(),
-            'start_page_first_result' => $pagination->getStartPageFirstResult()
-        ];
-
-        return $handler->getResponse()->jsonResponse($params, 200);
+        $count = $results['total'];
+        return $handler->getResponse()->jsonResponse($this->returnFilteredResult($pagination, $count, $result), 200);
     }
 
     public function profileTotalRatings(Handler $handler): string
@@ -177,17 +165,8 @@ class ContentController extends Controller
 
         $result = $results['result'];
         $pagination = $results['pagination'];
-        $total = $results['total'];
-
-        $params = [
-            'ratings' => $result,
-            'total' => $total,
-            'number_of_pages' => $pagination->getNumberOfPages(),
-            'results_per_page_count' => $pagination->getResultsPerPage(),
-            'start_page_first_result' => $pagination->getStartPageFirstResult()
-        ];
-
-        return $handler->getResponse()->jsonResponse($params, 200);
+        $count = $results['total'];
+        return $handler->getResponse()->jsonResponse($this->returnFilteredResult($pagination, $count, $result), 200);
     }
 
     public function profileTotalReviews(Handler $handler): string
@@ -201,24 +180,15 @@ class ContentController extends Controller
         //Get the results in the interval of the pagination.
         $results = $this->search->doSearchProfileReviews($filter, $profileID);
 
-        $data = array();
+        $result = array();
         foreach($results['result'] as $key => $value){
-            $data[$key] = $value;
-            $data[$key]['course'] = $this->courses->getCourse($value['courseID'])[0];
+            $result[$key] = $value;
+            $result[$key]['course'] = $this->courses->getCourse($value['courseID'])[0];
         }
 
         $pagination = $results['pagination'];
-        $total = $results['total'];
-
-        $params = [
-            'reviews' => $data,
-            'total' => $total,
-            'number_of_pages' => $pagination->getNumberOfPages(),
-            'results_per_page_count' => $pagination->getResultsPerPage(),
-            'start_page_first_result' => $pagination->getStartPageFirstResult()
-        ];
-
-        return $handler->getResponse()->jsonResponse($params, 200);
+        $count = $results['total'];
+        return $handler->getResponse()->jsonResponse($this->returnFilteredResult($pagination, $count, $result), 200);
     }
 
     /**
@@ -235,19 +205,10 @@ class ContentController extends Controller
 
         $results = $this->search->doSearchForums($filter);
 
-        $pagination = $results['pagination'];
         $result = $results['result'];
-        $total = $results['total'];
-
-        $params = [
-            'forums' => $result,
-            'total' => $total,
-            'number_of_pages' => $pagination->getNumberOfPages(),
-            'results_per_page_count' => $pagination->getResultsPerPage(),
-            'start_page_first_result' => $pagination->getStartPageFirstResult()
-        ];
-
-        return $handler->getResponse()->jsonResponse($params, 200);
+        $pagination = $results['pagination'];
+        $count = $results['total'];
+        return $handler->getResponse()->jsonResponse($this->returnFilteredResult($pagination, $count, $result), 200);
     }
 
     public function requests(Handler $handler): string
@@ -258,19 +219,10 @@ class ContentController extends Controller
 
         $results = $this->search->doSearchRequests($filter);
 
-        $pagination = $results['pagination'];
         $result = $results['result'];
-        $total = $results['total'];
-
-        $params = [
-            'requests' => $result,
-            'total' => $total,
-            'number_of_pages' => $pagination->getNumberOfPages(),
-            'results_per_page_count' => $pagination->getResultsPerPage(),
-            'start_page_first_result' => $pagination->getStartPageFirstResult()
-        ];
-
-        return $handler->getResponse()->jsonResponse($params, 200);
+        $pagination = $results['pagination'];
+        $count = $results['total'];
+        return $handler->getResponse()->jsonResponse($this->returnFilteredResult($pagination, $count, $result), 200);
     }
 
 
@@ -290,24 +242,15 @@ class ContentController extends Controller
 
         $results = $this->search->doSearchReviews($filter, $courseID);
 
-        $data = array();
+        $result = array();
         foreach($results['result'] as $key => $value){
-            $data[$key] = $value;
-           $data[$key]['userImage'] = base64_encode($value['userImage']);
+            $result[$key] = $value;
+            $result[$key]['userImage'] = base64_encode($value['userImage']);
         }
 
         $pagination = $results['pagination'];
-        $total = $results['total'];
-
-        $params = [
-            'reviews' => $data,
-            'total' => $total,
-            'number_of_pages' => $pagination->getNumberOfPages(),
-            'results_per_page_count' => $pagination->getResultsPerPage(),
-            'start_page_first_result' => $pagination->getStartPageFirstResult()
-        ];
-
-        return $handler->getResponse()->jsonResponse($params, 200);
+        $count = $results['total'];
+        return $handler->getResponse()->jsonResponse($this->returnFilteredResult($pagination, $count, $result), 200);
     }
 
     /**
@@ -327,23 +270,14 @@ class ContentController extends Controller
         //Get the results in the interval of the pagination.
         $results = $this->search->doSearchComments($filter, $profileID);
 
-        $data = array();
+        $result = array();
         foreach($results['result'] as $key => $value){
-            $data[$key] = $value;
-            $data[$key]['userImage'] = base64_encode($value['userImage']);
+            $result[$key] = $value;
+            $result[$key]['userImage'] = base64_encode($value['userImage']);
         }
 
         $pagination = $results['pagination'];
-        $total = $results['total'];
-
-        $params = [
-            'comments' => $data,
-            'total' => $total,
-            'number_of_pages' => $pagination->getNumberOfPages(),
-            'results_per_page_count' => $pagination->getResultsPerPage(),
-            'start_page_first_result' => $pagination->getStartPageFirstResult()
-        ];
-
-        return $handler->getResponse()->jsonResponse($params, 200);
+        $count = $results['total'];
+        return $handler->getResponse()->jsonResponse($this->returnFilteredResult($pagination, $count, $result), 200);
     }
 }

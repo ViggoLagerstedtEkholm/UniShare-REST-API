@@ -3,6 +3,7 @@
 namespace App\models;
 
 use App\core\Session;
+use App\validation\ProjectValidator;
 use App\validation\RequestValidation;
 use App\validation\SharedValidation;
 use JetBrains\PhpStorm\Pure;
@@ -39,7 +40,13 @@ class Requests extends Database implements IValidate
             $errors[] = INVALID_UNIVERSITY;
         }
         if(!SharedValidation::validDescription($params['description'])){
-            $errors[] = INVALID_UNIVERSITY;
+            $errors[] = INVALID_DESCRIPTION;
+        }
+        if(!RequestValidation::validCode($params['code'])){
+            $errors[] = INVALID_COURSE_CODE;
+        }
+        if(!ProjectValidator::validURL($params['link'])){
+            $errors[] = INVALID_COURSE_LINK;
         }
 
         return $errors;
@@ -56,10 +63,20 @@ class Requests extends Database implements IValidate
         date_default_timezone_set("Europe/Stockholm");
         $date = date('Y-m-d H:i:s');
 
-        $sql = "INSERT INTO request (name, credits, country, city, isHandled, university, description, userID, date) 
-                values(?,?,?,?,?,?,?,?,?);";
-        return $this->insertOrUpdate($sql, 'sisssssis', array($params["name"], $params["credits"],
-            $params["country"], $params["city"], false, $params["university"], $params["description"], $userID, $date));
+        $sql = "INSERT INTO request (name, credits, country, city, university, description, userID, date, code, link) 
+                values(?,?,?,?,?,?,?,?,?,?);";
+
+        $name = $params["name"];
+        $credits = $params["credits"];
+        $country = $params["country"];
+        $city = $params["city"];
+        $university = $params["university"];
+        $description = $params["description"];
+        $code = $params["code"];
+        $link = $params["link"];
+
+        return $this->insertOrUpdate($sql, 'sdssssisss', array($name, $credits,
+            $country, $city, $university, $description, $userID, $date, $code, $link));
     }
 
     /**
@@ -121,9 +138,27 @@ class Requests extends Database implements IValidate
             date_default_timezone_set("Europe/Stockholm");
             $date = date('Y-m-d H:i:s');
 
-            $sql = "INSERT INTO courses (name, credits, added, country, city, university) values(?,?,?,?,?,?);";
-            $inserted = $this->insertOrUpdate($sql, 'sissss', array($request["name"], $request["credits"], $date,
-                $request["country"], $request["city"], $request["university"]));
+            $name = $request["name"];
+            $credits = $request["credits"];
+            $country = $request["country"];
+            $city = $request["city"];
+            $university = $request["university"];
+            $description = $request["description"];
+            $code = $request["code"];
+            $link = $request["link"];
+
+            $sql = "INSERT INTO courses (name, credits, added, country, city, university, description, code, link) values(?,?,?,?,?,?,?,?,?);";
+            $inserted = $this->insertOrUpdate($sql, 'sfsssssss',
+                array(
+                    $name,
+                    $credits,
+                    $date,
+                    $country,
+                    $city,
+                    $university,
+                    $description,
+                    $code,
+                    $link));
             if (!$inserted) {
                 $this->getConnection()->rollback();
             }
@@ -156,7 +191,7 @@ class Requests extends Database implements IValidate
     function getRequestedCoursesFromUser(): array|null
     {
         $userID = Session::get(SESSION_USERID);
-        $sql = "SELECT * FROM request WHERE isHandled = 0 AND userID = ?;";
+        $sql = "SELECT * FROM request WHERE userID = ?;";
         $result = $this->executeQuery($sql, 'i', array($userID));
         return $this->fetchResults($result);
     }

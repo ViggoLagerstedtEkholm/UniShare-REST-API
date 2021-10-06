@@ -3,25 +3,16 @@
 namespace App\models;
 
 use App\Core\Session;
-use JetBrains\PhpStorm\Pure;
+use App\validation\RequestValidation;
+use App\validation\SharedValidation;
 use mysqli_result;
 
 /**
  * Model for handling courses.
  * @author Viggo Lagestedt Ekholm
  */
-class Courses extends Database implements IValidate
+class Courses extends Database
 {
-    /**
-     * Check if the user input is sufficient enough.
-     * @param array $params
-     * @return array
-     */
-    #[Pure] public function validate(array $params): array
-    {
-        return array();
-    }
-
     function getCourseCount(): int
     {
         $sql = "SELECT Count(*)
@@ -36,7 +27,7 @@ class Courses extends Database implements IValidate
      */
     function getTOP10Courses(): array
     {
-        $sql = "SELECT AVG(rating) AS average_rating, courses.*
+        $sql = "SELECT ROUND(AVG(rating),2)  AS average_rating, courses.*
             FROM rating
             JOIN courses
             ON rating.courseID = courses.courseID
@@ -91,7 +82,7 @@ class Courses extends Database implements IValidate
      */
     function getArithmeticMeanScore(int $courseID): array
     {
-        $sql = "SELECT AVG(rating), COUNT(rating) FROM rating WHERE courseID = ?;";
+        $sql = "SELECT ROUND(AVG(rating),2) AS rating, COUNT(rating) AS amount FROM rating WHERE courseID = ?;";
         $result = $this->executeQuery($sql, 'i', array($courseID));
         return $result->fetch_assoc();
     }
@@ -196,5 +187,23 @@ class Courses extends Database implements IValidate
         } else {
             return false;
         }
+    }
+
+    public function updateCourse(array $body)
+    {
+        $sql = "UPDATE courses 
+        SET name = ?, credits = ?, country = ?, city = ?, university = ?, description = ?, code = ?
+        WHERE courseID = ?";
+
+        $courseID = $body['courseID'];
+        $name = $body['name'];
+        $credits = $body['credits'];
+        $country = $body['country'];
+        $city = $body['city'];
+        $university = $body['university'];
+        $description = $body['description'];
+        $code = $body['code'];
+
+        $this->insertOrUpdate($sql, 'sdsssssi', array($name, $credits, $country, $city, $university, $description, $code, $courseID));
     }
 }
